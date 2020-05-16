@@ -70,9 +70,9 @@ int binarySearch(int* array, int number_of_elements, int key) {
 int main(int argc, char* argv[]) {
     bool prefetching = false;
     int stride = 0;
-    std::vector<int> keyArray(1);
+    std::vector<int> indexArray(1);
     int len = 4000000;
-    int* my_array;
+    int* inputArray;
 
     if (argc >= 2) {
         if(std::string(argv[1]).rfind("--working-set=") == 0) {
@@ -93,9 +93,9 @@ int main(int argc, char* argv[]) {
     }
 
     if (stride == 0) {
-        keyArray = createRandomArray(len);
+        indexArray = createRandomArray(len);
     } else {
-        keyArray = createGrowingArray(len, stride);
+        indexArray = createGrowingArray(len, stride);
     }
 
     std::cout << "Binary search: \n";
@@ -107,18 +107,18 @@ int main(int argc, char* argv[]) {
     }
     std::cout << "\n"; 
 
-    my_array = (int*) malloc(sizeof(int) * len);
-    generateRandomGrowingArray(my_array, len);
+    inputArray = (int*) malloc(sizeof(int) * len);
+    generateRandomGrowingArray(inputArray, len);
 
     auto start_time = std::chrono::high_resolution_clock::now();
     if (prefetching) {
         for (int i = 0; i < len; i++) {
-            binarySearch<true>(my_array, len, my_array[keyArray[i]]);
+            binarySearch<true>(inputArray, len, inputArray[indexArray[i]]);
         }
     }
     else {
         for (int i = 0; i < len; i++) {
-            binarySearch<false>(my_array, len, my_array[keyArray[i]]);
+            binarySearch<false>(inputArray, len, inputArray[indexArray[i]]);
         }
     }
 
@@ -127,7 +127,7 @@ int main(int argc, char* argv[]) {
 
     std::cout << " took " << time/std::chrono::milliseconds(1) << "ms to run.\n";
 
-    free(my_array);
+    free(inputArray);
 
     return 0;
 }
