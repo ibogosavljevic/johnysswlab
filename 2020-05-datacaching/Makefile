@@ -1,5 +1,5 @@
 
-RPATH=-Wl,-rpath /common/pkgs/gcc/4.9.4/lib64/
+#RPATH=-Wl,-rpath /common/pkgs/gcc/4.9.4/lib64/
 CC=g++
 OPT?=3
 CFLAGS=-I. -std=c++11 -O$(OPT) -pthread -g -Werror $(RPATH)
