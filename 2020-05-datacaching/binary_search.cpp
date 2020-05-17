@@ -8,22 +8,22 @@
 
 
 
-std::vector<int> createGrowingArray(int n, int stride) {
+std::vector<int> createGrowingArray(int n, int stride, int inputArrayLen) {
     std::vector<int> v(n);
     int j = 0;
     for (int i = 0; i < n; i++) {
         v[i] = j;
-        j = (j + stride) % n;
+        j = (j + stride) % inputArrayLen;
     }
     return v;
 }
 
-std::vector<int> createRandomArray(int n) {
+std::vector<int> createRandomArray(int n, int inputArrayLen) {
   std::random_device r;
   std::seed_seq      seed{r(), r(), r(), r(), r(), r(), r(), r()};
   std::mt19937       eng(seed); // a source of random data
 
-  std::uniform_int_distribution<int> dist(0, n - 1);
+  std::uniform_int_distribution<int> dist(0, inputArrayLen - 1);
   std::vector<int> v(n);
 
   generate(begin(v), end(v), bind(dist, eng));
@@ -73,6 +73,7 @@ int main(int argc, char* argv[]) {
     std::vector<int> indexArray(1);
     int len = 4000000;
     int* inputArray;
+    int searches = len;
 
     if (argc >= 2) {
         if(std::string(argv[1]).rfind("--working-set=") == 0) {
@@ -92,11 +93,12 @@ int main(int argc, char* argv[]) {
         }
     }
 
-    if (stride == 0) {
-        indexArray = createRandomArray(len);
-    } else {
-        indexArray = createGrowingArray(len, stride);
+    if (argc >= 5) {
+        if (std::string(argv[4]).rfind("--searches=") == 0) {
+            searches = std::atoi(argv[4] + 11);
+        }
     }
+
 
     std::cout << "Binary search: \n";
     std::cout << "Working set = " << len << "\n";
@@ -106,18 +108,25 @@ int main(int argc, char* argv[]) {
         std::cout << stride;
     }
     std::cout << "\n"; 
+    std::cout << "Number of searches = " << searches << "\n";
+
+    if (stride == 0) {
+        indexArray = createRandomArray(searches, len);
+    } else {
+        indexArray = createGrowingArray(searches, stride, len);
+    }
 
     inputArray = (int*) malloc(sizeof(int) * len);
     generateRandomGrowingArray(inputArray, len);
 
     auto start_time = std::chrono::high_resolution_clock::now();
     if (prefetching) {
-        for (int i = 0; i < len; i++) {
+        for (int i = 0; i < searches; i++) {
             binarySearch<true>(inputArray, len, inputArray[indexArray[i]]);
         }
     }
     else {
-        for (int i = 0; i < len; i++) {
+        for (int i = 0; i < searches; i++) {
             binarySearch<false>(inputArray, len, inputArray[indexArray[i]]);
         }
     }
