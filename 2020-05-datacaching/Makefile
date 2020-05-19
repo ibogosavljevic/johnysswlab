@@ -12,14 +12,22 @@ PERF=perf stat -B -e cache-references,cache-misses,cache-misses:u,cycles,instruc
 %.o: %.cpp $(DEPS)
 	$(CC) -c -o $@ $< $(CFLAGS)
 
+binary_search.o: binary_search.cpp utils.h measure_time.h
+
 binary_search: binary_search.o 
 	$(CC) -o binary_search binary_search.o $(CFLAGS)
+
+linked_list_test.o: linked_list.h linked_list_test.cpp utils.h measure_time.h
+
+linked_list: linked_list_test.o
+	$(CC) -o linked_list_test linked_list_test.o $(CFLAGS)
 
 clean:
 	rm *.o
 	rm binary_search
+	rm linked_list_test
 
-binary-search-runtimes: binary_search
+binary_search_runtimes: binary_search
 	for number in $(WORKING_SET) ; do \
 		./binary_search --working-set=$$number --prefetching-off --stride=0 --searches=$(NUMBER_OF_SEARCHES) ; \
 	done
@@ -45,7 +53,7 @@ binary-search-runtimes: binary_search
 		./binary_search --working-set=$$number --prefetching-on --stride=10000 --searches=$(NUMBER_OF_SEARCHES); \
 	done
 
-binary-search-cache-misses: binary_search
+binary_search_cache_misses: binary_search
 	for number in $(WORKING_SET) ; do \
 		$(PERF) ./binary_search --working-set=$$number --prefetching-off --stride=0 --searches=$(NUMBER_OF_SEARCHES) ; \
 	done

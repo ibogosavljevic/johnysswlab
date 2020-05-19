@@ -1,56 +1,16 @@
+#include "utils.h"
+
 #include <chrono>
 #include <iostream>
-#include <random>     // mt19937 and uniform_int_distribution
-#include <algorithm>  // generate
 #include <vector>
-#include <iterator>   // begin, end, and ostream_iterator
-#include <functional> // bind
 
 
-
-std::vector<int> createGrowingArray(int n, int stride, int inputArrayLen) {
-    std::vector<int> v(n);
-    int j = 0;
-    for (int i = 0; i < n; i++) {
-        v[i] = j;
-        j = (j + stride) % inputArrayLen;
-    }
-    return v;
-}
-
-std::vector<int> createRandomArray(int n, int inputArrayLen) {
-  std::random_device r;
-  std::seed_seq      seed{r(), r(), r(), r(), r(), r(), r(), r()};
-  std::mt19937       eng(seed); // a source of random data
-
-  std::uniform_int_distribution<int> dist(0, inputArrayLen - 1);
-  std::vector<int> v(n);
-
-  generate(begin(v), end(v), bind(dist, eng));
-  return v;
-}
-
-
-int generateRandomGrowingArray(int* array, int len) {
-    constexpr int randomArrayLen = 6;
-    int randomArray[randomArrayLen] = { 1, 2, 4, 3, 1, 2 };
-    int j = 0;
-
-    array[0] = 0;
-    for (int i = 1; i < len; i++) {
-        j = (j + 1) % randomArrayLen;
-        array[i] = array[i - 1] + randomArray[j];
-    }
-    return array[len - 1];
-}
-
-
-template <bool withPrefetching>
-int binarySearch(int* array, int number_of_elements, int key) {
+template <bool with_prefetching>
+int binary_search(int* array, int number_of_elements, int key) {
     int low = 0, high = number_of_elements-1, mid;
     while(low <= high) {
         mid = (low + high)/2;
-        if (withPrefetching) {
+        if (with_prefetching) {
             // low path
             __builtin_prefetch (&array[(mid + 1 + high)/2], 0, 1);
             // high path
@@ -70,9 +30,9 @@ int binarySearch(int* array, int number_of_elements, int key) {
 int main(int argc, char* argv[]) {
     bool prefetching = false;
     int stride = 0;
-    std::vector<int> indexArray(1);
+    std::vector<int> index_array(1);
     int len = 4000000;
-    int* inputArray;
+    int* input_array;
     int searches = len;
 
     if (argc >= 2) {
@@ -111,23 +71,23 @@ int main(int argc, char* argv[]) {
     std::cout << "Number of searches = " << searches << "\n";
 
     if (stride == 0) {
-        indexArray = createRandomArray(searches, len);
+        index_array = create_random_array(searches, 0, len);
     } else {
-        indexArray = createGrowingArray(searches, stride, len);
+        index_array = create_growing_array(searches, stride, len);
     }
 
-    inputArray = (int*) malloc(sizeof(int) * len);
-    generateRandomGrowingArray(inputArray, len);
+    input_array = (int*) malloc(sizeof(int) * len);
+    generate_random_growing_array(input_array, len);
 
     auto start_time = std::chrono::high_resolution_clock::now();
     if (prefetching) {
         for (int i = 0; i < searches; i++) {
-            binarySearch<true>(inputArray, len, inputArray[indexArray[i]]);
+            binary_search<true>(input_array, len, input_array[index_array[i]]);
         }
     }
     else {
         for (int i = 0; i < searches; i++) {
-            binarySearch<false>(inputArray, len, inputArray[indexArray[i]]);
+            binary_search<false>(input_array, len, input_array[index_array[i]]);
         }
     }
 
@@ -136,7 +96,7 @@ int main(int argc, char* argv[]) {
 
     std::cout << " took " << time/std::chrono::milliseconds(1) << "ms to run.\n";
 
-    free(inputArray);
+    free(input_array);
 
     return 0;
 }
