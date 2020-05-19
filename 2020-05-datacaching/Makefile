@@ -1,5 +1,4 @@
 
-#RPATH=-Wl,-rpath /common/pkgs/gcc/4.9.4/lib64/
 CC=g++
 OPT?=3
 CFLAGS=-I. -std=c++11 -O$(OPT) -pthread -g -Werror $(RPATH)
@@ -17,15 +16,23 @@ binary_search.o: binary_search.cpp utils.h measure_time.h
 binary_search: binary_search.o 
 	$(CC) -o binary_search binary_search.o $(CFLAGS)
 
-linked_list_test.o: linked_list.h linked_list_test.cpp utils.h measure_time.h
+linked_list_test_optimal.o: linked_list_test.cpp linked_list.h  utils.h measure_time.h
+	$(CC) -c -o $@ $< $(CFLAGS) -DOPTIMAL
 
-linked_list: linked_list_test.o
-	$(CC) -o linked_list_test linked_list_test.o $(CFLAGS)
+linked_list_test_suboptimal.o: linked_list_test.cpp linked_list.h  utils.h measure_time.h
+	$(CC) -c -o $@ $< $(CFLAGS) -DSUBOPTIMAL
+
+linked_list_optimal: linked_list_test_optimal.o
+	$(CC) -o linked_list_test_optimal linked_list_test_optimal.o $(CFLAGS)
+
+linked_list_suboptimal: linked_list_test_suboptimal.o
+	$(CC) -o linked_list_test_optimal linked_list_test_suboptimal.o $(CFLAGS)
 
 clean:
 	rm *.o
 	rm binary_search
-	rm linked_list_test
+	rm linked_list_test_optimal
+	rm linked_list_test_suboptimal
 
 binary_search_runtimes: binary_search
 	for number in $(WORKING_SET) ; do \

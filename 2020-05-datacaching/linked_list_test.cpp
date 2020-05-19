@@ -4,35 +4,36 @@
 #include "linked_list.h"
 #include "utils.h"
 
+template <int size>
 struct test_struct {
-    int my_val;
-    int padding[31];
+    int my_val[size];
 
     test_struct(int val) {
-        my_val = val;
+        my_val[0] = val;
     }
 
     bool operator==(const test_struct& rhs) const {
-        return my_val == rhs.my_val;
+        return my_val[0] == rhs.my_val[0];
     }
 
     bool operator==(const int& rhs) {
-        return my_val == rhs;
+        return my_val[0] == rhs;
     }
 };
 
-std::ostream& operator<<(std::ostream& os, const test_struct& obj) {
+template <int size>
+std::ostream& operator<<(std::ostream& os, const test_struct<size>& obj) {
     os << obj.my_val;
     return os;
 }
 
-template<int linked_list_values, int iterations>
+template<int linked_list_values, int iterations, int struct_size>
 void run_test(std::vector<int>& my_array) {
     int len = my_array.size();
 
     for (int j = 0; j < iterations; j++) {
-        linked_list<test_struct, linked_list_values> my_list;
-        std::string header = "Node size = " + std::to_string(linked_list_values) + " ";
+        linked_list<test_struct<struct_size>, linked_list_values> my_list;
+        std::string header = "Node size = " + std::to_string(linked_list_values) + ", struct size = " + std::to_string(struct_size);
         {
             measure_time m(header + "Emplace");
             for (int i = 0; i < len; i++ ) {
@@ -43,14 +44,14 @@ void run_test(std::vector<int>& my_array) {
         {
             measure_time m(header + "remove_if");
             for (int i = 0; i < len / 2; i++) {
-                my_list.remove_if([&my_array, i] (const test_struct& x) -> bool { return x == my_array[i]; });
+                my_list.remove_if([&my_array, i] (const test_struct<struct_size>& x) -> bool { return x == my_array[i]; });
             }
         }
 
         {
             measure_time m(header + "find_if");
             for (int i = 0; i < len / 2; i++) {
-                if (my_list.find_if([i, &my_array] (const test_struct& x) -> bool { return x == my_array[i]; })) {
+                if (my_list.find_if([i, &my_array] (const test_struct<struct_size>& x) -> bool { return x == my_array[i]; })) {
                     std::cout << "Found1 " << i;
                 }
             }
@@ -59,7 +60,7 @@ void run_test(std::vector<int>& my_array) {
         {
             measure_time m(header + "find_if2");
             for (int i = len / 2; i < len; i++) {
-                if (!my_list.find_if([i, &my_array] (const test_struct& x) -> bool { return x == my_array[i]; })) {
+                if (!my_list.find_if([i, &my_array] (const test_struct<struct_size>& x) -> bool { return x == my_array[i]; })) {
                     std::cout << "Found2 " << i;
                 }
             }
@@ -71,11 +72,29 @@ void run_test(std::vector<int>& my_array) {
 int main(int argc, char* argv[]) {
     constexpr int len = 50000;
     std::vector<int> my_array = create_growing_array(len, 1, len);
+#ifdef OPTIMAL
+    std::cout << "Running OPTIMAL\n";
+#elif defined(SUBOPTIMAL)
+    std::cout << "Running SUBOPTIMAL\n";
+#else
+    #error Need to define optimal or suboptimal
+#endif
 
-    run_test<1, 5>(my_array);
-    run_test<2, 5>(my_array);   
-    run_test<4, 5>(my_array);
-    run_test<8, 5>(my_array);
+        run_test<1, 5, 1>(my_array);
+    run_test<2, 5, 1>(my_array);   
+    run_test<4, 5, 1>(my_array);
+    run_test<8, 5, 1>(my_array);
+
+    run_test<1, 5, 4>(my_array);
+    run_test<2, 5, 4>(my_array);   
+    run_test<4, 5, 4>(my_array);
+    run_test<8, 5, 4>(my_array);
+
+    run_test<1, 5, 8>(my_array);
+    run_test<2, 5, 8>(my_array);   
+    run_test<4, 5, 8>(my_array);
+    run_test<8, 5, 8>(my_array);
+
 
     measure_time_database<std::chrono::milliseconds>::get_instance()->dump_database();
 

@@ -8,9 +8,17 @@ private:
 
     class linked_list_node {
     public:
+#ifdef OPTIMAL
+        char used_elems[count];
+        linked_list_node* next;
+        char values[count * sizeof(T)];
+#elif defined(SUBOPTIMAL)
         linked_list_node* next;
         char values[count * sizeof(T)];
         char used_elems[count];
+#else
+        #error Need to define OPTIMAL or SUBOPTIMAL
+#endif
 
         template<typename ...Args>
         void create(const int pos, const Args &... args) {
