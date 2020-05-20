@@ -20,7 +20,7 @@ public:
 
     void dump_database() {
         for(auto const& m: my_measurements) {
-            std::cout << "measurement " << m.first << " = " << m.second.get_average_time() << "ms\n";
+            std::cout << "measurement|" << m.first << "|" << m.second.get_average_time() << "ms\n";
         }
     }
 

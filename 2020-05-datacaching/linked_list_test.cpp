@@ -33,16 +33,16 @@ void run_test(std::vector<int>& my_array) {
 
     for (int j = 0; j < iterations; j++) {
         linked_list<test_struct<struct_size>, linked_list_values> my_list;
-        std::string header = "Node size = " + std::to_string(linked_list_values) + ", struct size = " + std::to_string(struct_size);
+        std::string header = "Node size = " + std::to_string(linked_list_values) + "|struct size = " + std::to_string(struct_size) + "|";
         {
-            measure_time m(header + "Emplace");
+            //measure_time m(header + "Emplace");
             for (int i = 0; i < len; i++ ) {
                 my_list.emplace_back(my_array[i]);
             }
         }
 
         {
-            measure_time m(header + "remove_if");
+            //measure_time m(header + "remove_if");
             for (int i = 0; i < len / 2; i++) {
                 my_list.remove_if([&my_array, i] (const test_struct<struct_size>& x) -> bool { return x == my_array[i]; });
             }
@@ -79,21 +79,22 @@ int main(int argc, char* argv[]) {
 #else
     #error Need to define optimal or suboptimal
 #endif
+    constexpr int iterations = 30;
+    
+    run_test<1, iterations, 1>(my_array);
+    run_test<2, iterations, 1>(my_array);   
+    run_test<4, iterations, 1>(my_array);
+    run_test<8, iterations, 1>(my_array);
 
-        run_test<1, 5, 1>(my_array);
-    run_test<2, 5, 1>(my_array);   
-    run_test<4, 5, 1>(my_array);
-    run_test<8, 5, 1>(my_array);
+    run_test<1, iterations, 4>(my_array);
+    run_test<2, iterations, 4>(my_array);   
+    run_test<4, iterations, 4>(my_array);
+    run_test<8, iterations, 4>(my_array);
 
-    run_test<1, 5, 4>(my_array);
-    run_test<2, 5, 4>(my_array);   
-    run_test<4, 5, 4>(my_array);
-    run_test<8, 5, 4>(my_array);
-
-    run_test<1, 5, 8>(my_array);
-    run_test<2, 5, 8>(my_array);   
-    run_test<4, 5, 8>(my_array);
-    run_test<8, 5, 8>(my_array);
+    run_test<1, iterations, 8>(my_array);
+    run_test<2, iterations, 8>(my_array);   
+    run_test<4, iterations, 8>(my_array);
+    run_test<8, iterations, 8>(my_array);
 
 
     measure_time_database<std::chrono::milliseconds>::get_instance()->dump_database();
