@@ -27,6 +27,25 @@ std::ostream& operator<<(std::ostream& os, const test_struct<size>& obj) {
     return os;
 }
 
+template <typename test_struct, int size>
+void __attribute__((noinline)) measure_find(linked_list<test_struct, size>& my_list, std::vector<int>& my_array, std::string message, int start, int stop, bool print_on_find) {
+    measure_time m(message);
+    bool find_result;
+
+    for (int i = start; i < stop; i++) {
+        find_result = my_list.find_if([i, &my_array] (const test_struct& x) -> bool { return x == my_array[i]; });
+        if (print_on_find) {
+            if (find_result) {
+                std::cout << "Found";
+            }
+        } else {
+            if (!find_result) {
+                std::cout << "Not found";
+            }
+        }
+    }
+}
+
 template<int linked_list_values, int iterations, int struct_size>
 void run_test(std::vector<int>& my_array) {
     int len = my_array.size();
@@ -48,23 +67,8 @@ void run_test(std::vector<int>& my_array) {
             }
         }
 
-        {
-            measure_time m(header + "find_if");
-            for (int i = 0; i < len / 2; i++) {
-                if (my_list.find_if([i, &my_array] (const test_struct<struct_size>& x) -> bool { return x == my_array[i]; })) {
-                    std::cout << "Found1 " << i;
-                }
-            }
-        }
-
-        {
-            measure_time m(header + "find_if2");
-            for (int i = len / 2; i < len; i++) {
-                if (!my_list.find_if([i, &my_array] (const test_struct<struct_size>& x) -> bool { return x == my_array[i]; })) {
-                    std::cout << "Found2 " << i;
-                }
-            }
-        }
+        measure_find(my_list, my_array, header + " find if", 0, len / 2, true);
+        measure_find(my_list, my_array, header + " find if2", len / 2, len, false);
     }
 
 }
@@ -79,7 +83,7 @@ int main(int argc, char* argv[]) {
 #else
     #error Need to define optimal or suboptimal
 #endif
-    constexpr int iterations = 30;
+    constexpr int iterations = 1;
     
     run_test<1, iterations, 1>(my_array);
     run_test<2, iterations, 1>(my_array);   
