@@ -76,13 +76,8 @@ void run_test(std::vector<int>& my_array) {
 int main(int argc, char* argv[]) {
     constexpr int len = 50000;
     std::vector<int> my_array = create_growing_array(len, 1, len);
-#ifdef OPTIMAL
-    std::cout << "Running OPTIMAL\n";
-#elif defined(SUBOPTIMAL)
-    std::cout << "Running SUBOPTIMAL\n";
-#else
-    #error Need to define optimal or suboptimal
-#endif
+    //  std::vector<int> my_array = create_random_array(len, 1, len * 500);
+
     constexpr int iterations = 1;
     
     run_test<1, iterations, 1>(my_array);
@@ -99,7 +94,6 @@ int main(int argc, char* argv[]) {
     run_test<2, iterations, 8>(my_array);   
     run_test<4, iterations, 8>(my_array);
     run_test<8, iterations, 8>(my_array);
-
 
     measure_time_database<std::chrono::milliseconds>::get_instance()->dump_database();
 

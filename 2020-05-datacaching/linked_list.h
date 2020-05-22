@@ -8,17 +8,9 @@ private:
 
     class linked_list_node {
     public:
-#ifdef OPTIMAL
         char used_elems[count];
         linked_list_node* next;
         char values[count * sizeof(T)];
-#elif defined(SUBOPTIMAL)
-        linked_list_node* next;
-        char values[count * sizeof(T)];
-        char used_elems[count];
-#else
-        #error Need to define OPTIMAL or SUBOPTIMAL
-#endif
 
         template<typename ...Args>
         void create(const int pos, const Args &... args) {
@@ -119,35 +111,38 @@ public:
         linked_list_node* next;
         linked_list_node* prev = nullptr;
         int removed = 0;
-        bool removed_iteration;
-        bool block_deleted;
+        bool block_empty;
 
         while (current != nullptr) {
-            removed_iteration = false;
-            block_deleted = false;
+            block_empty = true;
             for (int i = 0; i < count; i++) {
                 if (current->used(i)) {
                     if (condition(current->to_const_reference(i))) {
                         current->destroy(i);
                         removed++;
-                        removed_iteration = true;
+                    } else {
+                        block_empty = false;
                     }
+                } else {
+                    block_empty = false;
                 }
             }
 
             next = current->next;
 
-            if (removed_iteration) {
-                block_deleted = delete_block_if_empty(current, prev);
-            }
-
-            if (block_deleted) {
-                // prev doesn't change
-                current = next;
+            if (block_empty) {
+                if (prev) {
+                    prev->next = next;
+                } else {
+                    begin = next;
+                }
+                
+                delete current;
             } else {
-                current = next;
                 prev = current;
             }
+
+            current = next;
         }
         return removed;
     }
@@ -201,30 +196,4 @@ public:
         }
     }
 
-private:
-    bool delete_block_if_empty(linked_list_node* current, linked_list_node* prev) {
-        bool empty_block = true;
-        bool deleted;
-        for (int i = 0; i < count; i++) {
-            if (current->used(i)) {
-                empty_block = false;
-                break;
-            }
-        }
-
-        if (empty_block) {
-            if (prev) {
-                prev->next = current->next;
-            } else {
-                assert(current == begin);
-                begin = current->next;
-            }
-            delete current;
-            deleted = true;
-        } else {
-            deleted = false;
-        }
-
-        return deleted;
-    }
 };

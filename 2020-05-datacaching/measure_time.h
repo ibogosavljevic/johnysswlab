@@ -55,9 +55,11 @@ public:
         start_time = std::chrono::high_resolution_clock::now();
         
         std::cout << "Starting measurement for \"" << message_ << "\"\n";
+        asm volatile("": : :"memory");
     }
 
     ~measure_time() {
+        asm volatile("": : :"memory");
         auto end_time = std::chrono::high_resolution_clock::now();
         std::chrono::milliseconds time = std::chrono::duration_cast<std::chrono::milliseconds>(end_time - start_time);
         std::cout << "\"" << message_ << "\" took " << time /std::chrono::milliseconds(1) << "ms to run.\n";

@@ -6,7 +6,7 @@ DEPS =
 
 WORKING_SET=10000 100000 1000000 10000000 100000000
 NUMBER_OF_SEARCHES=10000000
-PERF=perf stat -B -e cache-references,cache-misses,cache-misses:u,cycles,instructions,branches,faults,migrations 
+PERF=perf stat -B -e cache-references,cache-misses,cache-misses:u,cycles,instructions,branches,branch-misses,faults,migrations 
 
 %.o: %.cpp $(DEPS)
 	$(CC) -c -o $@ $< $(CFLAGS)
@@ -16,23 +16,19 @@ binary_search.o: binary_search.cpp utils.h measure_time.h
 binary_search: binary_search.o 
 	$(CC) -o binary_search binary_search.o $(CFLAGS)
 
-linked_list_test_optimal.o: linked_list_test.cpp linked_list.h  utils.h measure_time.h
-	$(CC) -c -o $@ $< $(CFLAGS) -DOPTIMAL
+linked_list_test.o: linked_list_test.cpp linked_list.h  utils.h measure_time.h
 
-linked_list_test_suboptimal.o: linked_list_test.cpp linked_list.h  utils.h measure_time.h
-	$(CC) -c -o $@ $< $(CFLAGS) -DSUBOPTIMAL
+linked_list_test: linked_list_test.o
+	$(CC) -o linked_list_test linked_list_test.o $(CFLAGS)
 
-linked_list_optimal: linked_list_test_optimal.o
-	$(CC) -o linked_list_test_optimal linked_list_test_optimal.o $(CFLAGS)
+linked_list_runtimes: linked_list_test
+	./linked_list_test
 
-linked_list_suboptimal: linked_list_test_suboptimal.o
-	$(CC) -o linked_list_test_optimal linked_list_test_suboptimal.o $(CFLAGS)
+linked_list_cache_misses: linked_list_test
+	valgrind --tool=cachegrind ./linked_list_test
 
 clean:
-	rm *.o
-	rm binary_search
-	rm linked_list_test_optimal
-	rm linked_list_test_suboptimal
+	rm -f  *.o binary_search linked_list_test
 
 binary_search_runtimes: binary_search
 	for number in $(WORKING_SET) ; do \
