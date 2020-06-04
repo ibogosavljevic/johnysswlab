@@ -5,15 +5,17 @@
 #include "utils.h"
 #include "measure_time.h"
 
-inline void __attribute__((always_inline))swap_if_smaller_inline(int* a, int *b) {
-    if (*a < *b) {
-        std::swap(*a, *b);
+inline void __attribute__((always_inline))update_min_index_inline(int* current, int current_index, int *min, int* min_index) {
+    if (*current < *min) {
+        *min = *current;
+        *min_index = current_index;
     }
 }
 
-void __attribute__((noinline))swap_if_smaller_noinline(int* a, int *b) {
-    if (*a < *b) {
-        std::swap(*a, *b);
+inline void __attribute__((noinline))update_min_index_noinline(int* current, int current_index, int *min, int* min_index) {
+    if (*current < *min) {
+        *min = *current;
+        *min_index = current_index;
     }
 }
 
@@ -42,7 +44,6 @@ int __attribute__((noinline)) find_min_element_noinline(int* a, int start, int l
     return min_index;
 }
 
-
 void sort_noinline_large(int* a, int len) {
     for (int i = 0; i < len; i++) {
         int smallest = find_min_element_noinline(a, i, len);
@@ -61,27 +62,46 @@ void sort_inline_large(int* a, int len) {
 
 void sort_inline_small(int* a, int len) {
     for (int i = 0; i < len; i++) {
+        int min = a[i];
+        int min_index = i;
         for (int j = i+1; j < len; j++) {
-            swap_if_smaller_inline(&a[j], &a[i]);
+            update_min_index_inline(&a[j], j, &min, &min_index);
         }
+        std::swap(a[i], a[min_index]);
     }
 }
 
 void sort_noinline_small(int* a, int len) {
     for (int i = 0; i < len; i++) {
+        int min = a[i];
+        int min_index = i;
         for (int j = i+1; j < len; j++) {
-            swap_if_smaller_noinline(&a[j], &a[i]);
+            update_min_index_noinline(&a[j], j, &min, &min_index);
         }
+        std::swap(a[i], a[min_index]);
     }
 }
 
 
 void sort_regular(int* a, int len) {
     for (int i = 0; i < len; i++) {
+        int min = a[i];
+        int min_index = i;
         for (int j = i+1; j < len; j++) {
-            if (a[j] < a[i]) {
-                std::swap(a[j], a[i]);
+            if (a[j] < min) {
+                min = a[j];
+                min_index = j;
             }
+        }
+        std::swap(a[i], a[min_index]);
+    }
+}
+
+void verify_sorted(int* a, int len, const char* msg) {
+    for (int i = 1; i < len; i++) {
+        if (a[i] < a[i - 1]) {
+            printf("%s not sorted\n", msg);
+            return;
         }
     }
 }
@@ -125,6 +145,12 @@ int main(int argc, char* argv[]) {
             measure_time m("regular sort function");
             sort_regular(array_regular, arr_len);
         }
+
+        verify_sorted(array_noinline_small, arr_len, "noinline small");
+        verify_sorted(array_inline_small, arr_len, "inline small");
+        verify_sorted(array_noinline_large, arr_len, "noinline large");
+        verify_sorted(array_inline_large, arr_len, "inline large");
+        verify_sorted(array_regular, arr_len, "regular");
     }
 
     measure_time_database<std::chrono::milliseconds>::get_instance()->dump_database();
