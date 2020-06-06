@@ -109,48 +109,40 @@ void verify_sorted(int* a, int len, const char* msg) {
 static constexpr int arr_len = 40000;
 
 int array_regular[arr_len];
-int array_noinline_small[arr_len];
-int array_inline_small[arr_len];
-int array_noinline_large[arr_len];
-int array_inline_large[arr_len];
-
 int main(int argc, char* argv[]) {
-    
 
     for (int i = 0; i < 5; i++) {
         std::vector<int> random_vector = create_random_array(arr_len, 0, arr_len);
-        std::memcpy(array_regular, &random_vector[0], arr_len * sizeof(int));
-        std::memcpy(array_noinline_small, &random_vector[0], arr_len * sizeof(int));
-        std::memcpy(array_inline_small, &random_vector[0], arr_len * sizeof(int));
-        std::memcpy(array_noinline_large, &random_vector[0], arr_len * sizeof(int));
-        std::memcpy(array_inline_large, &random_vector[0], arr_len * sizeof(int));
 
+        std::memcpy(array_regular, &random_vector[0], arr_len * sizeof(int));
         {
             measure_time m("sort function calling noinlined small function");
-            sort_noinline_small(array_noinline_small, arr_len);
+            sort_noinline_small(array_regular, arr_len);
         }
+
+        std::memcpy(array_regular, &random_vector[0], arr_len * sizeof(int));
         {
             measure_time m("sort function calling inlined small function");
-            sort_inline_small(array_inline_small, arr_len);
+            sort_inline_small(array_regular, arr_len);
         }
+
+        std::memcpy(array_regular, &random_vector[0], arr_len * sizeof(int));
         {
             measure_time m("sort function calling noinlined large function");
-            sort_noinline_large(array_noinline_large, arr_len);
+            sort_noinline_large(array_regular, arr_len);
         }
+
+        std::memcpy(array_regular, &random_vector[0], arr_len * sizeof(int));
         {
             measure_time m("sort function calling inlined large function");
-            sort_inline_large(array_inline_large, arr_len);
+            sort_inline_large(array_regular, arr_len);
         }
+
+        std::memcpy(array_regular, &random_vector[0], arr_len * sizeof(int));
         {
             measure_time m("regular sort function");
             sort_regular(array_regular, arr_len);
         }
-
-        verify_sorted(array_noinline_small, arr_len, "noinline small");
-        verify_sorted(array_inline_small, arr_len, "inline small");
-        verify_sorted(array_noinline_large, arr_len, "noinline large");
-        verify_sorted(array_inline_large, arr_len, "inline large");
-        verify_sorted(array_regular, arr_len, "regular");
     }
 
     measure_time_database<std::chrono::milliseconds>::get_instance()->dump_database();
