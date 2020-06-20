@@ -58,3 +58,11 @@ int generate_random_growing_array(int* array, int len) {
     }
     return array[len - 1];
 }
+
+static void escape(void* p) {
+  asm volatile ("" : : "g"(p) : "memory");
+}
+
+static void clobber() {
+  asm volatile("" : : : "memory");
+}

@@ -3,34 +3,77 @@
 #include "utils.h"
 
 #include <cstring>
+#include <emmintrin.h>
+#include <immintrin.h>
 
 
-#define ADD(name,arch) \
-__attribute__ ((__target__ (arch)))  \
-float add_##name(float* __restrict__ a, float* __restrict__ b, float* __restrict__ res, int len)  \
- { \
-    float* __restrict__ aa = (float*) __builtin_assume_aligned(a, 128); \
-    float* __restrict__ ba = (float*) __builtin_assume_aligned(b, 128); \
-    float* __restrict__ resa = (float*) __builtin_assume_aligned(res, 128); \
-    std::cout << "Architecture: " << arch << "\n"; \
-    for (int i = 0; i < len; i++) { \
-        resa[i] = aa[i] + ba[i]; \
-    } \
-    return 0.0; \
+__attribute__ ((__target__ ("default")))
+void add_default(float* __restrict__ a, float* __restrict__ b, float* __restrict__ res, int len) {
+    float* __restrict__ aa = (float*) __builtin_assume_aligned(a, 128);
+    float* __restrict__ ba = (float*) __builtin_assume_aligned(b, 128);
+    float* __restrict__ resa = (float*) __builtin_assume_aligned(res, 128);
+
+    for (int i = 0; i < len; i++) {
+        resa[i] = aa[i] + ba[i];
+    }
 }
 
-ADD(default, "default")
-ADD(sse4, "sse4")
-ADD(avx, "avx")
-ADD(avx2, "avx2")
+
+__attribute__ ((__target__ ("sse2")))
+void add_sse_manual(float* __restrict__ a, float* __restrict__ b, float* __restrict__ res, int len) {
+    __m128 aa, bb, rr;
+    int n = len / 4;
+    for (int i = 0; i < n; i += 4) {
+        aa = _mm_load_ps(a + i);
+        bb = _mm_load_ps(b + i);
+        rr = _mm_add_ps(aa, bb);
+        _mm_store_ps(res + i, rr);
+    }
+}
 
 
-typedef float add_t(float* __restrict__, float* __restrict__, float* __restrict__, int);
+__attribute__ ((__target__ ("avx")))
+void add_avx_manual(float* __restrict__ a, float* __restrict__ b, float* __restrict__ res, int len) {
+    __m256 aa, bb, rr;
+    int n = len / 8;
+    for (int i = 0; i < n; i += 8) {
+        aa = _mm256_load_ps(a + i);
+        bb = _mm256_load_ps(b + i);
+        rr = _mm256_add_ps(aa, bb);
+        _mm256_store_ps(res + i, rr);
+    }
+}
 
+__attribute__ ((__target__ ("default")))
+void add2(float* __restrict__ a, float* __restrict__ b, float* __restrict__ res, int len) {
+    add_default(a, b, res, len);
+}
+
+
+__attribute__ ((__target__ ("sse2")))
+void add2(float* __restrict__ a, float* __restrict__ b, float* __restrict__ res, int len) {
+    add_sse_manual(a, b, res, len);
+}
+
+
+__attribute__ ((__target__ ("avx")))
+void add2(float* __restrict__ a, float* __restrict__ b, float* __restrict__ res, int len) {
+    add_avx_manual(a, b, res, len);
+}
+
+
+typedef void add_t(float* __restrict__, float* __restrict__, float* __restrict__, int);
 
 extern "C" {
     static add_t* add_dispatch() {
-        return add_avx;
+        __builtin_cpu_init ();
+        if (__builtin_cpu_supports ("avx")) {
+            return add_avx_manual;
+        } else if (__builtin_cpu_supports ("sse2")) {
+            return add_sse_manual;
+        } else {
+            return add_default;
+        }
     }
 }
 
@@ -50,8 +93,13 @@ int main(int argc, char** argv) {
     std::memcpy(arr2, &array2[1], sizeof(float) * arr_len);
 
     for (int i = 0; i < 100; i++) {
-        measure_time m("test");
+        measure_time m("manual dispatch");
         add(arr1, arr2, res, arr_len);
+    }
+
+    for (int i = 0; i < 100; i++) {
+        measure_time m("automatic dispatch");
+        add2(arr1, arr2, res, arr_len);
     }
 
     measure_time_database<std::chrono::milliseconds>::get_instance()->dump_database();
