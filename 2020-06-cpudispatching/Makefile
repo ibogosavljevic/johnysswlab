@@ -1,7 +1,9 @@
 
+# CC=clang++-9 -stdlib=libc++
 CC=g++
 OPT?=3
 CFLAGS=-I. -std=c++11 -O$(OPT) -pthread -ggdb3 -Werror $(RPATH)
+#LDFLAGS=-fuse-ld=lld-9
 DEPS = 
 
 WORKING_SET=10000 100000 1000000 10000000 100000000
@@ -12,7 +14,7 @@ PERF=perf stat -B -e cache-references,cache-misses,cache-misses:u,cycles,instruc
 	$(CC) -c -o $@ $< $(CFLAGS)
 
 %: %.o $(DEPS)
-	$(CC) -o $@ $< $(CFLAGS)
+	$(CC) -o $@ $< $(LDLAGS)
 
 cpudispatching.o: cpudispatching.cpp utils.h measure_time.h
 

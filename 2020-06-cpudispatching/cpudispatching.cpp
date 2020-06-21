@@ -65,7 +65,7 @@ void add2(float* __restrict__ a, float* __restrict__ b, float* __restrict__ res,
 typedef void add_t(float* __restrict__, float* __restrict__, float* __restrict__, int);
 
 extern "C" {
-    static add_t* add_dispatch() {
+    add_t* add_dispatch() {
         __builtin_cpu_init ();
         if (__builtin_cpu_supports ("avx")) {
             return add_avx_manual;
