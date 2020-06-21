@@ -78,7 +78,7 @@ extern "C" {
 }
 
 __attribute__ ((ifunc ("add_dispatch")))
-float add(float* __restrict__  a, float* __restrict__  b, float* __restrict__  res, int len);
+void add(float* __restrict__  a, float* __restrict__  b, float* __restrict__  res, int len);
 
 constexpr int arr_len = 1024*1024*100;
 float arr1[arr_len] __attribute__((aligned(128)));
