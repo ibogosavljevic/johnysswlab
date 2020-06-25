@@ -2,7 +2,7 @@
 # CC=clang++-9 -stdlib=libc++
 CC=g++
 OPT?=3
-CFLAGS=-I. -std=c++11 -O$(OPT) -pthread -ggdb3 -Werror $(RPATH)
+CFLAGS=-I. -std=c++11 -O$(OPT) -pthread -ggdb3 -Werror -fno-omit-frame-pointer $(RPATH)
 #LDFLAGS=-fuse-ld=lld-9
 DEPS = 
 
