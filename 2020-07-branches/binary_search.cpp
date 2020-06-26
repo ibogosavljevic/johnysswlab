@@ -38,15 +38,15 @@ int binary_search(int* array, int number_of_elements, int key) {
             }
 
 	    int new_low = mid + 1;
-            int new_high = mid - 1;
+        int new_high = mid - 1;
 
-            __asm__ (
-                "cmp %[array_middle], %[key];"
-                "cmovae %[new_low], %[low];"
-                "cmovb %[new_high], %[high];"
+        __asm__ (
+            "cmp %[array_middle], %[key];"
+            "cmovae %[new_low], %[low];"
+            "cmovb %[new_high], %[high];"
 	        : [low] "+&r"(low), [high] "+&r"(high)
-                : [new_low] "g"(new_low), [new_high] "g"(new_high), [array_middle] "g"(middle), [key] "g"(key)
-                : "cc" 
+            : [new_low] "g"(new_low), [new_high] "g"(new_high), [array_middle] "g"(middle), [key] "g"(key)
+            : "cc"
 	    );
 	}
     }
