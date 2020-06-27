@@ -2,7 +2,8 @@
 CC=g++
 OPT?=3
 CFLAGS=-I. -std=c++11 -O$(OPT) -pthread -g -Werror $(RPATH)
-DEPS = 
+DEPS= 
+LDFLAGS=-lpapi
 
 WORKING_SET=10000 100000 1000000 10000000 100000000
 NUMBER_OF_SEARCHES=10000000
@@ -12,11 +13,13 @@ PERF=perf stat -B -e cache-references,cache-misses,cache-misses:u,cycles,instruc
 	$(CC) -c -o $@ $< $(CFLAGS)
 
 %: %.o $(DEPS)
-	$(CC) -o $@ $< $(LDLAGS)
+	$(CC) -o $@ $< $(LDFLAGS)
 
 all: binary_search_runtimes
 
 binary_search.o: binary_search.cpp utils.h measure_time.h
+
+counting.o: counting.cpp utils.h measure_time.h argparse.h
 
 clean:
 	rm -f  *.o binary_search
