@@ -1,9 +1,11 @@
 
 CC=g++
 OPT?=3
-CFLAGS=-I. -std=c++11 -O$(OPT) -pthread -g -Werror $(RPATH)
 DEPS= 
 LDFLAGS=-lpapi
+FUNC_OPT?=0
+CFLAGS=-I. -std=c++11 -O$(OPT) -pthread -g -Werror $(RPATH) -DFUNC_OPT=$(FUNC_OPT)
+
 
 WORKING_SET=10000 100000 1000000 10000000 100000000
 NUMBER_OF_SEARCHES=10000000
@@ -22,7 +24,7 @@ binary_search.o: binary_search.cpp utils.h measure_time.h
 counting.o: counting.cpp utils.h measure_time.h argparse.h
 
 clean:
-	rm -f  *.o binary_search
+	rm -f  *.o binary_search counting
 
 binary_search_runtimes: binary_search
 	for number in $(WORKING_SET) ; do \
