@@ -2,8 +2,10 @@
 #include <string>
 #include <iostream>
 #include <map>
-#include <papi.h>
 
+#ifdef HAS_PAPI
+#include <papi.h>
+#endif
 
 template <typename T>
 class measure_time_database {
@@ -52,16 +54,16 @@ class measure_time {
 public:
 
     measure_time(const std::string& message) : message_(message) {
-
-        int events[events_length];
-
-        load_events(events, events_length);
-        
         std::cout << "Starting measurement for \"" << message_ << "\"\n";
 
         start_time = std::chrono::high_resolution_clock::now();
+#if HAS_PAPI
+        int events[events_length];
+        load_events(events, events_length);
+
         int ret_val = PAPI_start_counters(events, events_length);
         papi_valid = ret_val == PAPI_OK;
+#endif
         asm volatile("": : :"memory");
     }
 
@@ -69,17 +71,20 @@ public:
         asm volatile("": : :"memory");
 
         auto end_time = std::chrono::high_resolution_clock::now();
-        long_long values[events_length];
 
+#if HAS_PAPI
         if (papi_valid) {
+            long_long values[events_length];
             papi_valid = PAPI_stop_counters(values, events_length) == PAPI_OK;
             if (!papi_valid) {
                 std::cout << "PAPI not valid\n";
             } 
         }
+#endif
         
         std::chrono::milliseconds time = std::chrono::duration_cast<std::chrono::milliseconds>(end_time - start_time);
         std::cout << "\"" << message_ << "\" took " << time /std::chrono::milliseconds(1) << "ms to run.\n";
+#if HAS_PAPI
         if (papi_valid) {
             std::cout << "\t" << "Total instructions: " << values[0] << std::endl;
             std::cout << "\t" << "Total cycles: " << values[1] << std::endl; 
@@ -87,9 +92,11 @@ public:
             print_dcache(values);
             print_branches(values);
         }
+#endif
         measure_time_database<std::chrono::milliseconds>::get_instance()->set_result(message_, time);
     }
 
+#if HAS_PAPI
     static void initialize(int* events) {
         static bool initialized = false;
 
@@ -118,6 +125,7 @@ public:
         }
     }
 
+
     void print_dcache(long_long values[]) {
         if (get_what_to_measure() != what_to_measure::DCACHE) {
             return;
@@ -137,6 +145,7 @@ public:
         std::cout << "\t" << "Total branches: " << values[3] << "\n";
         std::cout << "\t" << "Branch missprediction rate: " << (values[2] * 100.0) / values[3] << "%\n";
     }
+#endif
 
 
 private:
@@ -157,6 +166,7 @@ private:
         return wtm; 
     }
 
+#if HAS_PAPI
     static int* get_events_array(){
         static int events[events_length];
         initialize(events);
@@ -169,4 +179,5 @@ private:
             events_array[i] = static_events[i];
         }
     }
+#endif
 };
