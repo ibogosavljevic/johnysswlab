@@ -73,8 +73,8 @@ public:
         auto end_time = std::chrono::high_resolution_clock::now();
 
 #if HAS_PAPI
+        long_long values[events_length];
         if (papi_valid) {
-            long_long values[events_length];
             papi_valid = PAPI_stop_counters(values, events_length) == PAPI_OK;
             if (!papi_valid) {
                 std::cout << "PAPI not valid\n";
