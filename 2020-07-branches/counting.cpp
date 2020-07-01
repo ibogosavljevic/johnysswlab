@@ -57,7 +57,6 @@ int count_bigger_than_limit_cmove(int* array, int n, int limit) {
 #define likely(x)       __builtin_expect(!!(x),1)
 #define unlikely(x)     __builtin_expect(!!(x),0)
 
-__attribute__ ((optimize(FUNC_OPT)))
 int count_bigger_than_limit_likely(int* array, int n, int limit) {
     int limit_cnt = 0;
     for (int i = 0; i < n; i++) {
@@ -69,7 +68,6 @@ int count_bigger_than_limit_likely(int* array, int n, int limit) {
     return limit_cnt;
 }
 
-__attribute__ ((optimize(FUNC_OPT)))
 int count_bigger_than_limit_unlikely(int* array, int n, int limit) {
     int limit_cnt = 0;
     for (int i = 0; i < n; i++) {
