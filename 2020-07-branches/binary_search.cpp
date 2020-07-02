@@ -110,7 +110,7 @@ int binary_search(int* array, int number_of_elements, int key) {
 
             int new_low = mid + 1;
             int new_high = mid - 1;
-
+#if defined(__x86_64)
             __asm__ (
                 "cmp %[array_middle], %[key];"
                 "cmovae %[new_low], %[low];"
@@ -119,6 +119,20 @@ int binary_search(int* array, int number_of_elements, int key) {
                 : [new_low] "g"(new_low), [new_high] "g"(new_high), [array_middle] "g"(middle), [key] "g"(key)
                 : "cc"
             );
+#elif defined(__MIPSEL)
+            __asm__ (
+                "sub $8, %[array_middle], %[key];"
+                "sra $8, $8, 31;"
+                "movn %[low], %[new_low], $8;"
+                "movz %[high], %[new_high], $8;"
+                : [low] "+&r"(low), [high] "+&r"(high)
+                : [new_low] "r"(new_low), [new_high] "r"(new_high), [array_middle] "r"(middle), [key] "r"(key)
+                : "cc", "$8"
+            );
+
+#else
+#error Implementation missing
+#endif
         }
 
         if (st == search_type::ARITHMETIC) {

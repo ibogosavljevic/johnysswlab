@@ -43,7 +43,7 @@ int count_bigger_than_limit_cmove(int* array, int n, int limit) {
     int new_limit_cnt;
     for (int i = 0; i < n; i++) {
         new_limit_cnt = limit_cnt + 1;
-#ifdef __MIPSEL
+#if defined(__MIPSEL)
         __asm__ (
             "sub $8, %[array_i], %[limit];"
             "sra $8, $8, 31;"
@@ -53,8 +53,7 @@ int count_bigger_than_limit_cmove(int* array, int n, int limit) {
             : "cc", "$8"
             );
 
-#endif
-#ifdef __x86_64
+#elif defined(__x86_64)
         __asm__ (
             "cmp %[array_i], %[limit];"
             "cmovbe %[new_limit_cnt], %[limit_cnt];"
@@ -62,6 +61,8 @@ int count_bigger_than_limit_cmove(int* array, int n, int limit) {
             : [array_i] "g"(array[i]), [new_limit_cnt] "g"(new_limit_cnt), [limit] "r"(limit)
             : "cc"
 	    );
+#else
+#error Unimplemented cmov
 #endif
     }
     return limit_cnt;
