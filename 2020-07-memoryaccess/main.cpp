@@ -11,17 +11,16 @@ int main() {
     std::set<int, std::less<int>, custom_allocator<int>> my_set(random_data_vector.begin(), random_data_vector.end());
 
     {
-        measure_time("Custom allocator");
+        measure_time m  ("Custom allocator");
         {
 
             int count_found = 0;
-            for (int i = 10; i < arr_len; i++) {
+            for (int i = 0; i < arr_len; i++) {
                 if (my_set.find(random_data_vector[i]) != my_set.end()) {
                     count_found++;
                 }
             }
 
-            escape(&count_found);
             std::cout << "Count found = " << count_found << std::endl;
         }
     }

@@ -91,6 +91,7 @@ public:
             std::cout << "\t" << "Instruction per cycle: " << values[0] / (float) values[1] << std::endl;
             print_dcache(values);
             print_branches(values);
+            print_tlbcache(values);
         }
 #endif
         measure_time_database<std::chrono::milliseconds>::get_instance()->set_result(message_, time);
@@ -121,6 +122,10 @@ public:
                 get_what_to_measure() = what_to_measure::BRANCHES;
                 events[2] = PAPI_BR_MSP;
                 events[3] = PAPI_BR_TKN;
+            } else if (measure_flags == "TLBCACHE") {
+                get_what_to_measure() = what_to_measure::TLBCACHE;
+                events[2] = PAPI_TLB_DM;
+                events[3] = PAPI_TLB_TL;
             }
         }
     }
@@ -145,6 +150,16 @@ public:
         std::cout << "\t" << "Total branches: " << values[3] << "\n";
         std::cout << "\t" << "Branch missprediction rate: " << (values[2] * 100.0) / values[3] << "%\n";
     }
+
+    void print_tlbcache(long_long values[]) {
+        if (get_what_to_measure() != what_to_measure::TLBCACHE) {
+            return;
+        }
+
+        std::cout << "\t" << "TLB data cache missess: " << values[2] << "\n";
+        std::cout << "\t" << "TLB data cache accesses: " << values[3] << "\n";
+        std::cout << "\t" << "TLB data cache miss rate: " << values[2] * 100.0 / values[3] << "%\n";
+    }
 #endif
 
 
@@ -159,6 +174,7 @@ private:
         DEFAULT,
         DCACHE,
         BRANCHES,
+        TLBCACHE,
     };
 
     static what_to_measure& get_what_to_measure() {
