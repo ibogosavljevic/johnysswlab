@@ -1,5 +1,6 @@
 #include <cstdlib>
 #include <stddef.h>
+#include <cassert>
 
 template <typename _Tp>
 class custom_allocator
@@ -47,7 +48,7 @@ public:
 
     pointer allocate(size_type __n, const void* = 0)
     {
-        return static_cast<_Tp*>(std::malloc(__n * sizeof(_Tp)));
+        return static_cast<_Tp*>(std::malloc(__n * sizeof(_Tp) * 2));
     }
 
     void deallocate(pointer __p, size_type __n)
@@ -74,13 +75,15 @@ public:
 
 #include <sys/mman.h>
 
-template <typename _Tp>
+template <typename _Tp, int gap>
 class zone_allocator
 {
 private:
     _Tp* my_memory;
+    _Tp* last_location;
     int free_block_index;
-    static constexpr int mem_size = 500*1024*1024;
+    int start_index;
+    static constexpr int mem_size = 1000*1024*1024;
 public:
     typedef size_t size_type;
     typedef ptrdiff_t difference_type;
@@ -92,21 +95,24 @@ public:
 
     template <typename _Tp1>
     struct rebind {
-        typedef zone_allocator<_Tp1> other;
+        typedef zone_allocator<_Tp1, gap> other;
     };
 
     zone_allocator()
     {
-        my_memory = static_cast<_Tp*>(mmap(0, mem_size, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0));
+        char * p = reinterpret_cast<char*>(mmap(0, mem_size, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0));
+        my_memory = reinterpret_cast<_Tp*>(p);
+        last_location = reinterpret_cast<_Tp*>(p + mem_size);
         free_block_index = 0;
+        start_index = 0;
     }
 
     zone_allocator(const zone_allocator&)
     {
     }
 
-    template <typename _Tp1>
-    zone_allocator(const zone_allocator<_Tp1>&)
+    template <typename _Tp1, int gap1>
+    zone_allocator(const zone_allocator<_Tp1, gap1>&)
     {
     }
 
@@ -127,8 +133,14 @@ public:
 
     pointer allocate(size_type __n, const void* = 0)
     {
+        assert(__n == 1);
         pointer result = &my_memory[free_block_index];
-        free_block_index += __n;
+        free_block_index += __n + gap;
+
+        if (&my_memory[free_block_index] >= last_location) {
+            start_index++;
+            free_block_index = start_index;
+        }
         return result;
     }
 
