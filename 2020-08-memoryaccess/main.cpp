@@ -11,7 +11,7 @@ int main() {
 
     std::sort(random_data_sorted.begin(), random_data_sorted.end());
 
-    binary_search_tree<int, int> bst = binary_search_tree<int,int>::create_from_sorted_array_bfs(&random_data_sorted[0], arr_len);
+    binary_search_tree<int, int> bst = binary_search_tree<int,int>::create_from_sorted_array_dfs(&random_data_sorted[0], arr_len);
     {
         measure_time m  ("BFS array");
         {
