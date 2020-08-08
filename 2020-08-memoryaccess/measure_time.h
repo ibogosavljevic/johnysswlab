@@ -63,6 +63,9 @@ public:
 
         int ret_val = PAPI_start_counters(events, events_length);
         papi_valid = ret_val == PAPI_OK;
+        if (!papi_valid) {
+            std::cout << "PAPI returned an error " << PAPI_strerror(ret_val) << std::endl;
+        }
 #endif
         asm volatile("": : :"memory");
     }
@@ -86,10 +89,9 @@ public:
         std::cout << "\"" << message_ << "\" took " << time /std::chrono::milliseconds(1) << "ms to run.\n";
 #if HAS_PAPI
         if (papi_valid) {
-            std::cout << "\t" << "Total instructions: " << values[0] << std::endl;
-            std::cout << "\t" << "Total cycles: " << values[1] << std::endl; 
-            std::cout << "\t" << "Instruction per cycle: " << values[0] / (float) values[1] << std::endl;
+            print_total(values);
             print_dcache(values);
+            print_dcache2(values);
             print_branches(values);
             print_tlbcache(values);
         }
@@ -108,37 +110,59 @@ public:
         initialized = true;
 
         char * measure_string_str = std::getenv("MEASURE_FLAGS");
-        events[0] = PAPI_TOT_INS;
-        events[1] = PAPI_TOT_CYC;
-        events[2] = PAPI_L1_DCM;
-        events[3] = PAPI_L1_DCA;
         if (measure_string_str) { 
             std::string measure_flags(measure_string_str);
-            if (measure_flags == "DCACHE") {
+            if (measure_flags == "TOTAL") {
+                events[0] = PAPI_TOT_INS;
+                events[1] = PAPI_TOT_CYC;
+            } else if (measure_flags == "DCACHE") {
                 get_what_to_measure() = what_to_measure::DCACHE;
-                events[2] = PAPI_L1_DCM;
-                events[3] = PAPI_L1_DCA;
+                events[0] = PAPI_L1_DCM;
+                events[1] = PAPI_L1_DCA;
+            } else if (measure_flags == "DCACHE2") {
+                get_what_to_measure() = what_to_measure::DCACHE2;
+                events[0] = PAPI_L2_DCM;
+                events[1] = PAPI_L2_DCA;
             } else if (measure_flags == "BRANCH") {
                 get_what_to_measure() = what_to_measure::BRANCHES;
-                events[2] = PAPI_BR_MSP;
-                events[3] = PAPI_BR_TKN;
+                events[0] = PAPI_BR_MSP;
+                events[1] = PAPI_BR_TKN;
             } else if (measure_flags == "TLBCACHE") {
                 get_what_to_measure() = what_to_measure::TLBCACHE;
-                events[2] = PAPI_TLB_DM;
-                events[3] = PAPI_TLB_TL;
+                events[0] = PAPI_TLB_DM;
+                events[1] = PAPI_TLB_TL;
             }
         }
     }
 
+    void print_total(long_long values[]) {
+        if (get_what_to_measure() != what_to_measure::TOTAL) {
+            return;
+        }
+
+        std::cout << "\t" << "Total instructions: " << values[0] << std::endl;
+        std::cout << "\t" << "Total cycles: " << values[1] << std::endl; 
+        std::cout << "\t" << "Instruction per cycle: " << values[0] / (float) values[1] << std::endl;
+    }
 
     void print_dcache(long_long values[]) {
         if (get_what_to_measure() != what_to_measure::DCACHE) {
             return;
         }
 
-        std::cout << "\t" << "L1 Cache missess: " << values[2] << "\n";
-        std::cout << "\t" << "L1 Cache accesses: " << values[3] << "\n";
-        std::cout << "\t" << "L1 Cache miss rate: " << values[2] * 100.0 / values[3] << "%\n";
+        std::cout << "\t" << "L1 Cache missess: " << values[0] << "\n";
+        std::cout << "\t" << "L1 Cache accesses: " << values[1] << "\n";
+        std::cout << "\t" << "L1 Cache miss rate: " << values[0] * 100.0 / values[1] << "%\n";
+    }
+
+    void print_dcache2(long_long values[]) {
+        if (get_what_to_measure() != what_to_measure::DCACHE2) {
+            return;
+        }
+
+        std::cout << "\t" << "L2 Cache missess: " << values[0] << "\n";
+        std::cout << "\t" << "L2 Cache accesses: " << values[1] << "\n";
+        std::cout << "\t" << "L2 Cache miss rate: " << values[0] * 100.0 / values[1] << "%\n";
     }
 
     void print_branches(long_long values[]) {
@@ -146,9 +170,9 @@ public:
             return;
         }
 
-        std::cout << "\t" << "Branches missprediced : " << values[2] << "\n";
-        std::cout << "\t" << "Total branches: " << values[3] << "\n";
-        std::cout << "\t" << "Branch missprediction rate: " << (values[2] * 100.0) / values[3] << "%\n";
+        std::cout << "\t" << "Branches missprediced : " << values[0] << "\n";
+        std::cout << "\t" << "Total branches: " << values[1] << "\n";
+        std::cout << "\t" << "Branch missprediction rate: " << (values[0] * 100.0) / values[1] << "%\n";
     }
 
     void print_tlbcache(long_long values[]) {
@@ -156,9 +180,9 @@ public:
             return;
         }
 
-        std::cout << "\t" << "TLB data cache missess: " << values[2] << "\n";
-        std::cout << "\t" << "TLB data cache accesses: " << values[3] << "\n";
-        std::cout << "\t" << "TLB data cache miss rate: " << values[2] * 100.0 / values[3] << "%\n";
+        std::cout << "\t" << "TLB data cache missess: " << values[0] << "\n";
+        std::cout << "\t" << "TLB data cache accesses: " << values[1] << "\n";
+        std::cout << "\t" << "TLB data cache miss rate: " << values[0] * 100.0 / values[1] << "%\n";
     }
 #endif
 
@@ -168,11 +192,13 @@ private:
     std::string message_;
     bool papi_valid;
 
-    static constexpr int events_length = 4;
+    static constexpr int events_length = 2;
 
     enum what_to_measure {
         DEFAULT,
+        TOTAL,
         DCACHE,
+        DCACHE2,
         BRANCHES,
         TLBCACHE,
     };
