@@ -124,7 +124,7 @@ void measure_custom(int arr_len, tree_type_e tree_type) {
 }
 
 int main(int argc, const char* argv[]) {
-    constexpr int arr_len = 40000000;
+    constexpr int arr_len = 10000000;
 
     std::cout << "Array length " << arr_len << std::endl;
 
