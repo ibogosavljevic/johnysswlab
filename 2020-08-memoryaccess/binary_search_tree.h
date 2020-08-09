@@ -50,13 +50,19 @@ public:
         
     }
 
-    static binary_search_tree create_from_sorted_array_dfs(T* array, int len) {
+    static binary_search_tree create_from_sorted_array_dfs_preorder(T* array, int len) {
         binary_search_tree result(nullptr);
         
-        result.m_head = create_dfs(result, array, 0, len - 1);
+        result.m_head = create_dfs_preorder(result, array, 0, len - 1);
         return result;
     }
 
+    static binary_search_tree create_from_sorted_array_dfs_inorder(T* array, int len) {
+        binary_search_tree result(nullptr);
+        
+        result.m_head = create_dfs_inorder(result, array, 0, len - 1);
+        return result;
+    }
     bool find(const T& value) {
         bs_chunk* current = m_head;
 
@@ -81,6 +87,31 @@ public:
         }
     }
 
+    void dump_tree() {
+        std::queue<bs_chunk*> bfs_queue;
+        std::vector<bs_chunk*> bfs_order;
+
+        bfs_queue.push(m_head);
+        while (!bfs_queue.empty()) {
+            bs_chunk* c = bfs_queue.front();
+            bfs_order.push_back(c);
+
+            if (c->m_left) {
+                bfs_queue.push(c->m_left);
+            }
+
+            if (c->m_right) {
+                bfs_queue.push(c->m_right);
+            }
+
+            bfs_queue.pop();
+        }
+
+        for(bs_chunk* c: bfs_order) {
+            std::cout << "Value = " << c->m_value << ", address = " << c << ", left = " << c->m_left << ", right = " << c->m_right << std::endl;
+        }
+    }
+
 private:
     struct bs_chunk {
         T m_value;
@@ -96,7 +127,7 @@ private:
     bs_chunk* m_head;
     node_alloc_t m_allocator;
 
-    static bs_chunk* create_dfs(binary_search_tree& bt, T* array, int left, int right) {
+    static bs_chunk* create_dfs_preorder(binary_search_tree& bt, T* array, int left, int right) {
         
         if (left > right) {
             return nullptr;
@@ -107,8 +138,27 @@ private:
         bs_chunk* b = bt.m_allocator.allocate(1);
         ::new (b) bs_chunk(array[middle]);
 
-        b->m_left = create_dfs(bt, array, left, middle - 1);
-        b->m_right = create_dfs(bt, array, middle + 1, right);
+        b->m_left = create_dfs_preorder(bt, array, left, middle - 1);
+        b->m_right = create_dfs_preorder(bt, array, middle + 1, right);
+
+        return b;
+    }
+
+    static bs_chunk* create_dfs_inorder(binary_search_tree& bt, T* array, int left, int right) {
+        
+        if (left > right) {
+            return nullptr;
+        }
+        
+        int middle = (left + right) / 2;
+
+        bs_chunk* tmp = create_dfs_inorder(bt, array, left, middle - 1);
+
+        bs_chunk* b = bt.m_allocator.allocate(1);
+        ::new (b) bs_chunk(array[middle]);
+        b->m_left = tmp;
+
+        b->m_right = create_dfs_inorder(bt, array, middle + 1, right);
 
         return b;
     }

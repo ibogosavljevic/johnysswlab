@@ -24,7 +24,7 @@ private:
     T* last_location;
     int free_block_index;
     int start_index;
-    static constexpr int mem_size = 380*1024*1024;
+    static constexpr int mem_size = sizeof(T) * 11000000;
 public:
     typedef T value_type;
     zone_allocator() noexcept {

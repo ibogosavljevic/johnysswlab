@@ -105,11 +105,13 @@ void measure_custom(int arr_len, tree_type_e tree_type) {
     std::vector<int> random_data_sorted(random_data_vector);
     std::sort(random_data_sorted.begin(), random_data_sorted.end());
 
-    binary_search_tree<int, allocator> bst = tree_type == tree_type_e::BFS_TREE ? 
+    binary_search_tree<int, allocator> bst = (tree_type == tree_type_e::BFS_TREE) ? 
         binary_search_tree<int, allocator>::create_from_sorted_array_bfs(&random_data_sorted[0], arr_len) :
-        binary_search_tree<int, allocator>::create_from_sorted_array_dfs(&random_data_sorted[0], arr_len);
+        binary_search_tree<int, allocator>::create_from_sorted_array_dfs_preorder(&random_data_sorted[0], arr_len);
+
+        //bst.dump_tree();
     {
-        measure_time m  ("BFS array");
+        measure_time m  ("Custom tree");
         {
             int count_found = 0;
             for (int i = 0; i < arr_len; i++) {
