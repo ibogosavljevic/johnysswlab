@@ -19,7 +19,11 @@ PERF=perf stat -B -e cache-references,cache-misses,cache-misses:u,cycles,instruc
 
 all: polymorphism
 
-polymorphism.o: polymorphism.cpp
+polymorphism.o: polymorphism.cpp polymorphic_vector.h objects.h measure_time.h
+
+format: polymorphism.cpp polymorphic_vector.h objects.h measure_time.h
+	find . -name "*.cpp" | xargs clang-format -style="{BasedOnStyle: Chromium, IndentWidth: 4}" -i
+	find . -name "*.h" | xargs clang-format -style="{BasedOnStyle: Chromium, IndentWidth: 4}" -i
 
 clean:
 	rm -f  *.o main

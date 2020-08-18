@@ -1,12 +1,12 @@
 #include <cmath>
 
-class bitmap {
-};
+class bitmap {};
 
 class object {
-protected:
+   protected:
     bool m_is_visible;
-public:
+
+   public:
     virtual void draw(const bitmap& b) = 0;
 
     virtual std::string to_string() = 0;
@@ -34,52 +34,36 @@ class point {
 class circle : virtual public object {
     point m_center;
     int m_diameter;
-public:
 
-    void draw(const bitmap& b) override {
+   public:
+    void draw(const bitmap& b) override {}
 
-    }
-
-    std::string to_string() {
-        return std::string("Circle");
-    }
+    std::string to_string() { return std::string("Circle"); }
 };
 
 class rectangle : virtual public object {
     point m_top_left;
     point m_bottom_right;
-public:
 
-    void draw(const bitmap& b) override {
+   public:
+    void draw(const bitmap& b) override {}
 
-    }
-
-    std::string to_string() {
-        return std::string("Rectangle");
-    }
+    std::string to_string() { return std::string("Rectangle"); }
 };
 
 class line : virtual public object {
     point m_top_left;
     point m_bottom_right;
-public:
 
-    void draw(const bitmap& b) override {
+   public:
+    void draw(const bitmap& b) override {}
 
-    }
-
-    std::string to_string() {
-        return std::string("Line");
-    }
+    std::string to_string() { return std::string("Line"); }
 };
 
-class monster: public line, public circle {
-public:
-    void draw(const bitmap& b) override {
+class monster : public line, public circle {
+   public:
+    void draw(const bitmap& b) override {}
 
-    }
-
-    std::string to_string() {
-        return std::string("Monster");
-    }
+    std::string to_string() { return std::string("Monster"); }
 };

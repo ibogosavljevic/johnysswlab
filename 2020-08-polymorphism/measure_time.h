@@ -1,7 +1,7 @@
 #include <chrono>
-#include <string>
 #include <iostream>
 #include <map>
+#include <string>
 
 #ifdef HAS_PAPI
 #include <papi.h>
@@ -9,7 +9,7 @@
 
 template <typename T>
 class measure_time_database {
-public:
+   public:
     static measure_time_database* get_instance() {
         if (!my_instance) {
             my_instance = new measure_time_database;
@@ -22,16 +22,18 @@ public:
     }
 
     void dump_database() {
-        for(auto const& m: my_measurements) {
-            std::cout << "measurement|" << m.first << "|" << m.second.get_average_time() << "ms\n";
+        for (auto const& m : my_measurements) {
+            std::cout << "measurement|" << m.first << "|"
+                      << m.second.get_average_time() << "ms\n";
         }
     }
 
-private:
+   private:
     class measurement {
         T all_time;
         int num_iterations;
-    public:
+
+       public:
         void set_result(T res) {
             all_time = all_time + res;
             num_iterations++;
@@ -39,20 +41,18 @@ private:
 
         int get_average_time() const {
             return all_time / num_iterations / std::chrono::milliseconds(1);
-        }  
+        }
     };
 
     static measure_time_database* my_instance;
     std::map<std::string, measurement> my_measurements;
 };
 
-
 template <typename T>
 measure_time_database<T>* measure_time_database<T>::my_instance;
 
 class measure_time {
-public:
-
+   public:
     measure_time(const std::string& message) : message_(message) {
         std::cout << "Starting measurement for \"" << message_ << "\"\n";
 
@@ -64,14 +64,15 @@ public:
         int ret_val = PAPI_start_counters(events, events_length);
         papi_valid = ret_val == PAPI_OK;
         if (!papi_valid) {
-            std::cout << "PAPI returned an error " << PAPI_strerror(ret_val) << std::endl;
+            std::cout << "PAPI returned an error " << PAPI_strerror(ret_val)
+                      << std::endl;
         }
 #endif
-        asm volatile("": : :"memory");
+        asm volatile("" : : : "memory");
     }
 
     ~measure_time() {
-        asm volatile("": : :"memory");
+        asm volatile("" : : : "memory");
 
         auto end_time = std::chrono::high_resolution_clock::now();
 
@@ -81,12 +82,15 @@ public:
             papi_valid = PAPI_stop_counters(values, events_length) == PAPI_OK;
             if (!papi_valid) {
                 std::cout << "PAPI not valid\n";
-            } 
+            }
         }
 #endif
-        
-        std::chrono::milliseconds time = std::chrono::duration_cast<std::chrono::milliseconds>(end_time - start_time);
-        std::cout << "\"" << message_ << "\" took " << time /std::chrono::milliseconds(1) << "ms to run.\n";
+
+        std::chrono::milliseconds time =
+            std::chrono::duration_cast<std::chrono::milliseconds>(end_time -
+                                                                  start_time);
+        std::cout << "\"" << message_ << "\" took "
+                  << time / std::chrono::milliseconds(1) << "ms to run.\n";
 #if HAS_PAPI
         if (papi_valid) {
             print_total(values);
@@ -96,7 +100,8 @@ public:
             print_tlbcache(values);
         }
 #endif
-        measure_time_database<std::chrono::milliseconds>::get_instance()->set_result(message_, time);
+        measure_time_database<std::chrono::milliseconds>::get_instance()
+            ->set_result(message_, time);
     }
 
 #if HAS_PAPI
@@ -109,8 +114,8 @@ public:
 
         initialized = true;
 
-        char * measure_string_str = std::getenv("MEASURE_FLAGS");
-        if (measure_string_str) { 
+        char* measure_string_str = std::getenv("MEASURE_FLAGS");
+        if (measure_string_str) {
             std::string measure_flags(measure_string_str);
             if (measure_flags == "TOTAL") {
                 events[0] = PAPI_TOT_INS;
@@ -140,9 +145,13 @@ public:
             return;
         }
 
-        std::cout << "\t" << "Total instructions: " << values[0] << std::endl;
-        std::cout << "\t" << "Total cycles: " << values[1] << std::endl; 
-        std::cout << "\t" << "Instruction per cycle: " << values[0] / (float) values[1] << std::endl;
+        std::cout << "\t"
+                  << "Total instructions: " << values[0] << std::endl;
+        std::cout << "\t"
+                  << "Total cycles: " << values[1] << std::endl;
+        std::cout << "\t"
+                  << "Instruction per cycle: " << values[0] / (float)values[1]
+                  << std::endl;
     }
 
     void print_dcache(long_long values[]) {
@@ -150,9 +159,13 @@ public:
             return;
         }
 
-        std::cout << "\t" << "L1 Cache missess: " << values[0] << "\n";
-        std::cout << "\t" << "L1 Cache accesses: " << values[1] << "\n";
-        std::cout << "\t" << "L1 Cache miss rate: " << values[0] * 100.0 / values[1] << "%\n";
+        std::cout << "\t"
+                  << "L1 Cache missess: " << values[0] << "\n";
+        std::cout << "\t"
+                  << "L1 Cache accesses: " << values[1] << "\n";
+        std::cout << "\t"
+                  << "L1 Cache miss rate: " << values[0] * 100.0 / values[1]
+                  << "%\n";
     }
 
     void print_dcache2(long_long values[]) {
@@ -160,9 +173,13 @@ public:
             return;
         }
 
-        std::cout << "\t" << "L2 Cache missess: " << values[0] << "\n";
-        std::cout << "\t" << "L2 Cache accesses: " << values[1] << "\n";
-        std::cout << "\t" << "L2 Cache miss rate: " << values[0] * 100.0 / values[1] << "%\n";
+        std::cout << "\t"
+                  << "L2 Cache missess: " << values[0] << "\n";
+        std::cout << "\t"
+                  << "L2 Cache accesses: " << values[1] << "\n";
+        std::cout << "\t"
+                  << "L2 Cache miss rate: " << values[0] * 100.0 / values[1]
+                  << "%\n";
     }
 
     void print_branches(long_long values[]) {
@@ -170,9 +187,13 @@ public:
             return;
         }
 
-        std::cout << "\t" << "Branches missprediced : " << values[0] << "\n";
-        std::cout << "\t" << "Total branches: " << values[1] << "\n";
-        std::cout << "\t" << "Branch missprediction rate: " << (values[0] * 100.0) / values[1] << "%\n";
+        std::cout << "\t"
+                  << "Branches missprediced : " << values[0] << "\n";
+        std::cout << "\t"
+                  << "Total branches: " << values[1] << "\n";
+        std::cout << "\t"
+                  << "Branch missprediction rate: "
+                  << (values[0] * 100.0) / values[1] << "%\n";
     }
 
     void print_tlbcache(long_long values[]) {
@@ -180,14 +201,17 @@ public:
             return;
         }
 
-        std::cout << "\t" << "TLB data cache missess: " << values[0] << "\n";
-        std::cout << "\t" << "TLB data cache accesses: " << values[1] << "\n";
-        std::cout << "\t" << "TLB data cache miss rate: " << values[0] * 100.0 / values[1] << "%\n";
+        std::cout << "\t"
+                  << "TLB data cache missess: " << values[0] << "\n";
+        std::cout << "\t"
+                  << "TLB data cache accesses: " << values[1] << "\n";
+        std::cout << "\t"
+                  << "TLB data cache miss rate: "
+                  << values[0] * 100.0 / values[1] << "%\n";
     }
 #endif
 
-
-private:
+   private:
     std::chrono::time_point<std::chrono::high_resolution_clock> start_time;
     std::string message_;
     bool papi_valid;
@@ -205,11 +229,11 @@ private:
 
     static what_to_measure& get_what_to_measure() {
         static what_to_measure wtm;
-        return wtm; 
+        return wtm;
     }
 
 #if HAS_PAPI
-    static int* get_events_array(){
+    static int* get_events_array() {
         static int events[events_length];
         initialize(events);
         return events;

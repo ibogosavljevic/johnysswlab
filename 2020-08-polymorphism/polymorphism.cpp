@@ -1,16 +1,14 @@
 
-#include <string>
-#include <vector>
+#include <algorithm>
 #include <cstring>
 #include <iostream>
+#include <string>
+#include <vector>
 #include "measure_time.h"
-#include <algorithm>
 #include "objects.h"
 #include "polymorphic_vector.h"
 
-
 int main(int argc, char* argv[]) {
-
     constexpr int arr_len = 10000000;
     bitmap b;
 
@@ -25,10 +23,9 @@ int main(int argc, char* argv[]) {
             v.emplace_back<monster>();
         }
 
-        //v.shuffle();
+        // v.shuffle();
 
-
-        measure_time m("Polymorphic vector"); 
+        measure_time m("Polymorphic vector");
         {
             for (int i = 0; i < arr_len; i++) {
                 v.get(i)->draw(b);
@@ -45,7 +42,6 @@ int main(int argc, char* argv[]) {
         std::vector<rectangle> v3(arr_len);
         std::vector<monster> v4(arr_len);
 
-
         for (int i = 0; i < arr_len; i++) {
             v1.emplace_back();
             v2.emplace_back();
@@ -53,12 +49,12 @@ int main(int argc, char* argv[]) {
             v4.emplace_back();
         }
 
-        //std::random_shuffle(v1.begin(), v1.end());
-        //std::random_shuffle(v2.begin(), v2.end());
-        //std::random_shuffle(v3.begin(), v3.end());
-        //std::random_shuffle(v4.begin(), v4.end());
+        // std::random_shuffle(v1.begin(), v1.end());
+        // std::random_shuffle(v2.begin(), v2.end());
+        // std::random_shuffle(v3.begin(), v3.end());
+        // std::random_shuffle(v4.begin(), v4.end());
 
-        measure_time m("DOO vector"); 
+        measure_time m("DOO vector");
         {
             for (int i = 0; i < arr_len; i++) {
                 v1[i].draw(b);
@@ -72,8 +68,6 @@ int main(int argc, char* argv[]) {
             for (int i = 0; i < arr_len; i++) {
                 v4[i].draw(b);
             }
-        
-
         }
 
         std::cout << v1[0].to_string();
@@ -92,9 +86,9 @@ int main(int argc, char* argv[]) {
             q.push_back(new monster());
         }
 
-        //std::random_shuffle(q.begin(), q.end());
+        // std::random_shuffle(q.begin(), q.end());
 
-        measure_time m("Array of pointers"); 
+        measure_time m("Array of pointers");
         {
             for (int i = 0; i < arr_len * 4; i++) {
                 q[i]->draw(b);
@@ -105,7 +99,6 @@ int main(int argc, char* argv[]) {
             std::cout << q[i]->to_string();
         }
     }
-
 
     return 0;
 }
