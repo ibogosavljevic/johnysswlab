@@ -4,7 +4,7 @@ OPT?=3
 DEPS= 
 LDFLAGS+=-lpapi
 FUNC_OPT?=0
-CFLAGS+=-I. -std=c++11 -O$(OPT) -pthread -g -Werror $(RPATH) -DFUNC_OPT=$(FUNC_OPT) -DHAS_PAPI
+CFLAGS+=-I. -I.. -std=c++17 -O$(OPT) -pthread -g -Werror $(RPATH) -DFUNC_OPT=$(FUNC_OPT) -DHAS_PAPI
 
 
 WORKING_SET=10000 100000 1000000 10000000 100000000

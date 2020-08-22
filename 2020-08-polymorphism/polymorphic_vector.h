@@ -17,6 +17,13 @@ class polymorphic_vector {
     polymorphic_vector(int size) : m_vector(size) {}
     polymorphic_vector() : m_vector() {}
 
+    ~polymorphic_vector() {
+        int size = m_vector.size();
+        for (int i = 0; i < size; i++) {
+            get(i)->~T();
+        }
+    }
+
     T* get(int index) {
         return reinterpret_cast<T*>(&(m_vector[index].m_data));
     }
