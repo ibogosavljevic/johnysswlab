@@ -37,6 +37,8 @@ class object {
 
     virtual unsigned int get_id() = 0;
 
+    unsigned int get_id2() { return m_id; }
+
     bool is_visible() { return m_is_visible; }
 
     void show() { m_is_visible = true; }

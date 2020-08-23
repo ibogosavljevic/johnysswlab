@@ -109,11 +109,21 @@ int main(int argc, const char* argv[]) {
         std::cout << "Pixels drawn: " << pixels_drawn << std::endl;
 
         {
-            measure_time m("Polymorphic vector: count");
+            measure_time m("Polymorphic vector: count virtual");
             unsigned int count = 0;
             for (int i = 0; i < arr_len * 4; i++) {
                 count += v.get(i)->get_id();
             }
+            std::cout << "Count virtual = " << count;
+        }
+
+        {
+            measure_time m("Polymorphic vector: count non-virtual");
+            unsigned int count = 0;
+            for (int i = 0; i < arr_len * 4; i++) {
+                count += v.get(i)->get_id2();
+            }
+            std::cout << "Count non-virtual = " << count << std::endl;
         }
 
     } else if (array_type == array_type_e::VAIRANT_ARRAY) {
@@ -141,11 +151,20 @@ int main(int argc, const char* argv[]) {
         {
             measure_time m("Variant array: draw");
             for (int i = 0; i < arr_len * 4; i++) {
+                if (std::holds_alternative<circle>(q[i])) {
+                    std::get<circle>(q[i]).draw(b);
+                } else if (std::holds_alternative<line>(q[i])) {
+                    std::get<line>(q[i]).draw(b);
+                } else if (std::holds_alternative<rectangle>(q[i])) {
+                    std::get<rectangle>(q[i]).draw(b);
+                } else if (std::holds_alternative<monster>(q[i])) {
+                    std::get<monster>(q[i]).draw(b);
+                }
             }
         }
 
         {
-            measure_time m("Variant vector: count");
+            measure_time m("Variant vector: count virtual");
             unsigned int count = 0;
             for (int i = 0; i < arr_len * 4; i++) {
                 if (std::holds_alternative<circle>(q[i])) {
@@ -158,6 +177,24 @@ int main(int argc, const char* argv[]) {
                     count += std::get<monster>(q[i]).get_id();
                 }
             }
+            std::cout << "Count virtual " << count << std::endl;
+        }
+
+        {
+            measure_time m("Variant vector: count non-virtual");
+            unsigned int count = 0;
+            for (int i = 0; i < arr_len * 4; i++) {
+                if (std::holds_alternative<circle>(q[i])) {
+                    count += std::get<circle>(q[i]).get_id2();
+                } else if (std::holds_alternative<line>(q[i])) {
+                    count += std::get<line>(q[i]).get_id2();
+                } else if (std::holds_alternative<rectangle>(q[i])) {
+                    count += std::get<rectangle>(q[i]).get_id2();
+                } else if (std::holds_alternative<monster>(q[i])) {
+                    count += std::get<monster>(q[i]).get_id2();
+                }
+            }
+            std::cout << "Count virtual non-virtual" << count << std::endl;
         }
 
     } else if (array_type == array_type_e::DOD_ARRAY) {
@@ -198,7 +235,7 @@ int main(int argc, const char* argv[]) {
         }
 
         {
-            measure_time m("DOD vector: count");
+            measure_time m("DOD vector: count virtual");
             unsigned int count = 0;
             for (int i = 0; i < arr_len; i++) {
                 count += v1[i].get_id();
@@ -212,6 +249,27 @@ int main(int argc, const char* argv[]) {
             for (int i = 0; i < arr_len; i++) {
                 count += v4[i].get_id();
             }
+
+            std::cout << "Count virtual " << count << std::endl;
+        }
+
+        {
+            measure_time m("DOD vector: count non-virtual");
+            unsigned int count = 0;
+            for (int i = 0; i < arr_len; i++) {
+                count += v1[i].get_id2();
+            }
+            for (int i = 0; i < arr_len; i++) {
+                count += v2[i].get_id2();
+            }
+            for (int i = 0; i < arr_len; i++) {
+                count += v3[i].get_id2();
+            }
+            for (int i = 0; i < arr_len; i++) {
+                count += v4[i].get_id2();
+            }
+
+            std::cout << "Count non-virtual " << count << std::endl;
         }
     } else if (array_type == array_type_e::POINTER_ARRAY) {
         std::vector<object*> q;
@@ -243,11 +301,21 @@ int main(int argc, const char* argv[]) {
         }
 
         {
-            measure_time m("Array of pointers: count");
+            measure_time m("Array of pointers: count virtual");
             unsigned int count = 0;
             for (int i = 0; i < arr_len * 4; i++) {
                 count += q[i]->get_id();
             }
+            std::cout << "Count virtual " << count << std::endl;
+        }
+
+        {
+            measure_time m("Array of pointers: count virtual");
+            unsigned int count = 0;
+            for (int i = 0; i < arr_len * 4; i++) {
+                count += q[i]->get_id2();
+            }
+            std::cout << "Count non-virtual " << count << std::endl;
         }
     }
 
