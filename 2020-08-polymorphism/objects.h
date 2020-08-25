@@ -1,6 +1,6 @@
 #include <cmath>
 
-#define NOINLINE __attribute__((noinline))
+#define NOINLINE /*__attribute__((noinline))*/
 
 class bitmap {
    private:
@@ -29,7 +29,7 @@ class object {
     unsigned int m_id;
 
    public:
-    object(unsigned int id) : m_id(id) {}
+    object(unsigned int id) : m_id(id), m_is_visible(true) {}
 
     virtual unsigned int draw(bitmap& b) = 0;
 
@@ -73,6 +73,12 @@ class point {
             return std::sqrt(x_diff * x_diff + y_diff * y_diff);
         }
     }
+
+    std::string to_string() {
+        char sbuf[200];
+        sprintf(sbuf, "point(%d,%d)", x, y);
+        return std::string(sbuf);
+    }
 };
 
 class circle : virtual public object {
@@ -105,7 +111,12 @@ class circle : virtual public object {
     NOINLINE
     unsigned int get_id() override { return m_id; }
 
-    std::string to_string() { return std::string("Circle"); }
+    std::string to_string() override {
+        char sbuf[200];
+        sprintf(sbuf, "circle(%s, diameter = %d)", m_center.to_string().c_str(),
+                m_diameter);
+        return std::string(sbuf);
+    }
 };
 
 class rectangle : virtual public object {
@@ -156,7 +167,12 @@ class rectangle : virtual public object {
     NOINLINE
     unsigned int get_id() override { return m_id; }
 
-    std::string to_string() { return std::string("Rectangle"); }
+    std::string to_string() override {
+        char sbuf[200];
+        sprintf(sbuf, "rectangle(%s, %s)", m_top_left.to_string().c_str(),
+                m_bottom_right.to_string().c_str());
+        return std::string(sbuf);
+    }
 };
 
 template <typename T>
@@ -215,7 +231,12 @@ class line : virtual public object {
     NOINLINE
     unsigned int get_id() override { return m_id; }
 
-    std::string to_string() { return std::string("Line"); }
+    std::string to_string() override {
+        char sbuf[200];
+        sprintf(sbuf, "line(%s, %s)", p1.to_string().c_str(),
+                p2.to_string().c_str());
+        return std::string(sbuf);
+    }
 };
 
 class monster : public line, public circle {
@@ -231,5 +252,5 @@ class monster : public line, public circle {
     NOINLINE
     unsigned int get_id() override { return m_id; }
 
-    std::string to_string() { return std::string("Monster"); }
+    std::string to_string() override { return std::string("monster"); }
 };

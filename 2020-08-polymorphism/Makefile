@@ -2,7 +2,7 @@
 CC=g++
 OPT?=3
 DEPS= 
-LDFLAGS+=-lpapi
+LDFLAGS+=-lpapi -lstdc++ -lm
 FUNC_OPT?=0
 CFLAGS+=-I. -I.. -std=c++17 -O$(OPT) -pthread -g -Werror $(RPATH) -DFUNC_OPT=$(FUNC_OPT) -DHAS_PAPI
 

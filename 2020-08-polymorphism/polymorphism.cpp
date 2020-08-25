@@ -66,8 +66,22 @@ bool parse_args(int argc,
     return true;
 }
 
+object* to_base(std::variant<circle, line, rectangle, monster>& v) {
+    if (std::holds_alternative<circle>(v)) {
+        return &std::get<circle>(v);
+    } else if (std::holds_alternative<line>(v)) {
+        return &std::get<line>(v);
+    } else if (std::holds_alternative<rectangle>(v)) {
+        return &std::get<rectangle>(v);
+    } else if (std::holds_alternative<monster>(v)) {
+        return &std::get<monster>(v);
+    } else {
+        return nullptr;
+    }
+}
+
 int main(int argc, const char* argv[]) {
-    constexpr int arr_len = 10 * 1024 * 1024;
+    constexpr int arr_len = 20 * 1024 * 1024;
     bitmap b(1024, 768);
     array_type_e array_type;
     bool shuffle;
@@ -78,7 +92,7 @@ int main(int argc, const char* argv[]) {
     }
 
     if (array_type == array_type_e::POLYMORPHIC_ARRAY) {
-        polymorphic_vector<object, 56> v;
+        polymorphic_vector<object, circle, rectangle, line, monster> v;
         v.reserve(4 * arr_len);
 
         for (int i = 0; i < arr_len; i++) {
@@ -114,7 +128,7 @@ int main(int argc, const char* argv[]) {
             for (int i = 0; i < arr_len * 4; i++) {
                 count += v.get(i)->get_id();
             }
-            std::cout << "Count virtual = " << count;
+            std::cout << "Count virtual = " << count << std::endl;
         }
 
         {
@@ -150,32 +164,18 @@ int main(int argc, const char* argv[]) {
 
         {
             measure_time m("Variant array: draw");
+            uint64_t pixels_drawn = 0;
             for (int i = 0; i < arr_len * 4; i++) {
-                if (std::holds_alternative<circle>(q[i])) {
-                    std::get<circle>(q[i]).draw(b);
-                } else if (std::holds_alternative<line>(q[i])) {
-                    std::get<line>(q[i]).draw(b);
-                } else if (std::holds_alternative<rectangle>(q[i])) {
-                    std::get<rectangle>(q[i]).draw(b);
-                } else if (std::holds_alternative<monster>(q[i])) {
-                    std::get<monster>(q[i]).draw(b);
-                }
+                to_base(q[i])->draw(b);
             }
+            std::cout << "Pixels drawn " << pixels_drawn << std::endl;
         }
 
         {
             measure_time m("Variant vector: count virtual");
             unsigned int count = 0;
             for (int i = 0; i < arr_len * 4; i++) {
-                if (std::holds_alternative<circle>(q[i])) {
-                    count += std::get<circle>(q[i]).get_id();
-                } else if (std::holds_alternative<line>(q[i])) {
-                    count += std::get<line>(q[i]).get_id();
-                } else if (std::holds_alternative<rectangle>(q[i])) {
-                    count += std::get<rectangle>(q[i]).get_id();
-                } else if (std::holds_alternative<monster>(q[i])) {
-                    count += std::get<monster>(q[i]).get_id();
-                }
+                count += to_base(q[i])->get_id();
             }
             std::cout << "Count virtual " << count << std::endl;
         }
@@ -184,25 +184,21 @@ int main(int argc, const char* argv[]) {
             measure_time m("Variant vector: count non-virtual");
             unsigned int count = 0;
             for (int i = 0; i < arr_len * 4; i++) {
-                if (std::holds_alternative<circle>(q[i])) {
-                    count += std::get<circle>(q[i]).get_id2();
-                } else if (std::holds_alternative<line>(q[i])) {
-                    count += std::get<line>(q[i]).get_id2();
-                } else if (std::holds_alternative<rectangle>(q[i])) {
-                    count += std::get<rectangle>(q[i]).get_id2();
-                } else if (std::holds_alternative<monster>(q[i])) {
-                    count += std::get<monster>(q[i]).get_id2();
-                }
+                count += to_base(q[i])->get_id2();
             }
             std::cout << "Count virtual non-virtual" << count << std::endl;
         }
 
     } else if (array_type == array_type_e::DOD_ARRAY) {
-        std::vector<circle> v1(arr_len, circle(point(20, 20), 10));
-        std::vector<line> v2(arr_len, line(point(0, 0), point(10, 10)));
-        std::vector<rectangle> v3(arr_len,
-                                  rectangle(point(0, 0), point(10, 10)));
-        std::vector<monster> v4(arr_len);
+        std::vector<circle> v1;
+        std::vector<line> v2;
+        std::vector<rectangle> v3;
+        std::vector<monster> v4;
+
+        v1.reserve(arr_len);
+        v2.reserve(arr_len);
+        v3.reserve(arr_len);
+        v4.reserve(arr_len);
 
         for (int i = 0; i < arr_len; i++) {
             v1.emplace_back(point(20, 20), 10);
@@ -220,18 +216,20 @@ int main(int argc, const char* argv[]) {
 
         {
             measure_time m("DOD vector: draw");
+            uint64_t pixels_drawn = 0;
             for (int i = 0; i < arr_len; i++) {
-                v1[i].draw(b);
+                pixels_drawn += v1[i].draw(b);
             }
             for (int i = 0; i < arr_len; i++) {
-                v2[i].draw(b);
+                pixels_drawn += v2[i].draw(b);
             }
             for (int i = 0; i < arr_len; i++) {
-                v3[i].draw(b);
+                pixels_drawn += v3[i].draw(b);
             }
             for (int i = 0; i < arr_len; i++) {
-                v4[i].draw(b);
+                pixels_drawn += v4[i].draw(b);
             }
+            std::cout << "Pixels drawn " << pixels_drawn << std::endl;
         }
 
         {
@@ -295,9 +293,11 @@ int main(int argc, const char* argv[]) {
 
         {
             measure_time m("Array of pointers: draw");
+            uint64_t pixels_drawn = 0;
             for (int i = 0; i < arr_len * 4; i++) {
-                q[i]->draw(b);
+                pixels_drawn += q[i]->draw(b);
             }
+            std::cout << "Pixels drawn " << pixels_drawn << std::endl;
         }
 
         {

@@ -118,6 +118,7 @@ class measure_time {
         if (measure_string_str) {
             std::string measure_flags(measure_string_str);
             if (measure_flags == "TOTAL") {
+                get_what_to_measure() = what_to_measure::TOTAL;
                 events[0] = PAPI_TOT_INS;
                 events[1] = PAPI_TOT_CYC;
             } else if (measure_flags == "DCACHE") {
