@@ -95,5 +95,8 @@ class polymorphic_vector {
         }
     }
 
-    void reserve(int size) { m_vector.reserve(size); }
+    void reserve(int size) {
+        m_vector.reserve(size);
+        m_pointer_diff.reserve(size);
+    }
 };

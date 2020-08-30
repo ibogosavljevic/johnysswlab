@@ -310,7 +310,7 @@ int main(int argc, const char* argv[]) {
         }
 
         {
-            measure_time m("Array of pointers: count virtual");
+            measure_time m("Array of pointers: count non-virtual");
             unsigned int count = 0;
             for (int i = 0; i < arr_len * 4; i++) {
                 count += q[i]->get_id2();
