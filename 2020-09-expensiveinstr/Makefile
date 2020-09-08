@@ -15,9 +15,9 @@ CFLAGS+=-I. -I.. -std=c++17 -O$(OPT) -pthread -g -Werror $(RPATH) -DFUNC_OPT=$(F
 
 all: main
 
-main.o: main.cpp
+main.o: main.cpp utils.h
 
-format: main.cpp
+format: main.cpp utils.h
 	find . -name "*.cpp" | xargs clang-format -style="{BasedOnStyle: Chromium, IndentWidth: 4}" -i
 	find . -name "*.h" | xargs clang-format -style="{BasedOnStyle: Chromium, IndentWidth: 4}" -i
 

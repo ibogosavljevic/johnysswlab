@@ -13,7 +13,6 @@ class hash_map {
           m_used(0),
           m_used_and_deleted(0),
           m_rehashing_threshhold(m_size * 0.7) {
-        // m_values = (char*)aligned_alloc(64, m_size * sizeof(T));
         posix_memalign((void**) &m_values, 64, m_size * sizeof(T));
         m_value_used = (char*)malloc(m_size);
 
@@ -197,7 +196,6 @@ class hash_map {
 
         size_t count = 0;
         char* new_values = nullptr;
-        //(char*)aligned_alloc(64, sizeof(T) * new_size);
         posix_memalign((void**) &new_values, 64, sizeof(T) * new_size);
         char* new_values_used = (char*)malloc(new_size);
 
@@ -234,7 +232,7 @@ struct simple_hasher {
 };
 
 struct shift_hasher {
-    size_t limit_input(size_t val, size_t limit) { return val & (limit - 1); }
+    size_t limit_input(size_t val, size_t limit) { return (val & (limit - 1)); }
 };
 
 struct fast_range_hasher {
@@ -246,21 +244,15 @@ struct fast_range_hasher {
 };
 
 #include <unordered_set>
+#include "utils.h"
 
 int main(int argc, char* argv[]) {
-    hash_map<int, shift_hasher> my_map(50 * 1024 * 1024);
-    std::unordered_set<int> test_set;
+    constexpr int arr_len = 50*1024*1024;
+    std::vector<int> v = create_random_array<int>(arr_len, 0, arr_len);
+    hash_map<int, fast_range_hasher> my_map(arr_len);
 
     for (size_t i = 0; i < 42 * 1024 * 1024; i++) {
-        int val = i * 64 + i + 1000;
-        my_map.insert(val);
-        test_set.insert(val);
-    }
-
-    for (int v : test_set) {
-        if (!my_map.find(v)) {
-            std::cout << "Error in map";
-        }
+        my_map.insert(v[i]);
     }
 
     return 0;
