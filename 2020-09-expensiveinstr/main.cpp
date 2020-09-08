@@ -13,6 +13,7 @@ class hash_map {
           m_used(0),
           m_used_and_deleted(0),
           m_rehashing_threshhold(m_size * 0.7) {
+        m_limiter.set_limit(m_size);
         posix_memalign((void**) &m_values, 64, m_size * sizeof(T));
         m_value_used = (char*)malloc(m_size);
 
@@ -23,7 +24,7 @@ class hash_map {
     hash_map() : hash_map(DEFAULT_HASH_SIZE) {}
 
     bool find(const T& val) {
-        size_t entry_start = m_limiter.limit_input(m_hasher(val), m_size);
+        size_t entry_start = m_limiter.limit_input(m_hasher(val));
         size_t entry_current = entry_start;
 
         do {
@@ -48,7 +49,7 @@ class hash_map {
     }
 
     bool insert(const T& val) {
-        size_t entry_start = m_limiter.limit_input(m_hasher(val), m_size);
+        size_t entry_start = m_limiter.limit_input(m_hasher(val));
         size_t entry_current = entry_start;
 
         do {
@@ -91,7 +92,7 @@ class hash_map {
     }
 
     bool remove(const T& val) {
-        size_t entry_start = m_limiter.limit_input(m_hasher(val), m_size);
+        size_t entry_start = m_limiter.limit_input(m_hasher(val));
         size_t entry_current = entry_start;
 
         do {
@@ -136,7 +137,7 @@ class hash_map {
             } else {
                 T* v = get(m_values, i);
                 size_t original_entry =
-                    m_limiter.limit_input(m_hasher(*v), m_size);
+                    m_limiter.limit_input(m_hasher(*v));
                 std::cout << "USED, original entry " << original_entry
                           << ", value = " << *v;
             }
@@ -224,24 +225,24 @@ class hash_map {
         m_used = count;
         m_used_and_deleted = count;
         m_rehashing_threshhold = m_size * 0.7;
+        m_limiter.set_limit(m_size);
     }
 };
 
 struct simple_hasher {
-    size_t limit_input(size_t val, size_t limit) { return val % limit; }
+    size_t m_limit;
+    void set_limit(size_t limit) { m_limit = limit; }
+    size_t limit_input(size_t val) { return val % m_limit; }
+    size_t limit_input(size_t val, size_t limit) { return val % m_limit; }
 };
 
 struct shift_hasher {
+    size_t m_limit;
+    void set_limit(size_t limit) { m_limit = limit - 1; }
+    size_t limit_input(size_t val) { return (val & m_limit); }
     size_t limit_input(size_t val, size_t limit) { return (val & (limit - 1)); }
 };
 
-struct fast_range_hasher {
-    size_t limit_input(size_t val, size_t limit) {
-        val = val & 0xFFFFFFFF;
-
-        return (val * limit) >> 32;
-    }
-};
 
 #include <unordered_set>
 #include "utils.h"
@@ -249,7 +250,7 @@ struct fast_range_hasher {
 int main(int argc, char* argv[]) {
     constexpr int arr_len = 50*1024*1024;
     std::vector<int> v = create_random_array<int>(arr_len, 0, arr_len);
-    hash_map<int, fast_range_hasher> my_map(arr_len);
+    hash_map<int, shift_hasher> my_map(arr_len);
 
     for (size_t i = 0; i < 42 * 1024 * 1024; i++) {
         my_map.insert(v[i]);
