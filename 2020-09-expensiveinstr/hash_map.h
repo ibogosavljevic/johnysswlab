@@ -1,13 +1,26 @@
+#include <stdlib.h>
 #include <cassert>
 #include <cstring>
 #include <functional>
 #include <iostream>
-#include <stdlib.h>
 
 namespace jsl {
 
+struct simple_hasher {
+    size_t m_limit;
+    void set_limit(size_t limit) { m_limit = limit; }
+    size_t limit_input(size_t val) { return val % m_limit; }
+    size_t limit_input(size_t val, size_t limit) { return val % m_limit; }
+};
 
-template <typename T, typename F>
+struct shift_hasher {
+    size_t m_limit;
+    void set_limit(size_t limit) { m_limit = limit - 1; }
+    size_t limit_input(size_t val) { return (val & m_limit); }
+    size_t limit_input(size_t val, size_t limit) { return (val & (limit - 1)); }
+};
+
+template <typename T, typename F = shift_hasher>
 class hash_map {
    public:
     hash_map(size_t capacity)
@@ -17,7 +30,10 @@ class hash_map {
           m_used_and_deleted(0),
           m_rehashing_threshhold(m_size * 0.7) {
         m_limiter.set_limit(m_size);
-        posix_memalign((void**) &m_values, 64, m_size * sizeof(T));
+        int result = posix_memalign((void**)&m_values, 64, m_size * sizeof(T));
+        if (result != 0) {
+            throw std::bad_alloc();
+        }
         m_value_used = (char*)malloc(m_size);
 
         std::memset(m_values, 0, m_size * sizeof(T));
@@ -139,8 +155,7 @@ class hash_map {
                 std::cout << "DELETED";
             } else {
                 T* v = get(m_values, i);
-                size_t original_entry =
-                    m_limiter.limit_input(m_hasher(*v));
+                size_t original_entry = m_limiter.limit_input(m_hasher(*v));
                 std::cout << "USED, original entry " << original_entry
                           << ", value = " << *v;
             }
@@ -200,7 +215,11 @@ class hash_map {
 
         size_t count = 0;
         char* new_values = nullptr;
-        posix_memalign((void**) &new_values, 64, sizeof(T) * new_size);
+        int result =
+            posix_memalign((void**)&new_values, 64, sizeof(T) * new_size);
+        if (result != 0) {
+            throw std::bad_alloc();
+        }
         char* new_values_used = (char*)malloc(new_size);
 
         std::memset(new_values, 0, new_size * sizeof(T));
@@ -232,18 +251,4 @@ class hash_map {
     }
 };
 
-struct simple_hasher {
-    size_t m_limit;
-    void set_limit(size_t limit) { m_limit = limit; }
-    size_t limit_input(size_t val) { return val % m_limit; }
-    size_t limit_input(size_t val, size_t limit) { return val % m_limit; }
-};
-
-struct shift_hasher {
-    size_t m_limit;
-    void set_limit(size_t limit) { m_limit = limit - 1; }
-    size_t limit_input(size_t val) { return (val & m_limit); }
-    size_t limit_input(size_t val, size_t limit) { return (val & (limit - 1)); }
-};
-
-}
+}  // namespace jsl
