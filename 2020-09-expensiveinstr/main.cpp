@@ -2,6 +2,7 @@
 #include <cstring>
 #include <functional>
 #include <iostream>
+#include <stdlib.h>
 
 template <typename T, typename F>
 class hash_map {
@@ -12,7 +13,8 @@ class hash_map {
           m_used(0),
           m_used_and_deleted(0),
           m_rehashing_threshhold(m_size * 0.7) {
-        m_values = (char*)aligned_alloc(64, m_size * sizeof(T));
+        // m_values = (char*)aligned_alloc(64, m_size * sizeof(T));
+        posix_memalign((void**) &m_values, 64, m_size * sizeof(T));
         m_value_used = (char*)malloc(m_size);
 
         std::memset(m_values, 0, m_size * sizeof(T));
@@ -194,7 +196,9 @@ class hash_map {
         size_t new_size = 1 << log_new_size;
 
         size_t count = 0;
-        char* new_values = (char*)aligned_alloc(64, sizeof(T) * new_size);
+        char* new_values = nullptr;
+        //(char*)aligned_alloc(64, sizeof(T) * new_size);
+        posix_memalign((void**) &new_values, 64, sizeof(T) * new_size);
         char* new_values_used = (char*)malloc(new_size);
 
         std::memset(new_values, 0, new_size * sizeof(T));
