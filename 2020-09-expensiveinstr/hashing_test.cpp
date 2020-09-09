@@ -59,14 +59,70 @@ bool parse_args(int argc,
     return true;
 }
 
+struct data_12bytes {
+    int v;
+    int padding[2];
+    data_12bytes(int x) : v(x) {}
+};
+
+bool operator==(const data_12bytes& lhs, const data_12bytes& rhs) {
+    return lhs.v == rhs.v;
+}
+
+struct data_16bytes {
+    int v;
+    int padding[3];
+    data_16bytes(int x) : v(x) {}
+};
+
+bool operator==(const data_16bytes& lhs, const data_16bytes& rhs) {
+    return lhs.v == rhs.v;
+}
+
+namespace std {
+template <>
+struct hash<data_12bytes> {
+    std::size_t operator()(data_12bytes const& s) const noexcept {
+        return std::hash<int>{}(s.v);
+    }
+};
+
+template <>
+struct hash<data_16bytes> {
+    std::size_t operator()(data_16bytes const& s) const noexcept {
+        return std::hash<int>{}(s.v);
+    }
+};
+
+}  // namespace std
+
+template <typename T>
+void run_test2() {
+    constexpr int arr_len = 80;
+    std::vector<int> v = create_random_array<int>(arr_len, 0, arr_len);
+    hash_map<T> my_map(arr_len);
+
+    for (size_t i = 0; i < arr_len; i++) {
+        my_map.insert(v[i]);
+    }
+
+    int count = 0;
+    for (size_t i = 0; i < arr_len * 10000000; i++) {
+        for (size_t j = 0; i < arr_len; i++) {
+            count += my_map.find(v[j]);
+        }
+    }
+    escape(&count);
+}
+
 template <typename T, typename Q>
 void run_test() {
     constexpr int arr_len = 50 * 1024 * 1024;
     std::vector<int> v = create_random_array<int>(arr_len, 0, arr_len);
-    hash_map<int, T> my_map(arr_len);
+    hash_map<Q, T> my_map(arr_len);
 
     for (size_t i = 0; i < 42 * 1024 * 1024; i++) {
-        my_map.insert(v[i]);
+        my_map.insert(Q(v[i]));
     }
 }
 

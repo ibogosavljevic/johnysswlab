@@ -40,6 +40,11 @@ class hash_map {
         std::memset(m_value_used, 0, m_size);
     }
 
+    ~hash_map() {
+        free(m_value_used);
+        free(m_values);
+    }
+
     hash_map() : hash_map(DEFAULT_HASH_SIZE) {}
 
     bool find(const T& val) {
