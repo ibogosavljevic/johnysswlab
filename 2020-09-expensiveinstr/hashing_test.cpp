@@ -9,11 +9,17 @@ using namespace argparse;
 
 enum hash_type_e { SIMPLE, SHIFT };
 
-bool parse_args(int argc, const char* argv[], hash_type_e& out_hash_type) {
+bool parse_args(int argc,
+                const char* argv[],
+                hash_type_e& out_hash_type,
+                size_t& out_element_size) {
     ArgumentParser parser("test123", "123");
 
     parser.add_argument("-h", "--hash",
                         "Type of the hash function (simple, shift)", true);
+    parser.add_argument("-s", "--size",
+                        "Size of the element in the container (4, 124, 128)",
+                        false);
 
     auto err = parser.parse(argc, argv);
     if (err) {
@@ -36,10 +42,24 @@ bool parse_args(int argc, const char* argv[], hash_type_e& out_hash_type) {
         return false;
     }
 
+    if (parser.exists("s")) {
+        int size = parser.get<int>("s");
+        std::cout << "Size of the element in the container : " << size
+                  << std::endl;
+        if (size == 4 || size == 124 || size == 128) {
+            out_element_size = size;
+        } else {
+            std::cout << "Unknown value for --size\n";
+            return false;
+        }
+    } else {
+        out_element_size = 4;
+    }
+
     return true;
 }
 
-template <typename T>
+template <typename T, typename Q>
 void run_test() {
     constexpr int arr_len = 50 * 1024 * 1024;
     std::vector<int> v = create_random_array<int>(arr_len, 0, arr_len);
@@ -52,15 +72,30 @@ void run_test() {
 
 int main(int argc, const char* argv[]) {
     hash_type_e hash_type;
+    size_t size;
 
-    if (!parse_args(argc, argv, hash_type)) {
+    if (!parse_args(argc, argv, hash_type, size)) {
         return false;
     }
 
-    if (hash_type == hash_type_e::SIMPLE) {
-        run_test<simple_hasher>();
-    } else if (hash_type == hash_type_e::SHIFT) {
-        run_test<shift_hasher>();
+    if (size == 4) {
+        if (hash_type == hash_type_e::SIMPLE) {
+            run_test<simple_hasher, int>();
+        } else if (hash_type == hash_type_e::SHIFT) {
+            run_test<shift_hasher, int>();
+        }
+    } else if (size == 124) {
+        if (hash_type == hash_type_e::SIMPLE) {
+            run_test<simple_hasher, int>();
+        } else if (hash_type == hash_type_e::SHIFT) {
+            run_test<shift_hasher, int>();
+        }
+    } else if (size == 128) {
+        if (hash_type == hash_type_e::SIMPLE) {
+            run_test<simple_hasher, int>();
+        } else if (hash_type == hash_type_e::SHIFT) {
+            run_test<shift_hasher, int>();
+        }
     }
     return 0;
 }
