@@ -131,7 +131,7 @@ fix16_t calculate_average(const std::vector<fix16_t>& v) {
     fix16_t current_count = fix16_from_int(1);
     fix16_t next_count;
 
-    for (int i = 0; i < v.size(); i++) {
+    for (int i = 1; i < v.size(); i++) {
         next_count = current_count + fix16_from_int(1);
         current_average =
             fix16_mul(current_average, fix16_div(current_count, next_count)) +
@@ -192,20 +192,44 @@ end_of_array:
     return old_average;
 }
 
+std::vector<float> fixed_to_float(const std::vector<fix16_t>& v) {
+    std::vector<float> result;
+    result.reserve(v.size());
+
+    std::transform(v.begin(), v.end(), std::back_inserter(result),
+                   [](fix16_t f) { return fix16_to_float(f); });
+    return result;
+}
+
 int main(int argc, const char* argv[]) {
-    const int arr_len = 100 * 1024 * 1024;
-    // std::vector<fix16_t> v = create_random_array<fix16_t>(arr_len, 0,
-    // arr_len);
-    std::vector<float> v_float =
-        create_random_array<float>(arr_len, 0, arr_len);
-    // fix16_t r = calculate_average(v);
+    const int arr_len = 10000;
+    const int loop_count = 10000;
+    std::vector<fix16_t> v_fixed = create_random_array<fix16_t>(
+        arr_len, fix16_from_int(2.0), fix16_from_int(3.0));
+    std::vector<float> v_float = fixed_to_float(v_fixed);
     {
         measure_time m("regular average");
-        std::cout << "Average 1 is " << calculate_average(v_float) << std::endl;
+        float sum = 0.0;
+        for (int i = 0; i < loop_count; i++) {
+            sum += calculate_average(v_float);
+        }
+        std::cout << "Average sum regular is " << sum << std::endl;
     }
     {
         measure_time m("fast average");
-        std::cout << "Average 1 is " << fast_calculate_average(v_float)
+        float sum = 0.0;
+        for (int i = 0; i < loop_count; i++) {
+            sum += fast_calculate_average(v_float);
+        }
+        std::cout << "Average sum fast is " << sum << std::endl;
+    }
+    {
+        measure_time m("fix-point average");
+        fix16_t sum = fix16_from_int(0);
+        for (int i = 0; i < loop_count; i++) {
+            sum += calculate_average(v_fixed);
+        }
+        std::cout << "Fix point average sum is " << fix16_to_float(sum)
                   << std::endl;
     }
     return 0;
