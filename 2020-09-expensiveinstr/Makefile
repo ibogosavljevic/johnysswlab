@@ -23,5 +23,5 @@ format: hashing_test.cpp utils.h hash_map.h
 	find . -name "*.h" | xargs clang-format -style="{BasedOnStyle: Chromium, IndentWidth: 4}" -i
 
 clean:
-	rm -f  *.o main
+	rm -f  *.o hashing_test floating_test
 
