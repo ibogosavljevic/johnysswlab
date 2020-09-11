@@ -13,9 +13,10 @@ CFLAGS+=-I. -I.. -std=c++17 -O$(OPT) -pthread -g -Werror $(RPATH) -DFUNC_OPT=$(F
 %: %.o $(DEPS)
 	$(CC) -o $@ $< $(LDFLAGS)
 
-all: hashing_test
+all: hashing_test floating_test
 
 hashing_test.o: hashing_test.cpp utils.h hash_map.h
+floating_test.o: floating_test.cpp utils.h fix16.h fix16.hpp
 
 format: hashing_test.cpp utils.h hash_map.h
 	find . -name "*.cpp" | xargs clang-format -style="{BasedOnStyle: Chromium, IndentWidth: 4}" -i
