@@ -211,6 +211,7 @@ int main(int argc, const char* argv[]) {
         measure_time m("regular average");
         float sum = 0.0;
         for (int i = 0; i < loop_count; i++) {
+            std::swap(v_float[0], v_float[1]);
             sum += calculate_average(v_float);
         }
         std::cout << "Average sum regular is " << sum << std::endl;
@@ -219,6 +220,7 @@ int main(int argc, const char* argv[]) {
         measure_time m("fast average");
         float sum = 0.0;
         for (int i = 0; i < loop_count; i++) {
+            std::swap(v_float[0], v_float[1]);
             sum += fast_calculate_average(v_float);
         }
         std::cout << "Average sum fast is " << sum << std::endl;
@@ -227,6 +229,7 @@ int main(int argc, const char* argv[]) {
         measure_time m("fix-point average");
         fix16_t sum = fix16_from_int(0);
         for (int i = 0; i < loop_count; i++) {
+            std::swap(v_float[0], v_float[1]);
             sum += calculate_average(v_fixed);
         }
         std::cout << "Fix point average sum is " << fix16_to_float(sum)
