@@ -17,9 +17,7 @@ bool parse_args(int argc,
 
     parser.add_argument("-h", "--hash",
                         "Type of the hash function (simple, shift)", true);
-    parser.add_argument("-s", "--size",
-                        "Size of the element in the container (4, 124, 128)",
-                        false);
+    parser.add_argument("-s", "--size", "Size of the hash map (s, m, l)", true);
 
     auto err = parser.parse(argc, argv);
     if (err) {
@@ -43,115 +41,51 @@ bool parse_args(int argc,
     }
 
     if (parser.exists("s")) {
-        int size = parser.get<int>("s");
-        std::cout << "Size of the element in the container : " << size
-                  << std::endl;
-        if (size == 4 || size == 124 || size == 128) {
-            out_element_size = size;
+        std::string size = parser.get<std::string>("s");
+        std::cout << "Size of the hash map : " << size << std::endl;
+        if (size == "s") {
+            out_element_size = 16 * 1024;
+        } else if (size == "m") {
+            out_element_size = 8 * 1024 * 1024;
+        } else if (size == "l") {
+            out_element_size = 64 * 1024 * 1024;
         } else {
             std::cout << "Unknown value for --size\n";
             return false;
         }
     } else {
-        out_element_size = 4;
+        return false;
     }
 
     return true;
 }
 
-struct data_12bytes {
-    int v;
-    int padding[2];
-    data_12bytes(int x) : v(x) {}
-};
-
-bool operator==(const data_12bytes& lhs, const data_12bytes& rhs) {
-    return lhs.v == rhs.v;
-}
-
-struct data_16bytes {
-    int v;
-    int padding[3];
-    data_16bytes(int x) : v(x) {}
-};
-
-bool operator==(const data_16bytes& lhs, const data_16bytes& rhs) {
-    return lhs.v == rhs.v;
-}
-
-namespace std {
-template <>
-struct hash<data_12bytes> {
-    std::size_t operator()(data_12bytes const& s) const noexcept {
-        return std::hash<int>{}(s.v);
-    }
-};
-
-template <>
-struct hash<data_16bytes> {
-    std::size_t operator()(data_16bytes const& s) const noexcept {
-        return std::hash<int>{}(s.v);
-    }
-};
-
-}  // namespace std
-
-template <typename T>
-void run_test2() {
-    constexpr int arr_len = 80;
-    std::vector<int> v = create_random_array<int>(arr_len, 0, arr_len);
-    hash_map<T> my_map(arr_len);
-
-    for (size_t i = 0; i < arr_len; i++) {
-        my_map.insert(v[i]);
-    }
-
-    int count = 0;
-    for (size_t i = 0; i < arr_len * 10000000; i++) {
-        for (size_t j = 0; i < arr_len; i++) {
-            count += my_map.find(v[j]);
-        }
-    }
-    escape(&count);
-}
-
 template <typename T, typename Q>
-void run_test() {
-    constexpr int arr_len = 50 * 1024 * 1024;
+void run_test(int size) {
+    int arr_len = size;
     std::vector<int> v = create_random_array<int>(arr_len, 0, arr_len);
     hash_map<Q, T> my_map(arr_len);
 
-    for (size_t i = 0; i < 42 * 1024 * 1024; i++) {
+    int count = 0.7 * size;
+
+    for (size_t i = 0; i < count; i++) {
         my_map.insert(Q(v[i]));
     }
 }
 
 int main(int argc, const char* argv[]) {
     hash_type_e hash_type;
-    size_t size;
+    size_t size = 0;
 
     if (!parse_args(argc, argv, hash_type, size)) {
         return false;
     }
 
-    if (size == 4) {
-        if (hash_type == hash_type_e::SIMPLE) {
-            run_test<simple_hasher, int>();
-        } else if (hash_type == hash_type_e::SHIFT) {
-            run_test<shift_hasher, int>();
-        }
-    } else if (size == 124) {
-        if (hash_type == hash_type_e::SIMPLE) {
-            run_test<simple_hasher, int>();
-        } else if (hash_type == hash_type_e::SHIFT) {
-            run_test<shift_hasher, int>();
-        }
-    } else if (size == 128) {
-        if (hash_type == hash_type_e::SIMPLE) {
-            run_test<simple_hasher, int>();
-        } else if (hash_type == hash_type_e::SHIFT) {
-            run_test<shift_hasher, int>();
-        }
+    if (hash_type == hash_type_e::SIMPLE) {
+        run_test<simple_hasher, int>(size);
+    } else if (hash_type == hash_type_e::SHIFT) {
+        run_test<shift_hasher, int>(size);
     }
+
     return 0;
 }

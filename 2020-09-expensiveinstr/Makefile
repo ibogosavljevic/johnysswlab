@@ -4,7 +4,7 @@ OPT?=3
 DEPS= 
 LDFLAGS+=-lpapi -lstdc++ -lm
 FUNC_OPT?=0
-CFLAGS+=-I. -I.. -std=c++17 -O$(OPT) -pthread -g -Werror $(RPATH) -DFUNC_OPT=$(FUNC_OPT) -DHAS_PAPI
+CFLAGS+=-I. -I.. -std=c++11 -O$(OPT) -pthread -g -Werror $(RPATH) -DFUNC_OPT=$(FUNC_OPT) -DHAS_PAPI
 
 
 %.o: %.cpp $(DEPS)
