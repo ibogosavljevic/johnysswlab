@@ -3,41 +3,6 @@
 #include "measure_time.h"
 #include "utils.h"
 
-fix16_t fix16_mul(fix16_t inArg0, fix16_t inArg1) {
-    int64_t product = (int64_t)inArg0 * inArg1;
-
-#ifndef FIXMATH_NO_OVERFLOW
-    // The upper 17 bits should all be the same (the sign).
-    uint32_t upper = (product >> 47);
-#endif
-
-    if (product < 0) {
-#ifndef FIXMATH_NO_OVERFLOW
-        if (~upper)
-            return fix16_overflow;
-#endif
-
-#ifndef FIXMATH_NO_ROUNDING
-        // This adjustment is required in order to round -1/2 correctly
-        product--;
-#endif
-    } else {
-#ifndef FIXMATH_NO_OVERFLOW
-        if (upper)
-            return fix16_overflow;
-#endif
-    }
-
-#ifdef FIXMATH_NO_ROUNDING
-    return product >> 16;
-#else
-    fix16_t result = product >> 16;
-    result += (product & 0x8000) >> 15;
-
-    return result;
-#endif
-}
-
 #ifdef __GNUC__
 // Count leading zeros, using processor-specific instruction if available.
 #define clz(x) (__builtin_clzl(x) - (8 * sizeof(long) - 32))
@@ -127,67 +92,51 @@ fix16_t fix16_div(fix16_t a, fix16_t b) {
 }
 
 fix16_t calculate_average(const std::vector<fix16_t>& v) {
-    fix16_t current_average = v[0];
-    fix16_t current_count = fix16_from_int(1);
-    fix16_t next_count;
+    fix16_t len = fix16_from_int(v.size());
+    fix16_t current_average = fix16_div(v[0], len);
 
-    for (int i = 1; i < v.size(); i++) {
-        next_count = current_count + fix16_from_int(1);
-        current_average =
-            fix16_mul(current_average, fix16_div(current_count, next_count)) +
-            fix16_div(v[i], next_count);
-        current_count = next_count;
+    for (int i = 0; i < v.size(); i++) {
+        current_average += fix16_div(v[i], len);
     }
 
     return current_average;
 }
 
 float calculate_average(const std::vector<float>& v) {
-    float current_average = v[0];
-    float current_count = 1.0;
-    float next_count;
-
-    for (int i = 1; i < v.size(); i++) {
-        next_count = current_count + 1.0;
-        current_average =
-            current_average * (current_count / next_count) + v[i] / next_count;
-        current_count = next_count;
+    int n = v.size();
+    float len = n;
+    float current_average = v[0] / len;
+    for (int i = 1; i < n; i++) {
+        current_average += (v[i] / len);
     }
 
     return current_average;
 }
 
 float fast_calculate_average(const std::vector<float>& v) {
+    float current_sum;
     float old_average = 0.0;
-    float old_count = 0.0;
-    float current_sum, current_count;
-    float total_count;
+    float n = v.size();
+    int i_n = v.size();
     int i = 0;
-    int n = v.size();
 
     while (true) {
         current_sum = 0.0;
-        current_count = 0.0;
         do {
             current_sum += v[i];
-            current_count += 1.0;
             i++;
 
-            if (i == n) {
+            if (i == i_n) {
                 goto end_of_array;
             }
 
         } while (current_sum < std::numeric_limits<float>::max() / 1000.0);
 
-        total_count = old_count + current_count;
-        old_average =
-            old_average * (old_count / total_count) + current_sum / total_count;
-        old_count = total_count;
+        old_average += current_sum / n;
     }
+
 end_of_array:
-    total_count = old_count + current_count;
-    old_average =
-        old_average * (old_count / total_count) + current_sum / total_count;
+    old_average += current_sum / n;
 
     return old_average;
 }
