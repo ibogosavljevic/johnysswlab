@@ -14,7 +14,8 @@ enum array_type_e {
     POINTER_ARRAY,
     DOD_ARRAY,
     POLYMORPHIC_ARRAY,
-    VAIRANT_ARRAY
+    VARIANT_ARRAY,
+    VARIANT_VISITOR_ARRAY
 };
 
 using namespace argparse;
@@ -25,9 +26,9 @@ bool parse_args(int argc,
                 bool& out_shuffle) {
     ArgumentParser parser("test123", "123");
 
-    parser.add_argument("-a", "--array",
-                        "Array type (pointer, dod, polymorphic, variant)",
-                        true);
+    parser.add_argument(
+        "-a", "--array",
+        "Array type (pointer, dod, polymorphic, variant, visitor)", true);
     parser.add_argument("-s", "--shuffle", "Shuffle array", false);
 
     auto err = parser.parse(argc, argv);
@@ -46,7 +47,9 @@ bool parse_args(int argc,
         } else if (array_type == "polymorphic") {
             out_array_type = array_type_e::POLYMORPHIC_ARRAY;
         } else if (array_type == "variant") {
-            out_array_type = array_type_e::VAIRANT_ARRAY;
+            out_array_type = array_type_e::VARIANT_ARRAY;
+        } else if (array_type == "visitor") {
+            out_array_type = array_type_e::VARIANT_VISITOR_ARRAY;
         } else {
             std::cout << "Unknown value for --array\n";
             return false;
@@ -79,6 +82,13 @@ object* to_base(std::variant<circle, line, rectangle, monster>& v) {
         return nullptr;
     }
 }
+
+template <class... Ts>
+struct overloaded : Ts... {
+    using Ts::operator()...;
+};
+template <class... Ts>
+overloaded(Ts...) -> overloaded<Ts...>;
 
 int main(int argc, const char* argv[]) {
     constexpr int arr_len = 20 * 1024 * 1024;
@@ -140,7 +150,7 @@ int main(int argc, const char* argv[]) {
             std::cout << "Count non-virtual = " << count << std::endl;
         }
 
-    } else if (array_type == array_type_e::VAIRANT_ARRAY) {
+    } else if (array_type == array_type_e::VARIANT_ARRAY) {
         std::vector<std::variant<circle, line, rectangle, monster>> q;
 
         q.reserve(arr_len * 4);
@@ -185,6 +195,57 @@ int main(int argc, const char* argv[]) {
             unsigned int count = 0;
             for (int i = 0; i < arr_len * 4; i++) {
                 count += to_base(q[i])->get_id2();
+            }
+            std::cout << "Count virtual non-virtual" << count << std::endl;
+        }
+
+    } else if (array_type == array_type_e::VARIANT_VISITOR_ARRAY) {
+        std::vector<std::variant<circle, line, rectangle, monster>> q;
+
+        q.reserve(arr_len * 4);
+
+        for (int i = 0; i < arr_len; i++) {
+            q.push_back(circle(point(20, 20), 10));
+        }
+        for (int i = 0; i < arr_len; i++) {
+            q.push_back(line(point(0, 0), point(10, 10)));
+        }
+        for (int i = 0; i < arr_len; i++) {
+            q.push_back(rectangle(point(0, 0), point(10, 10)));
+        }
+        for (int i = 0; i < arr_len; i++) {
+            q.push_back(monster());
+        }
+
+        if (shuffle) {
+            std::random_shuffle(q.begin(), q.end());
+        }
+
+        {
+            measure_time m("Variant visitor array: draw");
+            uint64_t pixels_drawn = 0;
+            for (int i = 0; i < arr_len * 4; i++) {
+                std::visit(overloaded{[&](auto& v) { v.draw(b); }}, q[i]);
+            }
+            std::cout << "Pixels drawn " << pixels_drawn << std::endl;
+        }
+
+        {
+            measure_time m("Variant visitor vector: count virtual");
+            unsigned int count = 0;
+            for (int i = 0; i < arr_len * 4; i++) {
+                count += std::visit(
+                    overloaded{[&](auto& v) { return v.get_id(); }}, q[i]);
+            }
+            std::cout << "Count virtual " << count << std::endl;
+        }
+
+        {
+            measure_time m("Variant visitor vector: count non-virtual");
+            unsigned int count = 0;
+            for (int i = 0; i < arr_len * 4; i++) {
+                count += std::visit(
+                    overloaded{[&](auto& v) { return v.get_id2(); }}, q[i]);
             }
             std::cout << "Count virtual non-virtual" << count << std::endl;
         }
