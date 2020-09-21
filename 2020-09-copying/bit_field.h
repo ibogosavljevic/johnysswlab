@@ -1,43 +1,66 @@
-#include <memory>
 #include <cstring>
+#include <initializer_list>
+#include <memory>
 
 namespace jsl {
 
 class bit_field {
-public:
+   public:
     using itype = uint64_t;
 
-    bit_field(size_t size) :
-        m_size_bits(size),
-        m_size(calculate_size(size)),
-        m_capacity(calculate_capacity(size)),
-        m_value(new itype[m_capacity]) { }
+    bit_field(size_t size)
+        : m_size_bits(size),
+          m_size(calculate_size(size)),
+          m_capacity(calculate_capacity(size)),
+          m_value(new itype[m_capacity]) {}
 
-    bit_field(const bit_field& other) :
-        m_size_bits(other.m_size_bits),
-        m_size(other.m_size),
-        m_capacity(other.m_capacity),
-        m_value(new itype[m_capacity]){ 
-            std::memcpy(m_value.get(), other.m_value.get(), m_capacity * sizeof(itype));
+    bit_field(const bit_field& other)
+        : m_size_bits(other.m_size_bits),
+          m_size(other.m_size),
+          m_capacity(other.m_capacity),
+          m_value(new itype[m_capacity]) {
+        std::memcpy(m_value.get(), other.m_value.get(),
+                    m_capacity * sizeof(itype));
     }
 
-    bit_field(bit_field&& other) :
-        m_size_bits(other.m_size_bits),
-        m_size(other.m_size),
-        m_capacity(other.m_capacity),
-        m_value(std::move(other.m_value)) { }
-
-    void operator=(const bit_field& other) { 
-        m_size_bits = other.m_size_bits;
-        m_size = other.m_size;
-        m_capacity = other.m_capacity;
-        m_value = std::unique_ptr<itype[]>(new itype[m_capacity]);
-
-        std::memcpy(m_value.get(), other.m_value.get(), m_capacity * sizeof(itype));
+    bit_field(std::initializer_list<itype> l)
+        : m_size_bits(l.size() * 8 * sizeof(itype)),
+          m_size(l.size()),
+          m_capacity(m_size),
+          m_value(new itype[m_capacity]) {
+        int i = 0;
+        for (auto it = l.begin(); it != l.end(); ++it) {
+            m_value[i] = *it;
+            i++;
+            ;
+        }
     }
 
+    bit_field(bit_field&& other)
+        : m_size_bits(other.m_size_bits),
+          m_size(other.m_size),
+          m_capacity(other.m_capacity),
+          m_value(std::move(other.m_value)) {}
 
-    void operator=(bit_field&& other) { 
+    void operator=(const bit_field& other) {
+        if (other.m_capacity <= m_capacity) {
+            std::memcpy(m_value.get(), other.m_value.get(),
+                        other.m_size * sizeof(itype));
+
+            m_size_bits = other.m_size_bits;
+            m_size = other.m_size;
+        } else {
+            m_value = std::unique_ptr<itype[]>(new itype[m_capacity]);
+            std::memcpy(m_value.get(), other.m_value.get(),
+                        m_capacity * sizeof(itype));
+
+            m_size_bits = other.m_size_bits;
+            m_size = other.m_size;
+            m_capacity = other.m_capacity;
+        }
+    }
+
+    void operator=(bit_field&& other) {
         m_size_bits = other.m_size_bits;
         m_size = other.m_size;
         m_capacity = other.m_capacity;
@@ -53,14 +76,14 @@ public:
 
     bit_field operator|(bit_field& other) {
         bit_field result(*this);
-        
+
         result |= other;
         return result;
     }
 
     bit_field operator^(bit_field& other) {
         bit_field result(*this);
-        
+
         result ^= other;
         return result;
     }
@@ -86,25 +109,24 @@ public:
         }
     }
 
-    void append(const bit_field& other) {
-
-    }
+    void append(const bit_field& other) {}
 
     bit_field append_t(const bit_field& other) {
-        bit_field result(64);
+        bit_field result(m_size_bits + other.m_size_bits);
+
+        result = *this;
+        result.append(other);
 
         return result;
     }
 
-
-
-private:    
+   private:
     std::unique_ptr<itype[]> m_value;
     size_t m_capacity;
     size_t m_size_bits;
     size_t m_size;
 
-    static constexpr size_t calculate_size(size_t size_in_bits) {
+    static size_t calculate_size(size_t size_in_bits) {
         size_t size_in_bytes = size_in_bits / 8;
         size_t size_in_units = size_in_bytes / (8 * sizeof(itype));
 
@@ -115,7 +137,7 @@ private:
         return size_in_units;
     }
 
-    static constexpr size_t calculate_capacity(size_t size_in_bits) {
+    static size_t calculate_capacity(size_t size_in_bits) {
         size_t size_in_units = calculate_size(size_in_bits);
 
         if (size_in_units < 8) {
@@ -125,11 +147,11 @@ private:
         return size_in_units;
     }
 
-    void resize(size_t new_size_bits) { 
+    void resize(size_t new_size_bits) {
         size_t new_capacity = calculate_capacity(new_size_bits);
-        std::unique_ptr<itype[]> new_value = std::unique_ptr<itype[]>(new itype[new_capacity]);
-
+        std::unique_ptr<itype[]> new_value =
+            std::unique_ptr<itype[]>(new itype[new_capacity]);
     }
 };
 
-}
+}  // namespace jsl
