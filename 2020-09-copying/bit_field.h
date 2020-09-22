@@ -1,5 +1,7 @@
 #include <cstring>
 #include <initializer_list>
+#include <ios>
+#include <iostream>
 #include <memory>
 
 namespace jsl {
@@ -32,7 +34,6 @@ class bit_field {
         for (auto it = l.begin(); it != l.end(); ++it) {
             m_value[i] = *it;
             i++;
-            ;
         }
     }
 
@@ -109,7 +110,41 @@ class bit_field {
         }
     }
 
-    void append(const bit_field& other) {}
+    void append(const bit_field& other) {
+        size_t my_size_units;
+        size_t other_size_units;
+
+        // std::cout << "\nTHIS ";
+        // stream_to(std::cout);
+
+        // std::cout << "\nOTHER ";
+        // other.stream_to(std::cout);
+
+        if (!fits_full_unit(m_size_bits, my_size_units)) {
+            throw std::logic_error("");
+        }
+
+        if (!fits_full_unit(other.m_size_bits, other_size_units)) {
+            throw std::logic_error("");
+        }
+
+        if (m_capacity < (m_size + other.m_size)) {
+            resize(m_size_bits + other.m_size_bits);
+        }
+
+        // std::cout << "\nTHIS AFTER RESIZE ";
+        // stream_to(std::cout);
+
+        for (size_t i = 0, j = m_size; i < other.m_size; i++, j++) {
+            m_value[j] = other.m_value[i];
+        }
+
+        m_size += other.m_size;
+        m_size_bits += other.m_size_bits;
+
+        // std::cout << "\nTHIS AFTER APPEND ";
+        // stream_to(std::cout);
+    }
 
     bit_field append_t(const bit_field& other) {
         bit_field result(m_size_bits + other.m_size_bits);
@@ -120,15 +155,30 @@ class bit_field {
         return result;
     }
 
+    void stream_to(std::ostream& os) const {
+        os << "size_bits(" << m_size_bits << "), size(" << m_size
+           << "), capacity (" << m_capacity << "): ";
+        os << std::hex;
+
+        for (size_t i = 0; i < m_size; i++) {
+            os << m_value[i] << ", ";
+        }
+        os << std::dec << std::flush;
+    }
+
+    void reserve(size_t bits) { resize(bits); }
+
+    size_t get_size() { return m_size_bits; }
+
    private:
-    std::unique_ptr<itype[]> m_value;
-    size_t m_capacity;
     size_t m_size_bits;
     size_t m_size;
+    size_t m_capacity;
+    std::unique_ptr<itype[]> m_value;
 
     static size_t calculate_size(size_t size_in_bits) {
         size_t size_in_bytes = size_in_bits / 8;
-        size_t size_in_units = size_in_bytes / (8 * sizeof(itype));
+        size_t size_in_units = size_in_bytes / sizeof(itype);
 
         if ((size_in_units * sizeof(itype) * 8) < size_in_bits) {
             size_in_units++;
@@ -149,8 +199,23 @@ class bit_field {
 
     void resize(size_t new_size_bits) {
         size_t new_capacity = calculate_capacity(new_size_bits);
+        // std::cout << "resize, old capacity" << m_capacity << "new_capacity"
+        // << new_capacity; std::cout << "old size in bits" << m_size_bits << ",
+        // new size in bits " << new_size_bits << std::endl;
         std::unique_ptr<itype[]> new_value =
             std::unique_ptr<itype[]>(new itype[new_capacity]);
+
+        std::memcpy(new_value.get(), m_value.get(), m_capacity * sizeof(itype));
+
+        m_value = std::move(new_value);
+        m_capacity = new_capacity;
+    }
+
+    bool fits_full_unit(size_t size_bits, size_t& out_unit_size) {
+        size_t size_bytes = size_bits / 8;
+        out_unit_size = size_bytes / sizeof(itype);
+
+        return (out_unit_size * sizeof(itype) * 8) == size_bits;
     }
 };
 
