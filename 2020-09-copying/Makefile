@@ -13,9 +13,12 @@ CFLAGS+=-I. -I.. -std=c++11 -O$(OPT) -pthread -g -Werror $(RPATH) -DFUNC_OPT=$(F
 %: %.o $(DEPS)
 	$(CC) -o $@ $< $(LDFLAGS)
 
-all: main
+all: main main_no_move_ctr
 
 main.o: bit_field.h main.cpp
+main_no_move_ctr.o: bit_field.h main.cpp
+	$(CC) -c -o $@ main.cpp $(CFLAGS) -DNO_MOVE_CTR
+
 
 format: main.cpp bit_field.h
 	find . -name "*.cpp" | xargs clang-format -style="{BasedOnStyle: Chromium, IndentWidth: 4}" -i

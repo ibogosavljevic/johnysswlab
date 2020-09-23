@@ -21,8 +21,7 @@ class bit_field {
           m_size(other.m_size),
           m_capacity(other.m_capacity),
           m_value(new itype[m_capacity]) {
-        std::memcpy(m_value.get(), other.m_value.get(),
-                    m_capacity * sizeof(itype));
+        std::memcpy(m_value.get(), other.m_value.get(), m_size * sizeof(itype));
     }
 
     bit_field(std::initializer_list<itype> l)
@@ -37,12 +36,13 @@ class bit_field {
         }
     }
 
+#ifndef NO_MOVE_CTR
     bit_field(bit_field&& other)
         : m_size_bits(other.m_size_bits),
           m_size(other.m_size),
           m_capacity(other.m_capacity),
           m_value(std::move(other.m_value)) {}
-
+#endif
     void operator=(const bit_field& other) {
         if (other.m_capacity <= m_capacity) {
             std::memcpy(m_value.get(), other.m_value.get(),
@@ -51,22 +51,23 @@ class bit_field {
             m_size_bits = other.m_size_bits;
             m_size = other.m_size;
         } else {
-            m_value = std::unique_ptr<itype[]>(new itype[m_capacity]);
+            m_value = std::unique_ptr<itype[]>(new itype[other.m_capacity]);
             std::memcpy(m_value.get(), other.m_value.get(),
-                        m_capacity * sizeof(itype));
+                        other.m_size * sizeof(itype));
 
             m_size_bits = other.m_size_bits;
             m_size = other.m_size;
             m_capacity = other.m_capacity;
         }
     }
-
+#ifndef NO_MOVE_CTR
     void operator=(bit_field&& other) {
         m_size_bits = other.m_size_bits;
         m_size = other.m_size;
         m_capacity = other.m_capacity;
         m_value = std::move(other.m_value);
     }
+#endif
 
     bit_field operator&(bit_field& other) {
         bit_field result(*this);
@@ -108,6 +109,19 @@ class bit_field {
         for (int i = 0; i < loop_end; ++i) {
             m_value[i] ^= other.m_value[i];
         }
+    }
+
+    bool operator==(const bit_field& other) {
+        if (m_size_bits != other.m_size_bits) {
+            return false;
+        }
+
+        if (m_size != other.m_size) {
+            return false;
+        }
+
+        return std::memcmp(m_value.get(), other.m_value.get(),
+                           m_size * sizeof(itype)) == 0;
     }
 
     void append(const bit_field& other) {

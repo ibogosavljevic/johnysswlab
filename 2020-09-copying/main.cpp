@@ -1,11 +1,13 @@
+#include <cassert>
 #include <ostream>
+#include <vector>
 #include "bit_field.h"
 #include "measure_time.h"
 
 using namespace jsl;
 
 constexpr size_t arr_len = 10000000;
-constexpr size_t arr_len_append = 10000;
+constexpr size_t arr_len_append = 4;
 
 std::ostream& operator<<(std::ostream& os, const jsl::bit_field& b) {
     b.stream_to(os);
@@ -60,33 +62,39 @@ int main(int argc, char* argv[]) {
     bit_field a({2, 2, 2, 2});
     bit_field b({1, 1, 1, 1});
     bit_field scratch({0, 0, 0, 0});
+    std::vector<bit_field> result;
+    result.reserve(10);
 
     {
         measure_time m("regular");
-        bit_field result = crunch_bitfield_regular(a, b);
-        std::cout << "regular result " << result;
+        result.emplace_back(crunch_bitfield_regular(a, b));
+        std::cout << "regular result " << result[0];
     }
-
     {
         measure_time m("compound");
-        bit_field result = crunch_bitfield_compound(a, b);
-        std::cout << "compound result " << result;
+        result.emplace_back(crunch_bitfield_compound(a, b));
+        std::cout << "compound result " << result[1];
     }
+    assert(result[0] == result[1]);
     {
         measure_time m("append regular");
-        bit_field result = append_regular(a, b);
-        scratch |= result;
+        result.emplace_back(append_regular(a, b));
+        scratch |= result[2];
     }
     {
         measure_time m("append optimized");
-        bit_field result = append_optimized(a, b, false);
-        scratch |= result;
+        result.emplace_back(append_optimized(a, b, false));
+        scratch |= result[3];
     }
     {
         measure_time m("append optimized with reserve");
-        bit_field result = append_optimized(a, b, true);
-        scratch |= result;
+        result.emplace_back(append_optimized(a, b, true));
+        scratch |= result[4];
     }
+    std::cout << result[2] << std::endl;
+    std::cout << result[3] << std::endl;
+    assert(result[3] == result[4]);
+    assert(result[2] == result[3]);
 
     std::cout << scratch;
 
