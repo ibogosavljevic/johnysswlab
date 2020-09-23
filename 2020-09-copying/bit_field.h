@@ -10,6 +10,7 @@ class bit_field {
    public:
     using itype = uint64_t;
 
+#ifndef NO_CTOR_INIT
     bit_field(size_t size)
         : m_size_bits(size),
           m_size(calculate_size(size)),
@@ -23,6 +24,23 @@ class bit_field {
           m_value(new itype[m_capacity]) {
         std::memcpy(m_value.get(), other.m_value.get(), m_size * sizeof(itype));
     }
+#else
+    bit_field(size_t size) {
+        m_size_bits = size;
+        m_size = calculate_size(size);
+        m_capacity = calculate_capacity(size);
+        m_value = std::unique_ptr<itype[]>(new itype[m_capacity]);
+    }
+
+    bit_field(const bit_field& other ){
+        m_size_bits = other.m_size_bits;
+        m_size = other.m_size;
+        m_capacity = other.m_capacity;
+        m_value = std::unique_ptr<itype[]>(new itype[m_capacity]);
+        std::memcpy(m_value.get(), other.m_value.get(), m_size * sizeof(itype));
+    }
+
+#endif
 
     bit_field(std::initializer_list<itype> l)
         : m_size_bits(l.size() * 8 * sizeof(itype)),
@@ -36,7 +54,7 @@ class bit_field {
         }
     }
 
-#ifndef NO_MOVE_CTR
+#ifndef NO_MOVE_CTOR
     bit_field(bit_field&& other)
         : m_size_bits(other.m_size_bits),
           m_size(other.m_size),

@@ -7,7 +7,7 @@
 using namespace jsl;
 
 constexpr size_t arr_len = 10000000;
-constexpr size_t arr_len_append = 4;
+constexpr size_t arr_len_append = 10000;
 
 std::ostream& operator<<(std::ostream& os, const jsl::bit_field& b) {
     b.stream_to(os);
@@ -91,8 +91,6 @@ int main(int argc, char* argv[]) {
         result.emplace_back(append_optimized(a, b, true));
         scratch |= result[4];
     }
-    std::cout << result[2] << std::endl;
-    std::cout << result[3] << std::endl;
     assert(result[3] == result[4]);
     assert(result[2] == result[3]);
 

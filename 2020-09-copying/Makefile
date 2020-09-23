@@ -13,11 +13,13 @@ CFLAGS+=-I. -I.. -std=c++11 -O$(OPT) -pthread -g -Werror $(RPATH) -DFUNC_OPT=$(F
 %: %.o $(DEPS)
 	$(CC) -o $@ $< $(LDFLAGS)
 
-all: main main_no_move_ctr
+all: main main_no_move_ctor main_no_ctor_init
 
 main.o: bit_field.h main.cpp
-main_no_move_ctr.o: bit_field.h main.cpp
-	$(CC) -c -o $@ main.cpp $(CFLAGS) -DNO_MOVE_CTR
+main_no_move_ctor.o: bit_field.h main.cpp
+	$(CC) -c -o $@ main.cpp $(CFLAGS) -DNO_MOVE_CTOR
+main_no_ctor_init.o: bit_field.h main.cpp
+	$(CC) -c -o $@ main.cpp $(CFLAGS) -DNO_CTOR_INIT -DNO_MOVE_CTR
 
 
 format: main.cpp bit_field.h
