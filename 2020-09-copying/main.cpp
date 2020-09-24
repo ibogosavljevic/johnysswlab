@@ -121,6 +121,29 @@ bit_field calculate_sum_direct(const std::vector<bit_field>& b_vec) {
     return result;
 }
 
+bit_field calculate_sum_ctor(size_t count) {
+    bit_field result({0});
+
+    for (size_t i = 0; i < count; i++) {
+        bit_field tmp({i});
+        result ^= tmp;
+    }
+
+    return result;
+}
+
+bit_field calculate_sum_assign(size_t count) {
+    bit_field result({0});
+    bit_field tmp({0});
+
+    for (size_t i = 0; i < count; i++) {
+        tmp = {i};
+        result ^= tmp;
+    }
+
+    return result;
+}
+
 int main(int argc, char* argv[]) {
     bit_field a({2, 2, 2, 2});
     bit_field b({1, 1, 1, 1});
@@ -183,7 +206,17 @@ int main(int argc, char* argv[]) {
     }
     {
         measure_time m("calculate_sum_range_value");
-        bit_field result = calculate_sum_range_reference(test_bit_fields);
+        bit_field result = calculate_sum_range_value(test_bit_fields);
+        std::cout << result << std::endl;
+    }
+    {
+        measure_time m("calculate_sum_ctor");
+        bit_field result = calculate_sum_ctor(arr_len);
+        std::cout << result << std::endl;
+    }
+    {
+        measure_time m("calculate_sum_assign");
+        bit_field result = calculate_sum_assign(arr_len);
         std::cout << result << std::endl;
     }
 

@@ -42,7 +42,7 @@ class bit_field {
 
 #endif
 
-    bit_field(std::initializer_list<itype> l)
+    explicit bit_field(std::initializer_list<itype> l)
         : m_size_bits(l.size() * 8 * sizeof(itype)),
           m_size(l.size()),
           m_capacity(m_size),
@@ -78,6 +78,7 @@ class bit_field {
             m_capacity = other.m_capacity;
         }
     }
+
 #ifndef NO_MOVE_CTR
     void operator=(bit_field&& other) {
         m_size_bits = other.m_size_bits;
@@ -86,6 +87,23 @@ class bit_field {
         m_value = std::move(other.m_value);
     }
 #endif
+
+    void operator=(std::initializer_list<itype> l) {
+        size_t size_in_bits = l.size() * sizeof(itype) * 8;
+
+        if (l.size() > m_capacity) {
+            resize(size_in_bits);
+        }
+
+        m_size_bits = size_in_bits;
+        m_size = l.size();
+
+        int i = 0;
+        for (auto it = l.begin(); it != l.end(); ++it) {
+            m_value[i] = *it;
+            i++;
+        }
+    }
 
     bit_field operator&(bit_field& other) {
         bit_field result(*this);
