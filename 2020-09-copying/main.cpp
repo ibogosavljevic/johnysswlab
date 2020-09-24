@@ -58,12 +58,77 @@ bit_field append_optimized(bit_field a, bit_field b, bool reserve) {
     return result;
 }
 
+std::vector<bit_field> create_bitfield_vector(size_t count) {
+    std::vector<bit_field> result;
+    result.reserve(count);
+
+    for (bit_field::itype i = 0; i < count; i++) {
+        bit_field b({i});
+        result.push_back(std::move(b));
+    }
+
+    return result;
+}
+
+bit_field calculate_sum_preincrement(const std::vector<bit_field>& b_vec) {
+    bit_field result({0});
+
+    for (auto it = b_vec.begin(); it != b_vec.end(); ++it) {
+        result ^= *it;
+    }
+
+    return result;
+}
+
+bit_field calculate_sum_postincrement(const std::vector<bit_field>& b_vec) {
+    bit_field result({0});
+
+    for (auto it = b_vec.begin(); it != b_vec.end(); it++) {
+        result ^= *it;
+    }
+
+    return result;
+}
+
+bit_field calculate_sum_range_value(const std::vector<bit_field>& b_vec) {
+    bit_field result({0});
+
+    for (auto b : b_vec) {
+        result ^= b;
+    }
+
+    return result;
+}
+
+bit_field calculate_sum_range_reference(const std::vector<bit_field>& b_vec) {
+    bit_field result({0});
+
+    for (const auto& b : b_vec) {
+        result ^= b;
+    }
+
+    return result;
+}
+
+bit_field calculate_sum_direct(const std::vector<bit_field>& b_vec) {
+    bit_field result({0});
+    size_t count = b_vec.size();
+
+    for (size_t i = 0; i < count; i++) {
+        result ^= b_vec[i];
+    }
+
+    return result;
+}
+
 int main(int argc, char* argv[]) {
     bit_field a({2, 2, 2, 2});
     bit_field b({1, 1, 1, 1});
     bit_field scratch({0, 0, 0, 0});
     std::vector<bit_field> result;
-    result.reserve(10);
+    result.reserve(20);
+
+    std::vector<bit_field> test_bit_fields = create_bitfield_vector(arr_len);
 
     {
         measure_time m("regular");
@@ -94,7 +159,33 @@ int main(int argc, char* argv[]) {
     assert(result[3] == result[4]);
     assert(result[2] == result[3]);
 
-    std::cout << scratch;
+    std::cout << scratch << std::endl;
+
+    {
+        measure_time m("calculate_sum_direct");
+        bit_field result = calculate_sum_direct(test_bit_fields);
+        std::cout << result << std::endl;
+    }
+    {
+        measure_time m("calculate_sum_preincrement");
+        bit_field result = calculate_sum_preincrement(test_bit_fields);
+        std::cout << result << std::endl;
+    }
+    {
+        measure_time m("calculate_sum_postincrement");
+        bit_field result = calculate_sum_postincrement(test_bit_fields);
+        std::cout << result << std::endl;
+    }
+    {
+        measure_time m("calculate_sum_range_reference");
+        bit_field result = calculate_sum_range_reference(test_bit_fields);
+        std::cout << result << std::endl;
+    }
+    {
+        measure_time m("calculate_sum_range_value");
+        bit_field result = calculate_sum_range_reference(test_bit_fields);
+        std::cout << result << std::endl;
+    }
 
     return 0;
 }

@@ -32,7 +32,7 @@ class bit_field {
         m_value = std::unique_ptr<itype[]>(new itype[m_capacity]);
     }
 
-    bit_field(const bit_field& other ){
+    bit_field(const bit_field& other) {
         m_size_bits = other.m_size_bits;
         m_size = other.m_size;
         m_capacity = other.m_capacity;
