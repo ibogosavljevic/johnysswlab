@@ -47,7 +47,8 @@ bit_field append_optimized(bit_field a, bit_field b, bool reserve) {
     bit_field result({0});
 
     if (reserve) {
-        result.reserve((a.get_size() + b.get_size()) * arr_len_append);
+        result.reserve((a.get_size() + b.get_size()) * arr_len_append +
+                       result.get_size());
     }
 
     for (int i = 0; i < arr_len_append; i++) {
