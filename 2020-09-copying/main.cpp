@@ -59,13 +59,35 @@ bit_field append_optimized(bit_field a, bit_field b, bool reserve) {
     return result;
 }
 
-std::vector<bit_field> create_bitfield_vector(size_t count) {
+std::vector<bit_field> create_bitfield_vector_push(size_t count) {
     std::vector<bit_field> result;
     result.reserve(count);
 
     for (bit_field::itype i = 0; i < count; i++) {
-        bit_field b({i});
-        result.push_back(std::move(b));
+        bit_field tmp(i, 0);
+        result.push_back(tmp);
+    }
+
+    return result;
+}
+
+std::vector<bit_field> create_bitfield_vector_push_move(size_t count) {
+    std::vector<bit_field> result;
+    result.reserve(count);
+
+    for (bit_field::itype i = 0; i < count; i++) {
+        result.push_back(std::move(bit_field(i, 0)));
+    }
+
+    return result;
+}
+
+std::vector<bit_field> create_bitfield_vector_emplace(size_t count) {
+    std::vector<bit_field> result;
+    result.reserve(count);
+
+    for (bit_field::itype i = 0; i < count; i++) {
+        result.emplace_back(i, 0);
     }
 
     return result;
@@ -164,8 +186,23 @@ int main(int argc, char* argv[]) {
     std::vector<bit_field> result;
     result.reserve(20);
 
-    std::vector<bit_field> test_bit_fields = create_bitfield_vector(arr_len);
+    std::vector<bit_field> test_bit_fields;
 
+    {
+        measure_time m("create vector push_back");
+        test_bit_fields = create_bitfield_vector_push(arr_len);
+        std::cout << "regular result " << result[0];
+    }
+    {
+        measure_time m("create vector push_back with move");
+        test_bit_fields = create_bitfield_vector_push_move(arr_len);
+        std::cout << "regular result " << result[0];
+    }
+    {
+        measure_time m("create vector emplace_back");
+        test_bit_fields = create_bitfield_vector_emplace(arr_len);
+        std::cout << "regular result " << result[0];
+    }
     {
         measure_time m("regular");
         result.emplace_back(crunch_bitfield_regular(a, b));

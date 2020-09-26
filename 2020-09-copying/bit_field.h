@@ -42,6 +42,14 @@ class bit_field {
 
 #endif
 
+    explicit bit_field(itype value, itype dummy)
+        : m_size_bits(sizeof(itype)),
+          m_size(1),
+          m_capacity(1),
+          m_value(new itype[m_capacity]) {
+        m_value[0] = value;
+    }
+
     explicit bit_field(std::initializer_list<itype> l)
         : m_size_bits(l.size() * 8 * sizeof(itype)),
           m_size(l.size()),
