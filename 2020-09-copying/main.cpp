@@ -132,6 +132,18 @@ bit_field calculate_sum_ctor(size_t count) {
     return result;
 }
 
+bit_field calculate_sum_ctor_assign(size_t count) {
+    bit_field result({0});
+
+    for (size_t i = 0; i < count; i++) {
+        bit_field tmp(sizeof(bit_field::itype));
+        tmp = {i};
+        result ^= tmp;
+    }
+
+    return result;
+}
+
 bit_field calculate_sum_assign(size_t count) {
     bit_field result({0});
     bit_field tmp({0});
@@ -212,6 +224,11 @@ int main(int argc, char* argv[]) {
     {
         measure_time m("calculate_sum_ctor");
         bit_field result = calculate_sum_ctor(arr_len);
+        std::cout << result << std::endl;
+    }
+    {
+        measure_time m("calculate_sum_ctor_assign");
+        bit_field result = calculate_sum_ctor_assign(arr_len);
         std::cout << result << std::endl;
     }
     {
