@@ -55,7 +55,7 @@ class bit_field {
     }
 
 #ifndef NO_MOVE_CTOR
-    bit_field(bit_field&& other)
+    bit_field(bit_field&& other) noexcept
         : m_size_bits(other.m_size_bits),
           m_size(other.m_size),
           m_capacity(other.m_capacity),
@@ -80,7 +80,7 @@ class bit_field {
     }
 
 #ifndef NO_MOVE_CTR
-    void operator=(bit_field&& other) {
+    void operator=(bit_field&& other) noexcept {
         m_size_bits = other.m_size_bits;
         m_size = other.m_size;
         m_capacity = other.m_capacity;
