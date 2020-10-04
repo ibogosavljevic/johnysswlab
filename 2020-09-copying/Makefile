@@ -13,7 +13,12 @@ CFLAGS+=-I. -I.. -std=c++11 -O$(OPT) -pthread -g -Werror $(RPATH) -DFUNC_OPT=$(F
 %: %.o $(DEPS)
 	$(CC) -o $@ $< $(LDFLAGS)
 
+%.tidy: %.cpp
+	clang-tidy -header-filter=.* -checks=portability-*,performance-*,readability-* $< -- $(CFLAGS)
+	touch $@
+
 all: main main_no_move_ctor main_no_ctor_init
+tidy: main.tidy
 
 main.o: bit_field.h main.cpp
 main_no_move_ctor.o: bit_field.h main.cpp
@@ -27,5 +32,5 @@ format: main.cpp bit_field.h
 	find . -name "*.h" | xargs clang-format -style="{BasedOnStyle: Chromium, IndentWidth: 4}" -i
 
 clean:
-	rm -f  *.o main
+	rm -f  *.o *.tidy main main_no_*
 
