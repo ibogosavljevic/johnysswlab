@@ -61,13 +61,14 @@ class hash_map {
 
         do {
             if (m_value_used[entry_current] == BUCKET_USED) {
-                if (*get(m_values, entry_current) == val) {
+                T* p = get(m_values, entry_current);
+                if (*p == val) {
                     return true;
                 } else {
                     entry_current++;
                 }
             } else if (m_value_used[entry_current] == BUCKET_DELETED) {
-                return entry_current++;
+                entry_current++;
             } else {
                 return false;
             }
@@ -80,10 +81,10 @@ class hash_map {
         return false;
     }
 
-    template <int parallel_searches = 2>
-    std::vector<bool> find(const std::vector<T>& in_values) {
+    template <int parallel_searches = 8>
+    std::vector<bool> find_multiple(const std::vector<T>& in_values) {
         std::vector<bool> result(in_values.size(), false);
-        std::array<size_t, parallel_searches> hashes;
+        std::array<find_single_t, parallel_searches> find_desc;
 
         // Round the length to lower four
         int len = (in_values.size() / parallel_searches) * parallel_searches;
@@ -91,15 +92,56 @@ class hash_map {
         for (int i = 0; i < len; i += parallel_searches) {
             for (int j = 0; j < parallel_searches; j++) {
                 size_t hash = m_limiter.limit_input(m_hasher(in_values[i + j]));
-                //__builtin_prefetch(&m_values[hash]);
-                //__builtin_prefetch(&m_value_used[hash]);
-                hashes[j] = hash;
+                __builtin_prefetch(&m_value_used[hash]);
+                find_desc[j].init(hash);
             }
 
-            for (int j = 0; j < parallel_searches; j++) {
-                size_t index = i + j;
-                result[index] = find<false>(in_values[index], hashes[j]);
+            for (size_t j = 0, index = i; j < parallel_searches; index++, j++) {
+                find_desc[j].find_result =
+                    find_single(in_values[index], find_desc[j]);
             }
+
+            for (size_t j = 0, index = i; j < parallel_searches; index++, j++) {
+                if (find_desc[j].find_result == find_single_result_e::RUNNING) {
+                    find_desc[j].find_result =
+                        find_single(in_values[index], find_desc[j]);
+                }
+
+                //                assert(find_desc[j].find_result ==
+                //                find_single_result_e::FOUND ||
+                //                        find_desc[j].find_result ==
+                //                        find_single_result_e::NOT_FOUND);
+
+                result[index] = find_desc[j].find_result;
+            }
+        }
+
+        return result;
+    }
+
+    template <int look_ahead = 4>
+    std::vector<bool> find(const std::vector<T>& in_values) {
+        std::vector<bool> result(in_values.size(), false);
+        std::array<size_t, look_ahead> hashes;
+        size_t len = in_values.size();
+
+        for (size_t i = 0; i < look_ahead; i++) {
+            hashes[i] = m_limiter.limit_input(m_hasher(in_values[i]));
+        }
+
+        for (size_t i = 0; i < len; i++) {
+            size_t look_ahaed_index = i + look_ahead;
+            size_t hash_index =
+                i %
+                look_ahead;  // (i + look_ahead ) % look_ahead == i % look_ahead
+            size_t my_hash = hashes[hash_index];
+            size_t new_hash =
+                m_limiter.limit_input(m_hasher(in_values[look_ahaed_index]));
+            hashes[hash_index] = new_hash;
+
+            __builtin_prefetch(&m_value_used[new_hash]);
+
+            result[i] = find<false>(in_values[i], my_hash);
         }
 
         return result;
@@ -286,6 +328,63 @@ class hash_map {
         m_used_and_deleted = count;
         m_rehashing_threshhold = m_size * 0.7;
         m_limiter.set_limit(m_size);
+    }
+
+    enum find_single_result_e {
+        NOT_FOUND = false,
+        FOUND = true,
+        INIT,
+        RUNNING,
+    };
+
+    struct find_single_t {
+        size_t entry_start;
+        size_t entry_current;
+        bool prefetched;
+        find_single_result_e find_result;
+
+        void init(size_t hash) {
+            entry_start = hash;
+            entry_current = hash;
+            prefetched = false;
+            find_result = find_single_result_e::INIT;
+        }
+    };
+
+    find_single_result_e __attribute__((always_inline))
+    find_single(const T& val, find_single_t& desc) {
+        size_t entry_start = desc.entry_start;
+        size_t entry_current = desc.entry_current;
+        bool prefetched = desc.prefetched;
+
+        do {
+            if (m_value_used[entry_current] == BUCKET_USED) {
+                T* p = get(m_values, entry_current);
+                if (!prefetched) {
+                    desc.prefetched = true;
+                    desc.entry_current = entry_current;
+                    __builtin_prefetch(p);
+                    //__builtin_prefetch(p + 1);
+                    //__builtin_prefetch(p + 2);
+                    return find_single_result_e::RUNNING;
+                }
+                if (*p == val) {
+                    return find_single_result_e::FOUND;
+                } else {
+                    entry_current++;
+                }
+            } else if (m_value_used[entry_current] == BUCKET_DELETED) {
+                entry_current++;
+            } else {
+                return find_single_result_e::NOT_FOUND;
+            }
+
+            if (entry_current == m_size) {
+                entry_current = 0;
+            }
+        } while (entry_current != entry_start);
+
+        return find_single_result_e::NOT_FOUND;
     }
 };
 

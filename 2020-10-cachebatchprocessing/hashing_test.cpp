@@ -68,6 +68,7 @@ size_t run_test(int size) {
     hash_map<Q, T> my_map(arr_len);
     size_t found1 = 0;
     size_t found2 = 0;
+    size_t found3 = 0;
 
     size_t iterations = 64 * 1024 * 1024 / size;
     iterations = iterations == 0 ? 1 : iterations;
@@ -100,11 +101,21 @@ size_t run_test(int size) {
                 found2 += result[i];
             }
         }
+        {
+            measure_time m("multiple");
+            std::vector<bool> result = my_map.find_multiple(v);
+            for (size_t i = 0; i < size; i++) {
+                found3 += result[i];
+            }
+        }
     }
 
-    assert(found1 == found2);
+    std::cout << "Found1 = " << found1 << ", found3 = " << found3 << std::endl;
 
-    return found1 + found2;
+    assert(found1 == found2);
+    assert(found1 == found3);
+
+    return found1;
 }
 
 int main(int argc, const char* argv[]) {
