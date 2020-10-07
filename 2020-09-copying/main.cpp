@@ -14,7 +14,7 @@ std::ostream& operator<<(std::ostream& os, const jsl::bit_field& b) {
     return os;
 }
 
-bit_field crunch_bitfield_regular(bit_field a, bit_field b) {
+bit_field crunch_bitfield_regular(const bit_field& a, const bit_field& b) {
     bit_field result(a);
     for (int i = 0; i < arr_len; i++) {
         result = result & a;
@@ -23,7 +23,7 @@ bit_field crunch_bitfield_regular(bit_field a, bit_field b) {
     return result;
 }
 
-bit_field crunch_bitfield_compound(bit_field a, bit_field b) {
+bit_field crunch_bitfield_compound(const bit_field& a, const bit_field& b) {
     bit_field result(a);
     for (int i = 0; i < arr_len; i++) {
         result &= a;
@@ -32,7 +32,7 @@ bit_field crunch_bitfield_compound(bit_field a, bit_field b) {
     return result;
 }
 
-bit_field append_regular(bit_field a, bit_field b) {
+bit_field append_regular(const bit_field& a, const bit_field& b) {
     bit_field result({0});
 
     for (int i = 0; i < arr_len_append; i++) {
@@ -43,7 +43,7 @@ bit_field append_regular(bit_field a, bit_field b) {
     return result;
 }
 
-bit_field append_optimized(bit_field a, bit_field b, bool reserve) {
+bit_field append_optimized(const bit_field& a, const bit_field& b, bool reserve) {
     bit_field result({0});
 
     if (reserve) {
@@ -116,7 +116,7 @@ bit_field calculate_sum_postincrement(const std::vector<bit_field>& b_vec) {
 bit_field calculate_sum_range_value(const std::vector<bit_field>& b_vec) {
     bit_field result({0});
 
-    for (auto b : b_vec) {
+    for (auto& b : b_vec) {
         result ^= b;
     }
 
@@ -179,6 +179,14 @@ bit_field calculate_sum_assign(size_t count) {
     return result;
 }
 
+bit_field test_by_value(bit_field b, bool t) { 
+    if (t) {
+        return b;
+    } else {
+        return b | bit_field({0, 0, 0, 0});
+    }
+}
+
 int main(int argc, char* argv[]) {
     bit_field a({2, 2, 2, 2});
     bit_field b({1, 1, 1, 1});
@@ -187,6 +195,8 @@ int main(int argc, char* argv[]) {
     result.reserve(20);
 
     std::vector<bit_field> test_bit_fields;
+
+    a = test_by_value(bit_field(a), true);
 
     {
         measure_time m("create vector push_back");

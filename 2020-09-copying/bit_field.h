@@ -113,21 +113,21 @@ class bit_field {
         }
     }
 
-    bit_field operator&(bit_field& other) {
+    bit_field operator&(const bit_field& other) {
         bit_field result(*this);
 
         result &= other;
         return result;
     }
 
-    bit_field operator|(bit_field& other) {
+    bit_field operator|(const bit_field& other) {
         bit_field result(*this);
 
         result |= other;
         return result;
     }
 
-    bit_field operator^(bit_field& other) {
+    bit_field operator^(const bit_field& other) {
         bit_field result(*this);
 
         result ^= other;
@@ -226,7 +226,7 @@ class bit_field {
 
     void reserve(size_t bits) { resize(bits); }
 
-    size_t get_size() { return m_size_bits; }
+    size_t get_size() const { return m_size_bits; }
 
    private:
     size_t m_size_bits;
