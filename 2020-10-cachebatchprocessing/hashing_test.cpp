@@ -1,6 +1,7 @@
 
 #include <unordered_set>
 #include "common/argparse.h"
+#include "fast_hash_map.h"
 #include "hash_map.h"
 #include "measure_time.h"
 #include "utils.h"
@@ -45,7 +46,7 @@ bool parse_args(int argc,
         std::string size = parser.get<std::string>("s");
         std::cout << "Size of the hash map : " << size << std::endl;
         if (size == "s") {
-            out_size = 16 * 1024;
+            out_size = 32;
         } else if (size == "m") {
             out_size = 8 * 1024 * 1024;
         } else if (size == "l") {
@@ -66,22 +67,29 @@ size_t run_test(int size) {
     int arr_len = size;
     std::vector<int> v = create_random_array<int>(arr_len, 0, arr_len);
     hash_map<Q, T> my_map(arr_len);
+    fast_hash_map<Q> my_map2(arr_len);
+    // std::unordered_set reference_map(arr_len);
     size_t found1 = 0;
     size_t found2 = 0;
     size_t found3 = 0;
+    size_t found4 = 0;
+    size_t found5 = 0;
 
     size_t iterations = 64 * 1024 * 1024 / size;
-    iterations = iterations == 0 ? 1 : iterations;
+    // iterations = iterations == 0 ? 1 : iterations;
+    iterations = 1;
 
     int count = 0.7 * size;
 
     for (int j = 0; j < iterations; j++) {
         for (size_t i = 0; i < count; i++) {
             my_map.insert(Q(v[i]));
+            my_map2.insert(Q(v[i]));
         }
 
         for (size_t i = 0.3 * size; i < size; i++) {
             my_map.remove(v[i]);
+            my_map2.remove(v[i]);
         }
 
         {
@@ -108,12 +116,28 @@ size_t run_test(int size) {
                 found3 += result[i];
             }
         }
+        {
+            measure_time m("fast hash map simple");
+            std::vector<bool> result = my_map2.find_multiple(v);
+            for (size_t i = 0; i < size; i++) {
+                found4 += result[i];
+            }
+        }
+        {
+            measure_time m("fast_hash_map_multiple");
+            std::vector<bool> result = my_map2.find_multiple_fast(v);
+            for (size_t i = 0; i < size; i++) {
+                found5 += result[i];
+            }
+        }
     }
 
-    std::cout << "Found1 = " << found1 << ", found3 = " << found3 << std::endl;
+    std::cout << "Found1 = " << found1 << ", found5 = " << found5 << std::endl;
 
     assert(found1 == found2);
     assert(found1 == found3);
+    // assert(found1 == found4);
+    assert(found1 == found5);
 
     return found1;
 }
