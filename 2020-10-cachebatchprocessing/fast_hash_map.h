@@ -12,41 +12,18 @@ class fast_hash_map {
     bool insert(const T& value) {
         size_t entry = get_entry(value);
 
-        auto it =
-            std::find(m_values[entry].begin(), m_values[entry].end(), value);
-        if (it != m_values[entry].end()) {
-            m_values[entry].push_back(value);
-            return true;
-        }
-
-        return false;
+        return m_values[entry].insert(value);
     }
 
     bool remove(const T& value) {
         size_t entry = get_entry(value);
-        auto end_it = m_values[entry].end();
 
-        auto it = std::find(m_values[entry].begin(), end_it, value);
-
-        // Put the value to delete at the end so we don't have to compact the
-        // vector
-        if (it != m_values[entry].end()) {
-            std::iter_swap(it, m_values[entry].rbegin());
-        } else {
-            return false;
-        }
-
-        m_values[entry].pop_back();
-        return true;
+        return m_values[entry].remove(value);
     }
 
     bool find(const T& value) {
         size_t entry = get_entry(value);
-
-        auto it =
-            std::find(m_values[entry].begin(), m_values[entry].end(), value);
-
-        return it != m_values[entry].end();
+        return m_values[entry].find(value);
     }
 
     std::vector<bool> find_multiple(const std::vector<T>& values) {
@@ -59,34 +36,61 @@ class fast_hash_map {
         return result;
     }
 
-    template <size_t look_ahead = 4>
+    void dump(std::ostream& os) {
+        for (size_t i = 0; i < m_values.size(); i++) {
+            os << i << ": ";
+            m_values[i].dump(os);
+            os << std::endl;
+        }
+    }
+
+    template <size_t look_ahead = 16>
     std::vector<bool> find_multiple_fast(const std::vector<T>& values) {
         std::vector<bool> result(values.size(), false);
-        std::array<size_t, 2 * look_ahead> hashes;
+        std::array<size_t, look_ahead> hashes;
 
         for (size_t i = 0; i < hashes.size(); i++) {
             hashes[i] = get_entry(values[i]);
         }
 
-        for (size_t i = 0, j = look_ahead, k = 2 * look_ahead;
-             i < values.size() - 2 * look_ahead; i++, j++, k++) {
+        for (size_t i = 0, j = look_ahead; i < values.size() - look_ahead;
+             i++, j++) {
             size_t entry = hashes[i % hashes.size()];
-            result[i] =
-                std::find(m_values[entry].begin(), m_values[entry].end(),
-                          values[i]) != m_values[entry].end();
+            result[i] = m_values[entry].find(values[i]);
 
-            entry = hashes[j & hashes.size()];
-            if (m_values[entry].size() > 0) {
-                __builtin_prefetch(&m_values[entry][0]);
-            }
-
-            entry = get_entry(values[k]);
-            hashes[k % hashes.size()] = entry;
-            __builtin_prefetch(&m_values[entry]);
+            entry = get_entry(values[j]);
+            hashes[j % hashes.size()] = entry;
+            m_values[entry].prefetch();
         }
 
-        for (size_t i = values.size() - 2 * look_ahead; i < values.size();
-             i++) {
+        for (size_t i = values.size() - look_ahead; i < values.size(); i++) {
+            result[i] = find(values[i]);
+        }
+
+        return result;
+    }
+
+    template <size_t look_ahead = 64>
+    std::vector<bool> find_multiple_fast2(const std::vector<T>& values) {
+        std::vector<bool> result(values.size(), false);
+        std::array<size_t, look_ahead> hashes;
+        size_t entry, index;
+
+        size_t len = (values.size() / look_ahead) * look_ahead;
+
+        for (size_t i = 0; i < len; i += look_ahead) {
+            for (size_t j = i, k = 0; k < look_ahead; j++, k++) {
+                entry = get_entry(values[j]);
+                hashes[k] = entry;
+                m_values[entry].prefetch();
+            }
+
+            for (size_t j = i, k = 0; k < look_ahead; j++, k++) {
+                result[j] = m_values[hashes[k]].find(values[j]);
+            }
+        }
+
+        for (size_t i = len; i < values.size(); i++) {
             result[i] = find(values[i]);
         }
 
@@ -94,7 +98,110 @@ class fast_hash_map {
     }
 
    private:
-    std::vector<std::vector<T>> m_values;
+    class hash_map_entry {
+       public:
+        hash_map_entry() : m_next_vector(nullptr) {}
+        bool find(const T& value) {
+            if (m_next_vector >= oneptr()) {
+                if (*get_first() == value) {
+                    return true;
+                }
+
+                return std::find(m_next_vector->begin(), m_next_vector->end(),
+                                 value) != m_next_vector->end();
+            } else {
+                return false;
+            }
+        }
+
+        void prefetch() { __builtin_prefetch(&m_value); }
+
+        bool insert(const T& value) {
+            if (find(value)) {
+                return false;
+            }
+
+            if (m_next_vector == nullptr) {
+                ::new (m_value) T(value);
+                m_next_vector = oneptr();
+            } else if (m_next_vector == oneptr()) {
+                m_next_vector = new std::vector<T>();
+                m_next_vector->push_back(value);
+            } else {
+                m_next_vector->push_back(value);
+            }
+
+            return true;
+        }
+
+        bool remove(const T& value) {
+            bool result;
+
+            if (m_next_vector >= oneptr()) {
+                if (*get_first() == value) {
+                    if (m_next_vector == oneptr()) {
+                        get_first()->~T();
+                        m_next_vector = 0;
+                    } else {
+                        std::swap(*get_first(), m_next_vector->back());
+                        if (m_next_vector->size() == 1) {
+                            delete m_next_vector;
+                            m_next_vector = oneptr();
+                        } else {
+                            m_next_vector->pop_back();
+                        }
+                    }
+
+                    result = true;
+                } else {
+                    if (m_next_vector == oneptr()) {
+                        result = false;
+                    } else {
+                        auto it = std::find(m_next_vector->begin(),
+                                            m_next_vector->end(), value);
+                        if (it == m_next_vector->end()) {
+                            result = false;
+                        } else {
+                            if (m_next_vector->size() > 1) {
+                                std::iter_swap(it, m_next_vector->rbegin());
+                                m_next_vector->pop_back();
+                            } else {
+                                delete m_next_vector;
+                                m_next_vector = oneptr();
+                            }
+                            result = true;
+                        }
+                    }
+                }
+            } else {
+                result = false;
+            }
+            return result;
+        }
+
+        void dump(std::ostream& os) {
+            if (m_next_vector >= oneptr()) {
+                os << *get_first() << ", ";
+                if (m_next_vector > oneptr()) {
+                    for (auto it = m_next_vector->begin();
+                         it != m_next_vector->end(); ++it) {
+                        os << *it << ", ";
+                    }
+                }
+            }
+        }
+
+       private:
+        std::vector<T>* oneptr() const {
+            return reinterpret_cast<std::vector<T>*>(1);
+        }
+
+        T* get_first() { return reinterpret_cast<T*>(m_value); }
+        char m_value[sizeof(T)];
+        std::vector<T>* m_next_vector;
+    };
+
+    std::vector<hash_map_entry> m_values;
     size_t m_size;
     std::hash<T> m_hash;
 
