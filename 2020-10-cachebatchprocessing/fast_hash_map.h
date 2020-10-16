@@ -3,6 +3,144 @@
 #include "short_alloc.h"
 
 template <typename T>
+class hash_map_entry {
+   public:
+    hash_map_entry() : m_next_vector(nullptr) {}
+    bool find(const T& value) {
+        if (m_next_vector >= oneptr()) {
+            if (*get_first() == value) {
+                return true;
+            }
+
+            return std::find(m_next_vector->begin(), m_next_vector->end(),
+                             value) != m_next_vector->end();
+        } else {
+            return false;
+        }
+    }
+
+    void prefetch() { __builtin_prefetch(&m_value); }
+
+    bool insert(const T& value) {
+        if (find(value)) {
+            return false;
+        }
+
+        if (m_next_vector == nullptr) {
+            ::new (m_value) T(value);
+            m_next_vector = oneptr();
+        } else if (m_next_vector == oneptr()) {
+            m_next_vector = new std::vector<T>();
+            m_next_vector->push_back(value);
+        } else {
+            m_next_vector->push_back(value);
+        }
+
+        return true;
+    }
+
+    bool remove(const T& value) {
+        bool result;
+
+        if (m_next_vector >= oneptr()) {
+            if (*get_first() == value) {
+                if (m_next_vector == oneptr()) {
+                    get_first()->~T();
+                    m_next_vector = 0;
+                } else {
+                    std::swap(*get_first(), m_next_vector->back());
+                    if (m_next_vector->size() == 1) {
+                        delete m_next_vector;
+                        m_next_vector = oneptr();
+                    } else {
+                        m_next_vector->pop_back();
+                    }
+                }
+
+                result = true;
+            } else {
+                if (m_next_vector == oneptr()) {
+                    result = false;
+                } else {
+                    auto it = std::find(m_next_vector->begin(),
+                                        m_next_vector->end(), value);
+                    if (it == m_next_vector->end()) {
+                        result = false;
+                    } else {
+                        if (m_next_vector->size() > 1) {
+                            std::iter_swap(it, m_next_vector->rbegin());
+                            m_next_vector->pop_back();
+                        } else {
+                            delete m_next_vector;
+                            m_next_vector = oneptr();
+                        }
+                        result = true;
+                    }
+                }
+            }
+        } else {
+            result = false;
+        }
+        return result;
+    }
+
+    void dump(std::ostream& os) {
+        if (m_next_vector >= oneptr()) {
+            os << *get_first() << ", ";
+            if (m_next_vector > oneptr()) {
+                for (auto it = m_next_vector->begin();
+                     it != m_next_vector->end(); ++it) {
+                    os << *it << ", ";
+                }
+            }
+        }
+    }
+
+   private:
+    std::vector<T>* oneptr() const {
+        return reinterpret_cast<std::vector<T>*>(1);
+    }
+
+    T* get_first() { return reinterpret_cast<T*>(m_value); }
+    char m_value[sizeof(T)];
+    std::vector<T>* m_next_vector;
+};
+
+template <typename T>
+class simple_hash_map_entry {
+   public:
+    bool find(const T& value) {
+        return std::find(m_values.begin(), m_values.end(), value) !=
+               m_values.end();
+    }
+
+    bool insert(const T& value) {
+        if (find(value)) {
+            return false;
+        }
+
+        m_values.push_back(value);
+        return true;
+    }
+
+    void prefetch() { __builtin_prefetch(&m_values); }
+
+    bool remove(const T& value) {
+        auto it = std::find(m_values.begin(), m_values.end(), value);
+        if (it != m_values.end()) {
+            std::iter_swap(it, m_values.rbegin());
+            m_values.pop_back();
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+   private:
+    std::vector<T> m_values;
+};
+
+template <typename T, typename Q>
 class fast_hash_map {
    public:
     fast_hash_map(size_t size) : m_values(size), m_size(size) {}
@@ -97,111 +235,7 @@ class fast_hash_map {
         return result;
     }
 
-   private:
-    class hash_map_entry {
-       public:
-        hash_map_entry() : m_next_vector(nullptr) {}
-        bool find(const T& value) {
-            if (m_next_vector >= oneptr()) {
-                if (*get_first() == value) {
-                    return true;
-                }
-
-                return std::find(m_next_vector->begin(), m_next_vector->end(),
-                                 value) != m_next_vector->end();
-            } else {
-                return false;
-            }
-        }
-
-        void prefetch() { __builtin_prefetch(&m_value); }
-
-        bool insert(const T& value) {
-            if (find(value)) {
-                return false;
-            }
-
-            if (m_next_vector == nullptr) {
-                ::new (m_value) T(value);
-                m_next_vector = oneptr();
-            } else if (m_next_vector == oneptr()) {
-                m_next_vector = new std::vector<T>();
-                m_next_vector->push_back(value);
-            } else {
-                m_next_vector->push_back(value);
-            }
-
-            return true;
-        }
-
-        bool remove(const T& value) {
-            bool result;
-
-            if (m_next_vector >= oneptr()) {
-                if (*get_first() == value) {
-                    if (m_next_vector == oneptr()) {
-                        get_first()->~T();
-                        m_next_vector = 0;
-                    } else {
-                        std::swap(*get_first(), m_next_vector->back());
-                        if (m_next_vector->size() == 1) {
-                            delete m_next_vector;
-                            m_next_vector = oneptr();
-                        } else {
-                            m_next_vector->pop_back();
-                        }
-                    }
-
-                    result = true;
-                } else {
-                    if (m_next_vector == oneptr()) {
-                        result = false;
-                    } else {
-                        auto it = std::find(m_next_vector->begin(),
-                                            m_next_vector->end(), value);
-                        if (it == m_next_vector->end()) {
-                            result = false;
-                        } else {
-                            if (m_next_vector->size() > 1) {
-                                std::iter_swap(it, m_next_vector->rbegin());
-                                m_next_vector->pop_back();
-                            } else {
-                                delete m_next_vector;
-                                m_next_vector = oneptr();
-                            }
-                            result = true;
-                        }
-                    }
-                }
-            } else {
-                result = false;
-            }
-            return result;
-        }
-
-        void dump(std::ostream& os) {
-            if (m_next_vector >= oneptr()) {
-                os << *get_first() << ", ";
-                if (m_next_vector > oneptr()) {
-                    for (auto it = m_next_vector->begin();
-                         it != m_next_vector->end(); ++it) {
-                        os << *it << ", ";
-                    }
-                }
-            }
-        }
-
-       private:
-        std::vector<T>* oneptr() const {
-            return reinterpret_cast<std::vector<T>*>(1);
-        }
-
-        T* get_first() { return reinterpret_cast<T*>(m_value); }
-        char m_value[sizeof(T)];
-        std::vector<T>* m_next_vector;
-    };
-
-    std::vector<hash_map_entry> m_values;
+    std::vector<Q> m_values;
     size_t m_size;
     std::hash<T> m_hash;
 

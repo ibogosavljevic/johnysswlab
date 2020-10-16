@@ -67,7 +67,7 @@ size_t run_test(int size) {
     int arr_len = size;
     std::vector<int> v = create_random_array<int>(arr_len, 0, arr_len);
     hash_map<Q, T> my_map(arr_len);
-    fast_hash_map<Q> my_map2(arr_len);
+    fast_hash_map<Q, simple_hash_map_entry<Q>> my_map2(arr_len);
     std::unordered_set<Q> reference_map(arr_len);
     size_t found0 = 0;
     size_t found1 = 0;
