@@ -1,6 +1,5 @@
 #include <cassert>
 #include <functional>
-#include "short_alloc.h"
 
 template <typename T>
 class hash_map_entry {
