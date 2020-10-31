@@ -2,19 +2,12 @@
 #include <unordered_set>
 #include "common/argparse.h"
 #include "fast_hash_map.h"
-#include "hash_map.h"
 #include "measure_time.h"
 #include "utils.h"
 
-using namespace jsl;
 using namespace argparse;
 
-enum hash_type_e { SIMPLE, SHIFT };
-
-bool parse_args(int argc,
-                const char* argv[],
-                hash_type_e& out_hash_type,
-                size_t& out_size) {
+bool parse_args(int argc, const char* argv[], size_t& out_size) {
     ArgumentParser parser("test123", "123");
 
     parser.add_argument("-h", "--hash",
@@ -24,21 +17,6 @@ bool parse_args(int argc,
     auto err = parser.parse(argc, argv);
     if (err) {
         std::cout << err << std::endl;
-        return false;
-    }
-
-    if (parser.exists("h")) {
-        std::string hash_type = parser.get<std::string>("h");
-        std::cout << "Hash type : " << hash_type << std::endl;
-        if (hash_type == "simple") {
-            out_hash_type = hash_type_e::SIMPLE;
-        } else if (hash_type == "shift") {
-            out_hash_type = hash_type_e::SHIFT;
-        } else {
-            std::cout << "Unknown value for --hash\n";
-            return false;
-        }
-    } else {
         return false;
     }
 
@@ -62,11 +40,10 @@ bool parse_args(int argc,
     return true;
 }
 
-template <typename T, typename Q>
+template <typename Q>
 size_t run_test(int size) {
     int arr_len = size;
     std::vector<int> v = create_random_array<int>(arr_len, 0, arr_len);
-    hash_map<Q, T> my_map(arr_len);
     fast_hash_map<Q, simple_hash_map_entry<Q>> my_map2(arr_len);
     std::unordered_set<Q> reference_map(arr_len);
     size_t found0 = 0;
@@ -169,19 +146,14 @@ size_t run_test(int size) {
 }
 
 int main(int argc, const char* argv[]) {
-    hash_type_e hash_type;
     size_t size = 0;
     size_t found;
 
-    if (!parse_args(argc, argv, hash_type, size)) {
+    if (!parse_args(argc, argv, size)) {
         return false;
     }
 
-    if (hash_type == hash_type_e::SIMPLE) {
-        found = run_test<simple_hasher, int>(size);
-    } else if (hash_type == hash_type_e::SHIFT) {
-        found = run_test<shift_hasher, int>(size);
-    }
+    found = run_test<int>(size);
 
     std::cout << "Found " << found << std::endl;
 
