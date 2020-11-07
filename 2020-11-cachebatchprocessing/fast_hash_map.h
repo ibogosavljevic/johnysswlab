@@ -163,7 +163,7 @@ class fast_hash_map {
         return m_values[entry].find(value);
     }
 
-    std::vector<bool> find_multiple(const std::vector<T>& values) {
+    std::vector<bool> find_multiple_simple(const std::vector<T>& values) {
         std::vector<bool> result(values.size(), false);
 
         for (size_t i = 0; i < values.size(); i++) {
@@ -182,7 +182,7 @@ class fast_hash_map {
     }
 
     template <size_t look_ahead = 16>
-    std::vector<bool> find_multiple_fast(const std::vector<T>& values) {
+    std::vector<bool> find_multiple_alternate(const std::vector<T>& values) {
         std::vector<bool> result(values.size(), false);
         std::array<size_t, look_ahead> hashes;
 
@@ -208,7 +208,7 @@ class fast_hash_map {
     }
 
     template <size_t look_ahead = 64>
-    std::vector<bool> find_multiple_fast2(const std::vector<T>& values) {
+    std::vector<bool> find_multiple_nanothreads(const std::vector<T>& values) {
         std::vector<bool> result(values.size(), false);
         std::array<size_t, look_ahead> hashes;
         size_t entry, index;
