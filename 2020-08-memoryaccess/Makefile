@@ -17,46 +17,17 @@ PERF=perf stat -B -e cache-references,cache-misses,cache-misses:u,cycles,instruc
 %: %.o $(DEPS)
 	$(CC) -o $@ $< $(LDFLAGS)
 
-all: binary_search_runtimes
+all: main
 
 main.o: main.cpp utils.h measure_time.h custom_allocator.h binary_search_tree.h
+
+main: main.o
 
 clean:
 	rm -f  *.o main
 
-binary_search_runtimes: binary_search
-	for number in $(WORKING_SET) ; do \
-		./binary_search --working-set=$$number --prefetching-off --stride=0 --searches=$(NUMBER_OF_SEARCHES) ; \
-	done
-	for number in $(WORKING_SET) ; do \
-		./binary_search --working-set=$$number --prefetching-on --stride=0 --searches=$(NUMBER_OF_SEARCHES); \
-	done
-	for number in $(WORKING_SET) ; do \
-               ./binary_search --working-set=$$number --prefetching-off --stride=1 --searches=$(NUMBER_OF_SEARCHES) ; \
-        done
-	for number in $(WORKING_SET) ; do \
-                ./binary_search --working-set=$$number --prefetching-on --stride=1 --searches=$(NUMBER_OF_SEARCHES); \
-        done
-
-
-binary_search_cache_misses: binary_search
-	for number in $(WORKING_SET) ; do \
-		$(PERF) ./binary_search --working-set=$$number --prefetching-off --stride=0 --searches=$(NUMBER_OF_SEARCHES) ; \
-	done
-	for number in $(WORKING_SET) ; do \
-		$(PERF) ./binary_search --working-set=$$number --prefetching-on --stride=0 --searches=$(NUMBER_OF_SEARCHES); \
-	done
-	for number in $(WORKING_SET) ; do \
-                $(PERF) ./binary_search --working-set=$$number --prefetching-off --stride=1 --searches=$(NUMBER_OF_SEARCHES) ; \
-        done
-	for number in $(WORKING_SET) ; do \
-                $(PERF) ./binary_search --working-set=$$number --prefetching-on --stride=1 --searches=$(NUMBER_OF_SEARCHES); \
-        done
-
-
-
 profile:
-	perf record --call-graph dwarf ./binary_search
+	perf record --call-graph dwarf ./main
 
 report:
 	perf report
