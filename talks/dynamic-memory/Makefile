@@ -30,6 +30,8 @@ run_allocation_test: allocation_test
 	LD_PRELOAD=/usr/lib/x86_64-linux-gnu/libtcmalloc_minimal.so.4 multitime -f rusage -n 5  ./allocation_test
 	echo "Jemalloc"
 	LD_PRELOAD=/usr/lib/x86_64-linux-gnu/libjemalloc.so.2 multitime -f rusage -n 5 ./allocation_test
+	echo "Mimalloc"
+	LD_PRELOAD=/usr/local/lib/mimalloc-1.6/libmimalloc.so multitime -f rusage -n 5 ./allocation_test
 
 clean:
 	rm -f  *.o access_pattern_test allocation_test
