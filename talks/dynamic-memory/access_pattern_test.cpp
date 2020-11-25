@@ -4,7 +4,7 @@
 #include "utils.h"
 
 int main(int argc, char* argv[]) {
-    constexpr int size = 10 * 1024 * 1024;
+    constexpr int size = 100 * 1024 * 1024;
     std::vector<int> input = create_random_array<int>(size, 0, size);
 
     std::vector<int> map(size);
