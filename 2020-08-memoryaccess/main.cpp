@@ -9,6 +9,7 @@
 enum tree_type_e {
     BFS_TREE,
     DFS_TREE,
+    VBE_TREE,
     STD_SET
 };
 
@@ -41,6 +42,8 @@ bool parse_args(int argc, const char* argv[], tree_type_e& out_tree_type, alloca
             out_tree_type = tree_type_e::BFS_TREE;
         } else if (tree_type == "dfs") {
             out_tree_type = tree_type_e::DFS_TREE;
+        } else if (tree_type == "vbe") {
+            out_tree_type = tree_type_e::VBE_TREE;
         } else if (tree_type == "stdset") {
             out_tree_type = tree_type_e::STD_SET;
         } else {
@@ -98,6 +101,17 @@ void measure_stdset(int arr_len) {
     }
 }
 
+template <typename allocator>
+binary_search_tree<int, allocator> create_binary_tree(tree_type_e tree_type, int* array, int arr_len) {
+    if (tree_type == tree_type_e::BFS_TREE) {
+        return binary_search_tree<int, allocator>::create_from_sorted_array_bfs(array, arr_len);
+    } else if (tree_type == tree_type_e::DFS_TREE) {
+        return binary_search_tree<int, allocator>::create_from_sorted_array_dfs_preorder(array, arr_len);
+    } else {
+        return binary_search_tree<int, allocator>::create_from_sorted_array_van_emde_boas_layout(array, arr_len); 
+    }
+}
+
 template
 <typename allocator>
 void measure_custom(int arr_len, tree_type_e tree_type) {
@@ -105,17 +119,17 @@ void measure_custom(int arr_len, tree_type_e tree_type) {
     std::vector<int> random_data_sorted(random_data_vector);
     std::sort(random_data_sorted.begin(), random_data_sorted.end());
 
-    binary_search_tree<int, allocator> bst = (tree_type == tree_type_e::BFS_TREE) ? 
-        binary_search_tree<int, allocator>::create_from_sorted_array_bfs(&random_data_sorted[0], arr_len) :
-        binary_search_tree<int, allocator>::create_from_sorted_array_dfs_preorder(&random_data_sorted[0], arr_len);
+    auto it = unique(random_data_sorted.begin(), random_data_sorted.end()); 
+    random_data_sorted.resize(std::distance(random_data_sorted.begin(), it));
 
-        //bst.dump_tree();
+    binary_search_tree<int, allocator> bst = create_binary_tree<allocator>(tree_type, &random_data_sorted[0], random_data_sorted.size());
+
     {
         measure_time m  ("Custom tree");
         {
             int count_found = 0;
             for (int i = 0; i < arr_len; i++) {
-                if (bst.find(random_data_vector[i])) {
+                if (bst.find(random_data_vector[i]))     {
                     count_found++;
                 }
             }
@@ -141,7 +155,7 @@ int main(int argc, const char* argv[]) {
 
     zone_allocator_config<void>::set_use_large_pages(large_pages);
 
-    if (tree_type == tree_type_e::BFS_TREE || tree_type == tree_type_e::DFS_TREE) {
+    if (tree_type == tree_type_e::BFS_TREE || tree_type == tree_type_e::DFS_TREE || tree_type == tree_type_e::VBE_TREE) {
         if (allocator_type == allocator_type_e::BUILTIN) {
             measure_custom<std::allocator<int>>(arr_len,tree_type);
         } else if (allocator_type == allocator_type_e::CUSTOM_OPTIMAL) {

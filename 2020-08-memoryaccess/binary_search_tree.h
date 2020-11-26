@@ -63,6 +63,14 @@ public:
         result.m_head = create_dfs_inorder(result, array, 0, len - 1);
         return result;
     }
+
+    static binary_search_tree create_from_sorted_array_van_emde_boas_layout(T* array, int len) {
+        binary_search_tree result(nullptr);
+
+        result.m_head = create_van_emde_boas_layout(result, array, 0, len - 1);
+        return result;
+    }
+
     bool find(const T& value) {
         bs_chunk* current = m_head;
 
@@ -108,7 +116,16 @@ public:
         }
 
         for(bs_chunk* c: bfs_order) {
-            std::cout << "Value = " << c->m_value << ", address = " << c << ", left = " << c->m_left << ", right = " << c->m_right << std::endl;
+            std::cout << "Value = " << c->m_value;
+            if (c->m_left) {
+                std::cout << ", left = " << c->m_left->m_value;
+            }
+
+            if (c->m_right) {
+                std::cout << ", right = " << c->m_right->m_value;
+            }
+
+            std::cout << std::endl;
         }
     }
 
@@ -140,6 +157,62 @@ private:
 
         b->m_left = create_dfs_preorder(bt, array, left, middle - 1);
         b->m_right = create_dfs_preorder(bt, array, middle + 1, right);
+
+        return b;
+    }
+
+    static bs_chunk* create_van_emde_boas_layout(binary_search_tree& bt, T* array, int left, int right) {
+        if (left > right) {
+            return nullptr;
+        }
+
+        int middle = (left + right) / 2;
+        int left_middle = (left + middle) / 2;
+        int right_middle = (right + middle) / 2;
+        bool left_exists = false;
+        bool right_exists = false;
+        bs_chunk* bl;
+        bs_chunk* br;
+
+        //std::cout << "left = " << array[left] << ", left_middle = " << array[left_middle];
+        //std::cout << ", middle = " << array[middle];
+        //std::cout  << ", right_middle = " << array[right_middle] << ", right = " << array[right] << std::endl;
+
+        bs_chunk* b = bt.m_allocator.allocate(1);
+        ::new (b) bs_chunk(array[middle]);
+
+
+        if (left_middle < middle) {
+            bl = bt.m_allocator.allocate(1);
+            ::new (bl) bs_chunk(array[left_middle]);
+            b->m_left = bl;
+            left_exists = true;
+        } else {
+            b->m_left = nullptr;
+        }
+
+        if (middle < right_middle) {
+            br = bt.m_allocator.allocate(1);
+            ::new (br) bs_chunk(array[right_middle]);
+            b->m_right = br;
+            right_exists = true;
+        } else {
+            b->m_right = nullptr;
+        }
+
+        if (left_exists) {
+            bl->m_left = create_van_emde_boas_layout(bt, array, left, left_middle - 1);
+            bl->m_right = create_van_emde_boas_layout(bt, array, left_middle + 1, middle - 1);
+        } else {
+            b->m_left = create_van_emde_boas_layout(bt, array, left, middle - 1);
+        }
+
+        if (right_exists) {
+            br->m_left = create_van_emde_boas_layout(bt, array, middle + 1, right_middle - 1);
+            br->m_right = create_van_emde_boas_layout(bt, array, right_middle + 1, right);
+        } else {
+            b->m_right = create_van_emde_boas_layout(bt, array, middle + 1, right);
+        }
 
         return b;
     }
