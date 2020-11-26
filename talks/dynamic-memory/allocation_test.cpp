@@ -9,7 +9,6 @@
 std::string gen_random(const int max_len) {
     int len = rand() % max_len;
     std::string tmp_s;
-    tmp_s.reserve(len);
     static const char alphanum[] =
         "0123456789"
         "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
