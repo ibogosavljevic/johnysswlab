@@ -4,6 +4,8 @@
 #include <sstream>
 #include <string>
 #include <vector>
+#include <parallel/algorithm>
+#include <execution>
 
 std::vector<std::string> load_file(std::string file_name) {
     std::vector<std::string> result;
@@ -19,7 +21,11 @@ std::vector<std::string> load_file(std::string file_name) {
 }
 
 void sort_lines(std::vector<std::string>& lines) {
-    std::sort(lines.begin(), lines.end());
+#if __cplusplus >= 201703L
+    std::sort(std::execution::par_unseq, lines.begin(), lines.end());
+#else
+    __gnu_parallel::sort(lines.begin(), lines.end());
+#endif
 }
 
 void remove_duplicates_and_save(std::vector<std::string>& lines,

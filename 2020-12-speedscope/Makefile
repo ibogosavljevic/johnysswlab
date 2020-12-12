@@ -2,9 +2,9 @@
 CC=g++
 OPT?=3
 DEPS= 
-LDFLAGS+=-lpapi -lstdc++ -lm
+LDFLAGS+=-lpapi -lstdc++ -lm -ltbb -fopenmp
 FUNC_OPT?=0
-CFLAGS+=-I. -I.. -std=c++11 -O$(OPT) -pthread -g -Werror $(RPATH) -DFUNC_OPT=$(FUNC_OPT) -DHAS_PAPI
+CFLAGS+=-I. -I.. -std=c++11 -O$(OPT) -pthread -g -Werror $(RPATH) -DFUNC_OPT=$(FUNC_OPT) -DHAS_PAPI -fopenmp
 
 
 %.o: %.cpp $(DEPS)
