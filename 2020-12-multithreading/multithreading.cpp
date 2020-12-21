@@ -173,19 +173,21 @@ int main(int argc, char* argv[]) {
         threads.reserve(num_threads);
         std::vector<accum> result_arr(num_threads);
 
-        auto f = [&](int index, int start, int stop) {
-            result_arr[index].val = 0;
+        auto f = [&](volatile int* acc, int start, int stop) {
+            *acc = 0;
             for (int i = start; i < stop; i++) {
-                result_arr[index].val += v[i] / rand_num;
+                *acc += v[i] / rand_num;
             }
         };
 
         for (int i = 0; i < num_threads; i++) {
             if (i != num_threads - 1) {
-                threads.emplace_back(f, i, i * count_per_threads,
+                threads.emplace_back(f, &(result_arr[i].val),
+                                     i * count_per_threads,
                                      (i + 1) * count_per_threads);
             } else {
-                threads.emplace_back(f, i, i * count_per_threads, v.size());
+                threads.emplace_back(f, &(result_arr[i].val),
+                                     i * count_per_threads, v.size());
             }
         }
 
@@ -201,21 +203,22 @@ int main(int argc, char* argv[]) {
         measure_time m("Reduction on array, with false sharing");
         std::vector<std::thread> threads;
         threads.reserve(num_threads);
-        std::array<int, 64> result_arr;
+        std::vector<int> result_arr(num_threads);
 
-        auto f = [&](int index, int start, int stop) {
-            result_arr[index] = 0;
+        auto f = [&](volatile int* acc, int start, int stop) {
+            *acc = 0;
             for (int i = start; i < stop; i++) {
-                result_arr[index] += v[i] / rand_num;
+                *acc += v[i] / rand_num;
             }
         };
 
         for (int i = 0; i < num_threads; i++) {
             if (i != num_threads - 1) {
-                threads.emplace_back(f, i, i * count_per_threads,
+                threads.emplace_back(f, &result_arr[i], i * count_per_threads,
                                      (i + 1) * count_per_threads);
             } else {
-                threads.emplace_back(f, i, i * count_per_threads, v.size());
+                threads.emplace_back(f, &result_arr[i], i * count_per_threads,
+                                     v.size());
             }
         }
 
