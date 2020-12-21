@@ -2,6 +2,7 @@
 #include <mutex>
 #include <thread>
 #include "measure_time.h"
+#include "spinlock.h"
 #include "utils.h"
 
 static constexpr int MB = 1024 * 1024;
@@ -88,6 +89,38 @@ int main(int argc, char* argv[]) {
                 mutex.lock();
                 res += tmp;
                 mutex.unlock();
+            }
+        };
+
+        for (int i = 0; i < num_threads; i++) {
+            if (i != num_threads - 1) {
+                threads.emplace_back(f, i * count_per_threads,
+                                     (i + 1) * count_per_threads);
+            } else {
+                threads.emplace_back(f, i * count_per_threads, v.size());
+            }
+        }
+
+        for (int i = 0; i < num_threads; i++) {
+            threads[i].join();
+        }
+        std::cout << "Result = " << res << std::endl;
+    }
+
+    {
+        measure_time m("Spinlock");
+        int res;
+        res = 0;
+        std::vector<std::thread> threads;
+        threads.reserve(num_threads);
+        spinlock s;
+
+        auto f = [&](int start, int stop) {
+            for (int i = start; i < stop; i++) {
+                int tmp = v[i] / rand_num;
+                s.lock();
+                res += tmp;
+                s.unlock();
             }
         };
 
