@@ -21,7 +21,7 @@ int main(int argc, char* argv[]) {
 
     {
         measure_time m("Serial version");
-        int res = 0;
+        volatile int res = 0;
         for (int i = 0; i < v.size(); i++) {
             res += v[i] / rand_num;
         }
@@ -30,11 +30,23 @@ int main(int argc, char* argv[]) {
 
     {
         measure_time m("Serial version, with mutexes");
-        int res = 0;
+        volatile int res = 0;
         for (int i = 0; i < v.size(); i++) {
             mutex.lock();
             res += v[i] / rand_num;
             mutex.unlock();
+        }
+        std::cout << "Result = " << res << std::endl;
+    }
+
+    {
+        measure_time m("Serial version, with spinlocks");
+        volatile int res = 0;
+        spinlock s;
+        for (int i = 0; i < v.size(); i++) {
+            s.lock();
+            res += v[i] / rand_num;
+            s.unlock();
         }
         std::cout << "Result = " << res << std::endl;
     }
