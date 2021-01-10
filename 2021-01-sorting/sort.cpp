@@ -3,6 +3,7 @@
 #include <iostream>
 #include <utility>
 #include <vector>
+#include <list>
 #include "measure_time.h"
 #include "utils.h"
 
@@ -179,6 +180,36 @@ int main(int argc, char** argv) {
     std::vector<int> array = create_random_array<int>(ARR_LEN, 0, ARR_LEN - 1);
     std::vector<int> copy(array);
     std::vector<int> result(array);
+    std::list<int> array_list(array.begin(), array.end());
+
+    {
+        measure_time m("summing array");
+        int sum = 0;
+        for (int v: array) {
+            sum += v;
+        }
+        std::cout << "Array sum = " << sum << std::endl;
+    }
+
+    {
+        measure_time m("summing list");
+        int sum = 0;
+        for (int v: array_list) {
+            sum += v;
+        }
+        std::cout << "List sum = " << sum << std::endl;
+    }
+
+    array_list.sort();
+
+    {
+        measure_time m("summing shuffled list");
+        int sum = 0;
+        for (int v: array_list) {
+            sum += v;
+        }
+        std::cout << "Shuffled list sum = " << sum << std::endl;
+    }
 
     {
         measure_time m("insertion_sort");
