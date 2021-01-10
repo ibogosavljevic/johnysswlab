@@ -128,14 +128,15 @@ void insertion_sort(T a[]) {
 // Taken from:
 // https://github.com/JMarianczuk/SmallSorters/blob/a119c50d8e69e477f5af3d27d2a412b013a9680e/conditional_swap/ConditionalSwapX86.h
 static inline void swap_if_greater(int& left, int& right) {
-    /*    int tmp = left;
+        int tmp = left;
         __asm__(
             "cmp %[left],%[right]\n\t"
             "cmovb %[right],%[left]\n\t"
             "cmovb %[tmp],%[right]\n\t"
             : [ left ] "=&r"(left), [ right ] "=&r"(right)
             : "0"(left), "1"(right), [ tmp ] "r"(tmp)
-            : "cc");*/
+            : "cc");
+    return;
     if (left > right) {
         std::swap(left, right);
     }
