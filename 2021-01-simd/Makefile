@@ -2,7 +2,7 @@
 CC=g++
 OPT?=3
 DEPS= 
-LDFLAGS+=-lpapi -lstdc++ -lm -ltbb -fopenmp
+LDFLAGS+=-lstdc++ -lm -fopenmp
 CFLAGS+=-I. -I.. -std=c++11 -O$(OPT) -pthread -g -Werror $(RPATH) -fopenmp -ffast-math -march=native
 
 
