@@ -1,5 +1,5 @@
 
-CC=g++
+CC=clang
 OPT?=3
 DEPS= 
 LDFLAGS+=-lstdc++ -lm -fopenmp
