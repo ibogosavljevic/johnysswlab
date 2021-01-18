@@ -3,7 +3,7 @@ CC=clang
 OPT?=3
 DEPS= 
 LDFLAGS+=-lstdc++ -lm -fopenmp
-CFLAGS+=-I. -I.. -std=c++11 -O$(OPT) -pthread -g -Werror $(RPATH) -fopenmp -ffast-math -march=native
+CFLAGS+=-I. -I.. -std=c++11 -O$(OPT) -pthread -g -Werror $(RPATH) -fopenmp -ffast-math
 
 
 %.o: %.cpp $(DEPS)

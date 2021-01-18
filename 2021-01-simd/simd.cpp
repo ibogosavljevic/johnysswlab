@@ -27,6 +27,7 @@ class students {
     double calculate_average() {
         double val = 0.0;
         int size = average_marks.size();
+        #pragma clang loop vectorize(enable)
         for (int i = 0; i < size; i++) {
             val += average_marks[i];
         }
