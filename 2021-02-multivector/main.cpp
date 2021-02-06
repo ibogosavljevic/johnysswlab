@@ -10,6 +10,40 @@ enum sort_type_t {
     TAKING_TURNS,
 };
 
+using namespace argparse;
+
+bool parse_args(int argc, const char* argv[], size_t& out_size) {
+    ArgumentParser parser("test123", "123");
+
+    parser.add_argument("-s", "--size", "Size of the input arrays (s, m, l)",
+                        true);
+
+    auto err = parser.parse(argc, argv);
+    if (err) {
+        std::cout << err << std::endl;
+        return false;
+    }
+
+    if (parser.exists("s")) {
+        std::string size = parser.get<std::string>("s");
+        if (size == "s") {
+            out_size = 1024;
+        } else if (size == "m") {
+            out_size = 512 * 1024;
+        } else if (size == "l") {
+            out_size = 20 * 1024 * 1024;
+        } else {
+            std::cout << "Unknown value for --size\n";
+            return false;
+        }
+        std::cout << "Array size : " << out_size << std::endl;
+    } else {
+        return false;
+    }
+
+    return true;
+}
+
 point get_random_point(int width, int height) {
     return point(std::rand() % width, std::rand() % height);
 }
@@ -107,31 +141,40 @@ void measure_cache_performance(int arr_len, Functor fn) {
     std::vector<object*> ov(arr_len);
 
     fill_container(pv, arr_len, RANDOM, 640, 480);
+    int repeat_count = 20 * 1024 * 1024 / arr_len;
 
     for (int i = 0; i < arr_len; i++) {
         ov[i] = pv.get(i);
     }
 
-    int tmp = 0;
+    int tmp;
     {
         measure_time m("Completely sorted");
 
-        for (int i = 0; i < arr_len; i++) {
-            tmp += fn(ov[i]);
+        for (int s = 0; s < repeat_count; s++) {
+            tmp = 0;
+            for (int i = 0; i < arr_len; i++) {
+                tmp += fn(ov[i]);
+            }
         }
     }
 
-    int total_swaps = 256;
+    int goal_swaps = 256;
+    int current_swaps = 0;
     char tmp_str[64];
     do {
-        std::sprintf(tmp_str, "%d swaps", total_swaps);
-        perform_swap(ov, total_swaps);
+        perform_swap(ov, goal_swaps - current_swaps);
+        current_swaps = goal_swaps;
+        std::sprintf(tmp_str, "%d swaps", current_swaps);
 
         {
             measure_time m(tmp_str);
-            int tmp_2 = 0;
-            for (int i = 0; i < ov.size(); i++) {
-                tmp_2 += fn(ov[i]);
+            int tmp_2;
+            for (int s = 0; s < repeat_count; s++) {
+                tmp_2 = 0;
+                for (int i = 0; i < ov.size(); i++) {
+                    tmp_2 += fn(ov[i]);
+                }
             }
 
             if (tmp != tmp_2) {
@@ -139,23 +182,27 @@ void measure_cache_performance(int arr_len, Functor fn) {
             }
         }
 
-        total_swaps += total_swaps;
-    } while ((total_swaps / 20) < arr_len);
+        goal_swaps += goal_swaps;
+    } while ((goal_swaps / 20) < arr_len);
 }
 
-static constexpr int ARR_LEN = 20 * 1024 * 1024;
+int main(int argc, const char** argv) {
+    size_t out_size;
 
-int main(int argc, char* argv[]) {
+    if (!parse_args(argc, argv, out_size)) {
+        std::cout << "Bad arguments" << std::endl;
+        return -1;
+    }
+
+    measure_cache_performance(out_size, [](object* o) { return o->get_id2(); });
+
+    return 0;
     // polymorphic_vector<object, circle, line, rectangle, monster> mv;
     jsl::multivector<circle, line, rectangle, monster> mv;
 
     bitmap b(640, 480);
 
-    measure_cache_performance(ARR_LEN, [](object* o) { return o->get_id2(); });
-
-    return 0;
-
-    fill_container(mv, ARR_LEN, TAKING_TURNS, 640, 480);
+    fill_container(mv, out_size, TAKING_TURNS, 640, 480);
     {
         measure_time m("test");
         int tmp = 0;
