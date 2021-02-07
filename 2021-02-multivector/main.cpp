@@ -186,6 +186,24 @@ void measure_cache_performance(int arr_len, Functor fn) {
     } while ((goal_swaps / 20) < arr_len);
 }
 
+void measure_inlining_performance(int arr_len) {
+    polymorphic_vector<object, circle, line, rectangle, monster> pv;
+    fill_container(pv, arr_len, RANDOM, 640, 480);
+
+    int count = 0;
+    {
+        measure_time m("Inlining performance");
+        for (int i = 0; i < arr_len; i++) {
+            object* o = pv.get(i);
+            if (o->is_visible()) {
+                count += o->get_id2();
+            }
+        }
+
+        std::cout << "Count is " << count << std::endl;
+    }
+}
+
 int main(int argc, const char** argv) {
     size_t out_size;
 
@@ -194,7 +212,9 @@ int main(int argc, const char** argv) {
         return -1;
     }
 
-    measure_cache_performance(out_size, [](object* o) { return o->get_id2(); });
+    // measure_cache_performance(out_size, [](object* o) { return o->get_id2();
+    // });
+    measure_inlining_performance(out_size);
 
     return 0;
     // polymorphic_vector<object, circle, line, rectangle, monster> mv;
