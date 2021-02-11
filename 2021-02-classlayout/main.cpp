@@ -92,13 +92,17 @@ void measure(int size, what_to_measure_e what_to_measure) {
     out.append("\n");
     std::cout << out;
     if (what_to_measure == SURFACE_ALL) {
-        measure_time m("Surface all " + out);
-        int surface_all = calculate_surface_all(rectangles);
-        std::cout << "Surface all is " << surface_all << std::endl;
+        for (int i = 0; i < 5; i++) {
+            measure_time m("Surface all " + out);
+            int surface_all = calculate_surface_all(rectangles);
+            std::cout << "Surface all is " << surface_all << std::endl;
+        }
     } else {
-        measure_time m("Surface visible " + out);
-        int surface_visible = calculate_surface_visible(rectangles);
-        std::cout << "Surface visible is " << surface_visible << std::endl;
+        for (int i = 0; i < 5; i++) {
+            measure_time m("Surface visible " + out);
+            int surface_visible = calculate_surface_visible(rectangles);
+            std::cout << "Surface visible is " << surface_visible << std::endl;
+        }
     }
 }
 
@@ -203,6 +207,9 @@ void measure_class_size(what_to_measure_e w) {
     measure<rectangle<0, 76>>(size, w);
     measure<rectangle<0, 108>>(size, w);
     measure<rectangle<0, 140>>(size, w);
+
+    measure_time_database<std::chrono::milliseconds>::get_instance()
+        ->dump_database();
 }
 
 int main(int argc, char** argv) {
