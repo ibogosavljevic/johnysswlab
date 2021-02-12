@@ -92,13 +92,13 @@ void measure(int size, what_to_measure_e what_to_measure) {
     out.append("\n");
     std::cout << out;
     if (what_to_measure == SURFACE_ALL) {
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < 30; i++) {
             measure_time m("Surface all " + out);
             int surface_all = calculate_surface_all(rectangles);
             std::cout << "Surface all is " << surface_all << std::endl;
         }
     } else {
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < 30; i++) {
             measure_time m("Surface visible " + out);
             int surface_visible = calculate_surface_visible(rectangles);
             std::cout << "Surface visible is " << surface_visible << std::endl;
@@ -108,7 +108,29 @@ void measure(int size, what_to_measure_e what_to_measure) {
 
 static constexpr int size = 20 * 1024 * 1024;
 
+// With class size 512, we can observe conflict misses
+// for some padding value (on CLANG it was paddng 32)
+void measure_cache_conflict_misses(what_to_measure_e w) {
+    measure_time_database<std::chrono::milliseconds>::get_instance()
+        ->clear_database();
+
+    measure<rectangle<0, 140>>(size, w);
+    measure<rectangle<4, 140>>(size, w);
+    measure<rectangle<8, 140>>(size, w);
+    measure<rectangle<16, 140>>(size, w);
+    measure<rectangle<32, 140>>(size, w);
+    measure<rectangle<48, 140>>(size, w);
+    measure<rectangle<64, 140>>(size, w);
+    measure<rectangle<96, 140>>(size, w);
+
+    measure_time_database<std::chrono::milliseconds>::get_instance()
+        ->dump_database();
+}
+
 void measure_class_padding(what_to_measure_e w) {
+    measure_time_database<std::chrono::milliseconds>::get_instance()
+        ->clear_database();
+
     measure<rectangle<0, 17>>(size, w);
 
     measure<rectangle<0, 18>>(size, w);
@@ -134,85 +156,104 @@ void measure_class_padding(what_to_measure_e w) {
     measure<rectangle<4, 24>>(size, w);
     measure<rectangle<6, 24>>(size, w);
 
-    measure<rectangle<0, 28>>(size, w);
-    measure<rectangle<1, 28>>(size, w);
-    measure<rectangle<2, 28>>(size, w);
-    measure<rectangle<4, 28>>(size, w);
-    measure<rectangle<8, 28>>(size, w);
+    measure<rectangle<0, 26>>(size, w);
+    measure<rectangle<1, 26>>(size, w);
+    measure<rectangle<2, 26>>(size, w);
+    measure<rectangle<4, 26>>(size, w);
+    measure<rectangle<8, 26>>(size, w);
 
-    measure<rectangle<0, 36>>(size, w);
-    measure<rectangle<2, 36>>(size, w);
-    measure<rectangle<4, 36>>(size, w);
-    measure<rectangle<8, 36>>(size, w);
-    measure<rectangle<12, 36>>(size, w);
-    measure<rectangle<16, 36>>(size, w);
+    measure<rectangle<0, 34>>(size, w);
+    measure<rectangle<2, 34>>(size, w);
+    measure<rectangle<4, 34>>(size, w);
+    measure<rectangle<8, 34>>(size, w);
+    measure<rectangle<12, 34>>(size, w);
+    measure<rectangle<16, 34>>(size, w);
 
-    measure<rectangle<0, 44>>(size, w);
-    measure<rectangle<2, 44>>(size, w);
-    measure<rectangle<4, 44>>(size, w);
-    measure<rectangle<8, 44>>(size, w);
-    measure<rectangle<16, 44>>(size, w);
-    measure<rectangle<24, 44>>(size, w);
+    measure<rectangle<0, 42>>(size, w);
+    measure<rectangle<2, 42>>(size, w);
+    measure<rectangle<4, 42>>(size, w);
+    measure<rectangle<8, 42>>(size, w);
+    measure<rectangle<16, 42>>(size, w);
+    measure<rectangle<24, 42>>(size, w);
 
-    measure<rectangle<0, 60>>(size, w);
-    measure<rectangle<2, 60>>(size, w);
-    measure<rectangle<4, 60>>(size, w);
-    measure<rectangle<8, 60>>(size, w);
-    measure<rectangle<16, 60>>(size, w);
-    measure<rectangle<24, 60>>(size, w);
-    measure<rectangle<32, 60>>(size, w);
+    measure<rectangle<0, 58>>(size, w);
+    measure<rectangle<2, 58>>(size, w);
+    measure<rectangle<4, 58>>(size, w);
+    measure<rectangle<8, 58>>(size, w);
+    measure<rectangle<16, 58>>(size, w);
+    measure<rectangle<24, 58>>(size, w);
+    measure<rectangle<32, 58>>(size, w);
 
-    measure<rectangle<0, 76>>(size, w);
-    measure<rectangle<4, 76>>(size, w);
-    measure<rectangle<8, 76>>(size, w);
-    measure<rectangle<16, 76>>(size, w);
-    measure<rectangle<24, 76>>(size, w);
-    measure<rectangle<32, 76>>(size, w);
-    measure<rectangle<48, 76>>(size, w);
+    measure<rectangle<0, 74>>(size, w);
+    measure<rectangle<4, 74>>(size, w);
+    measure<rectangle<8, 74>>(size, w);
+    measure<rectangle<16, 74>>(size, w);
+    measure<rectangle<24, 74>>(size, w);
+    measure<rectangle<32, 74>>(size, w);
+    measure<rectangle<48, 74>>(size, w);
 
-    measure<rectangle<0, 108>>(size, w);
-    measure<rectangle<4, 108>>(size, w);
-    measure<rectangle<8, 108>>(size, w);
-    measure<rectangle<16, 108>>(size, w);
-    measure<rectangle<32, 108>>(size, w);
-    measure<rectangle<48, 108>>(size, w);
-    measure<rectangle<64, 108>>(size, w);
+    measure<rectangle<0, 106>>(size, w);
+    measure<rectangle<4, 106>>(size, w);
+    measure<rectangle<8, 106>>(size, w);
+    measure<rectangle<16, 106>>(size, w);
+    measure<rectangle<32, 106>>(size, w);
+    measure<rectangle<48, 106>>(size, w);
+    measure<rectangle<64, 106>>(size, w);
 
-    measure<rectangle<0, 140>>(size, w);
-    measure<rectangle<4, 140>>(size, w);
-    measure<rectangle<8, 140>>(size, w);
-    measure<rectangle<16, 140>>(size, w);
-    measure<rectangle<32, 140>>(size, w);
-    measure<rectangle<48, 140>>(size, w);
-    measure<rectangle<64, 140>>(size, w);
-    measure<rectangle<96, 140>>(size, w);
+    measure<rectangle<0, 138>>(size, w);
+    measure<rectangle<4, 138>>(size, w);
+    measure<rectangle<8, 138>>(size, w);
+    measure<rectangle<16, 138>>(size, w);
+    measure<rectangle<32, 138>>(size, w);
+    measure<rectangle<48, 138>>(size, w);
+    measure<rectangle<64, 138>>(size, w);
+    measure<rectangle<96, 138>>(size, w);
+
+    measure_time_database<std::chrono::milliseconds>::get_instance()
+        ->dump_database();
 }
 
 void measure_class_size(what_to_measure_e w) {
-    measure<rectangle<0, 17>>(size, w);
+    measure_time_database<std::chrono::milliseconds>::get_instance()
+        ->clear_database();
 
-    measure<rectangle<0, 18>>(size, w);
+    measure<rectangle<0, 17>>(size, w);  // 20
 
-    measure<rectangle<0, 19>>(size, w);
+    measure<rectangle<0, 18>>(size, w);  // 24
 
-    measure<rectangle<0, 20>>(size, w);
-    measure<rectangle<0, 22>>(size, w);
-    measure<rectangle<0, 24>>(size, w);
+    measure<rectangle<0, 19>>(size, w);  // 28
 
-    measure<rectangle<0, 28>>(size, w);
-    measure<rectangle<0, 36>>(size, w);
-    measure<rectangle<0, 44>>(size, w);
-    measure<rectangle<0, 60>>(size, w);
+    measure<rectangle<0, 20>>(size, w);  // 32
+    measure<rectangle<0, 22>>(size, w);  // 40
+    measure<rectangle<0, 24>>(size, w);  // 48
 
-    measure<rectangle<0, 76>>(size, w);
-    measure<rectangle<0, 108>>(size, w);
-    measure<rectangle<0, 140>>(size, w);
+    measure<rectangle<0, 26>>(size, w);  // 56
+    // measure<rectangle<0, 28>>(size, w); // 64
+    measure<rectangle<0, 34>>(size, w);  // 88
+    // measure<rectangle<0, 36>>(size, w); // 96
+    measure<rectangle<0, 42>>(size, w);  // 120
+    // measure<rectangle<0, 44>>(size, w); // 128
+
+    measure<rectangle<0, 58>>(size, w);  // 184
+    // measure<rectangle<0, 60>>(size, w); // 192
+
+    measure<rectangle<0, 74>>(size, w);  // 248
+    // measure<rectangle<0, 76>>(size, w); // 256
+    measure<rectangle<0, 106>>(size, w);  // 376
+    // measure<rectangle<0, 108>>(size, w); // 384
+    measure<rectangle<0, 138>>(size, w);  // 504
+    // measure<rectangle<0, 140>>(size, w); // 512
 
     measure_time_database<std::chrono::milliseconds>::get_instance()
         ->dump_database();
 }
 
 int main(int argc, char** argv) {
+    measure_class_size(SURFACE_ALL);
     measure_class_size(SURFACE_VISIBLE);
-    // measure_class_padding(SURFACE_VISIBLE);
+
+    measure_class_padding(SURFACE_VISIBLE);
+    measure_class_padding(SURFACE_ALL);
+
+    measure_cache_conflict_misses(SURFACE_VISIBLE);
 }
