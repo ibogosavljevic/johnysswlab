@@ -1,6 +1,12 @@
 #include <cmath>
 
-#define NOINLINE /*__attribute__((noinline))*/
+//#define NOINLINE
+
+#ifdef NOINLINE
+#define ATTRNOINLINE __attribute__((noinline))
+#else
+#define ATTRNOINLINE
+#endif
 
 class bitmap {
    private:
@@ -39,8 +45,10 @@ class object {
 
     virtual unsigned int get_id() = 0;
 
+    ATTRNOINLINE
     unsigned int get_id2() { return m_id; }
 
+    ATTRNOINLINE
     bool is_visible() { return m_is_visible; }
 
     void show() { m_is_visible = true; }
@@ -91,7 +99,6 @@ class circle : virtual public object {
     circle(point center, int diameter)
         : object(1), m_center(center), m_diameter(diameter) {}
 
-    NOINLINE
     unsigned int draw(bitmap& b) override {
         /*        (x - h)2 + (y - k)2 = r2
                 (y - k)2 = r2 - (x - h2)
@@ -110,7 +117,6 @@ class circle : virtual public object {
         return 4 * m_diameter - 2;
     }
 
-    NOINLINE
     unsigned int get_id() override { return m_id; }
 
     std::string to_string() override {
@@ -150,7 +156,6 @@ class rectangle : virtual public object {
         }
     }
 
-    NOINLINE
     unsigned int draw(bitmap& b) override {
         for (int i = m_top_left.x; i < m_bottom_right.x; i++) {
             b.set_pixel(i, m_top_left.y, 255);
@@ -166,7 +171,6 @@ class rectangle : virtual public object {
                2 * (m_bottom_right.x - m_top_left.y);
     }
 
-    NOINLINE
     unsigned int get_id() override { return m_id; }
 
     std::string to_string() override {
@@ -191,7 +195,6 @@ class line : virtual public object {
    public:
     line(point pp1, point pp2) : object(3), p1(pp1), p2(pp2) {}
 
-    NOINLINE
     unsigned int draw(bitmap& b) override {
         if (p1.x == p2.x) {
             int y1 = p1.y;
@@ -230,7 +233,6 @@ class line : virtual public object {
         }
     }
 
-    NOINLINE
     unsigned int get_id() override { return m_id; }
 
     std::string to_string() override {
@@ -248,10 +250,8 @@ class monster : public line, public circle {
           line(point(0, 0), point(10, 8)),
           circle(point(20, 20), 0) {}
 
-    NOINLINE
     unsigned int draw(bitmap& b) override { return 0; }
 
-    NOINLINE
     unsigned int get_id() override { return m_id; }
 
     std::string to_string() override { return std::string("monster"); }
