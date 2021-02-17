@@ -1,12 +1,103 @@
 #include <cmath>
 
-//#define NOINLINE
+#define NOINLINE
 
 #ifdef NOINLINE
 #define ATTRNOINLINE __attribute__((noinline))
 #else
 #define ATTRNOINLINE
 #endif
+
+#define UNROLL_COUNT 20
+
+#define VARIABLES       \
+    V(0, -a)            \
+    V(1, a* a* a)       \
+    V(2, a / 3)         \
+    V(3, a / 5)         \
+    V(4, -a / (a - 1))  \
+    V(5, a + 5)         \
+    V(6, a - 1)         \
+    V(7, a* a)          \
+    V(8, a / 12)        \
+    V(9, a / (a - 1))   \
+    V(10, a + 27)       \
+    V(11, a - (a / 2))  \
+    V(12, a* a - a)     \
+    V(13, a / 7)        \
+    V(14, a / (a - 3))  \
+    V(15, a + 2)        \
+    V(16, -a - 1)       \
+    V(17, a& a)         \
+    V(18, a & 12)       \
+    V(19, a | (a - 1))  \
+    V(20, a & 27)       \
+    V(21, a + (a / 2))  \
+    V(22, -a ^ a - a)   \
+    V(23, a / -1)       \
+    V(24, a / (-a - 3)) \
+    V(25, a + 5)        \
+    V(26, a - 1)        \
+    V(27, a* a)         \
+    V(28, a / 12)       \
+    V(29, a / (a - 1))
+
+//    V(30, a + 27) \
+//    V(31, a - (a / 2)) \
+//    V(32, a * a - a) \
+//    V(33, a / 7) \
+//    V(34, a / (a - 3)) \
+//    V(35, a + 2) \
+//    V(36, -a - 1) \
+//    V(37, a & a) \
+//    V(38, a & 12) \
+//    V(39, a | (a - 1)) \
+//    V(40, a & 27) \
+//    V(41, a + (a / 2)) \
+//    V(42, -a ^ a - a) \
+//    V(43, a / -1) \
+//    V(44, a / (-a - 3)) \
+//    V(45, a + 5) \
+//    V(46, a - 1) \
+//    V(47, a * a) \
+//    V(48, a / 12) \
+//    V(49, a / (a - 1)) \
+//    V(50, a + 27) \
+//    V(51, a - (a / 2)) \
+//    V(52, a * a - a) \
+//    V(53, a / 7) \
+//    V(54, a / (a - 3)) \
+//    V(55, a + 2) \
+//    V(56, -a - 1) \
+//    V(57, a & a) \
+//    V(58, a & 12) \
+//    V(59, a | (a - 1)) \
+//    V(60, a & 27) \
+//    V(61, a + (a / 2)) \
+//    V(62, -a ^ a - a) \
+//    V(63, a / -1) \
+//    V(64, a / (-a - 3)) \
+//    V(65, a + 5) \
+//    V(66, a - 1) \
+//    V(67, a * a) \
+//    V(68, a / 12) \
+//    V(69, a / (a - 1)) \
+//    V(70, a + 27) \
+//    V(71, a - (a / 2)) \
+//    V(72, a / a * a) \
+//    V(73, a / 7) \
+//    V(74, a / (a - 3)) \
+//    V(75, a + 2) \
+//    V(76, -a - 1) \
+//    V(77, a & a) \
+//    V(78, a & 12) \
+//    V(79, a | (a - 1)) \
+//    V(80, a & 27) \
+//    V(81, a + (a / 2)) \
+//    V(82, -a ^ a - a) \
+//    V(83, a / -1) \
+//    V(84, a / (-a - 3)) \
+
 
 class bitmap {
    private:
@@ -19,7 +110,7 @@ class bitmap {
         : m_bitmap(m_width * m_height, 0), m_width(width), m_height(height) {}
 
     void set_pixel(int x, int y, unsigned char value) {
-        if (x >= 0 & y >= 0 & x < m_width & y < m_width) {
+        if (x >= 0 & y >= 0 & x < m_width & y < m_height) {
             m_bitmap[y * m_width + x] = value;
         }
     }
@@ -44,6 +135,10 @@ class object {
     virtual std::string to_string() = 0;
 
     virtual unsigned int get_id() = 0;
+
+    virtual int long_virtual_function(std::vector<int>& v,
+                                      int start,
+                                      int count) = 0;
 
     ATTRNOINLINE
     unsigned int get_id2() { return m_id; }
@@ -117,6 +212,7 @@ class circle : virtual public object {
         return 4 * m_diameter - 2;
     }
 
+    ATTRNOINLINE
     unsigned int get_id() override { return m_id; }
 
     std::string to_string() override {
@@ -124,6 +220,26 @@ class circle : virtual public object {
         sprintf(sbuf, "circle(%s, diameter = %d)", m_center.to_string().c_str(),
                 m_diameter);
         return std::string(sbuf);
+    }
+
+    int long_virtual_function(std::vector<int>& v,
+                              int start,
+                              int count) override {
+        int sum = 0;
+        for (int i = start; i < start + count; i++) {
+            int a = v[i];
+
+            if (a == 0) {
+                sum += a;
+            }
+#define V(num, expr)                \
+    else if (a == num) {            \
+        sum += (expr) - (expr) / 2; \
+    }
+            VARIABLES
+#undef V
+        }
+        return sum;
     }
 };
 
@@ -171,6 +287,7 @@ class rectangle : virtual public object {
                2 * (m_bottom_right.x - m_top_left.y);
     }
 
+    ATTRNOINLINE
     unsigned int get_id() override { return m_id; }
 
     std::string to_string() override {
@@ -178,6 +295,26 @@ class rectangle : virtual public object {
         sprintf(sbuf, "rectangle(%s, %s)", m_top_left.to_string().c_str(),
                 m_bottom_right.to_string().c_str());
         return std::string(sbuf);
+    }
+
+    int long_virtual_function(std::vector<int>& v,
+                              int start,
+                              int count) override {
+        int sum = 0;
+        for (int i = start; i < start + count; i++) {
+            int a = v[i];
+
+            if (a == 0) {
+                sum += a;
+            }
+#define V(num, expr)                \
+    else if (a == num) {            \
+        sum += (expr) * (expr) / 2; \
+    }
+            VARIABLES
+#undef V
+        }
+        return sum;
     }
 };
 
@@ -233,6 +370,7 @@ class line : virtual public object {
         }
     }
 
+    ATTRNOINLINE
     unsigned int get_id() override { return m_id; }
 
     std::string to_string() override {
@@ -240,6 +378,26 @@ class line : virtual public object {
         sprintf(sbuf, "line(%s, %s)", p1.to_string().c_str(),
                 p2.to_string().c_str());
         return std::string(sbuf);
+    }
+
+    int long_virtual_function(std::vector<int>& v,
+                              int start,
+                              int count) override {
+        int sum = 0;
+        for (int i = start; i < start + count; i++) {
+            int a = v[i];
+
+            if (a == 0) {
+                sum += a;
+            }
+#define V(num, expr)                        \
+    else if (a == num) {                    \
+        sum += (expr - 1) + (expr - 1) / 2; \
+    }
+            VARIABLES
+#undef V
+        }
+        return sum;
     }
 };
 
@@ -252,7 +410,28 @@ class monster : public line, public circle {
 
     unsigned int draw(bitmap& b) override { return 0; }
 
+    ATTRNOINLINE
     unsigned int get_id() override { return m_id; }
 
     std::string to_string() override { return std::string("monster"); }
+
+    int long_virtual_function(std::vector<int>& v,
+                              int start,
+                              int count) override {
+        int sum = 0;
+        for (int i = start; i < start + count; i++) {
+            int a = v[i];
+
+            if (a == 0) {
+                sum += a;
+            }
+#define V(num, expr)                \
+    else if (a == num) {            \
+        sum += (expr) + (expr) / 2; \
+    }
+            VARIABLES
+#undef V
+        }
+        return sum;
+    }
 };

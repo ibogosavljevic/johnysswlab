@@ -24,9 +24,14 @@ class multivector {
         my_vector.push_back(val);
     }
 
-    template <class Function>
+    template <typename Function>
     void for_all(Function fn) {
         for_all_p<Function, Types...>(fn);
+    }
+
+    template <typename T, typename Function>
+    void for_all(Function fn) {
+        for_all_p<Function, T>(fn);
     }
 
     template <typename T>
@@ -37,18 +42,15 @@ class multivector {
     void reserve(size_t size) {}
 
    private:
-    template <class Function, typename T>
+    template <typename Function, typename T>
     void for_all_p(Function fn) {
-        std::vector<T> my_vector = get_vector<T>();
-        /*for (auto it = my_vector.begin(); it != my_vector.end(); ++it) {
+        std::vector<T>& my_vector = get_vector<T>();
+        for (auto it = my_vector.begin(); it != my_vector.end(); ++it) {
             fn(*it);
-        }*/
-        for (int i = 0; i < my_vector.size(); ++i) {
-            fn(my_vector[i]);
         }
     }
 
-    template <class Function, typename T, typename Arg, typename... Args>
+    template <typename Function, typename T, typename Arg, typename... Args>
     void for_all_p(Function fn) {
         for_all_p<Function, T>(fn);
         for_all_p<Function, Arg, Args...>(fn);

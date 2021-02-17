@@ -3,6 +3,7 @@
 #include "multivector.h"
 #include "objects.h"
 #include "polymorphic_vector.h"
+#include <algorithm>
 
 enum sort_type_t {
     SORTED,
@@ -59,7 +60,7 @@ void fill_container(T& container,
         int count_per_type = count / 4;
         for (int i = 0; i < count_per_type; i++) {
             container.template emplace_back<circle>(
-                get_random_point(width, height), 5);
+                get_random_point(width, height), 50);
         }
 
         for (int i = count_per_type; i < 2 * count_per_type; i++) {
@@ -83,7 +84,7 @@ void fill_container(T& container,
             switch (type) {
                 case 0:
                     container.template emplace_back<circle>(
-                        get_random_point(width, height), 5);
+                        get_random_point(width, height), 50);
                     break;
                 case 1:
                     container.template emplace_back<line>(
@@ -106,7 +107,7 @@ void fill_container(T& container,
             switch (type) {
                 case 0:
                     container.template emplace_back<circle>(
-                        get_random_point(width, height), 5);
+                        get_random_point(width, height), 50);
                     break;
                 case 1:
                     container.template emplace_back<line>(
@@ -127,18 +128,30 @@ void fill_container(T& container,
 }
 
 template <typename T>
-void perform_swap(T& container, int count) {
+int perform_swap(T& container,
+                 std::vector<int>& swap_array,
+                 int start,
+                 int count) {
     int container_size = container.size();
-    for (int i = 0; i < count; i++) {
-        int random = std::rand() % container_size;
-        std::swap(container[0], container[random]);
+
+    int performed_swaps = 0;
+
+    int end = std::min<int>(start + count, swap_array.size());
+    for (int i = start; i < end; i++, performed_swaps++) {
+        std::swap(container[0], container[swap_array[i]]);
     }
+
+    return performed_swaps;
 }
 
 template <class Functor>
 void measure_cache_performance(int arr_len, Functor fn) {
     polymorphic_vector<object, circle, line, rectangle, monster> pv;
     std::vector<object*> ov(arr_len);
+    std::vector<int> swap_array(arr_len);
+
+    std::iota(swap_array.begin(), swap_array.end(), 0);
+    std::random_shuffle(swap_array.begin(), swap_array.end());
 
     fill_container(pv, arr_len, RANDOM, 640, 480);
     int repeat_count = 20 * 1024 * 1024 / arr_len;
@@ -163,8 +176,8 @@ void measure_cache_performance(int arr_len, Functor fn) {
     int current_swaps = 0;
     char tmp_str[64];
     do {
-        perform_swap(ov, goal_swaps - current_swaps);
-        current_swaps = goal_swaps;
+        current_swaps += perform_swap(ov, swap_array, current_swaps,
+                                      goal_swaps - current_swaps);
         std::sprintf(tmp_str, "%d swaps", current_swaps);
 
         {
@@ -183,7 +196,7 @@ void measure_cache_performance(int arr_len, Functor fn) {
         }
 
         goal_swaps += goal_swaps;
-    } while ((goal_swaps / 20) < arr_len);
+    } while ((goal_swaps / 2) < arr_len);
 }
 
 void measure_inlining_performance(int arr_len) {
@@ -204,6 +217,130 @@ void measure_inlining_performance(int arr_len) {
     }
 }
 
+void measure_jump_misprediction_performance(int arr_len,
+                                            sort_type_t sort_type) {
+    polymorphic_vector<object, circle, line, rectangle, monster> pv;
+    fill_container(pv, arr_len, sort_type, 640, 480);
+    bitmap b(640, 480);
+
+    {
+        measure_time m("Function get_id()");
+
+        int count = 0;
+        for (int i = 0; i < arr_len; i++) {
+            object* o = pv.get(i);
+            count += o->get_id();
+        }
+        std::cout << "Count is " << count << std::endl;
+    }
+    /*{
+        measure_time m("Function draw()");
+
+        int count = 0;
+        for (int i = 0; i < arr_len; i++) {
+            object* o = pv.get(i);
+            count += o->draw(b);
+        }
+
+        std::cout << "Count is " << count << std::endl;
+    }*/
+}
+
+void measure_jump_misprediction_performance(int arr_len) {
+    std::cout << "SORTED" << std::endl;
+    measure_jump_misprediction_performance(arr_len, SORTED);
+    std::cout << "TAKING_TURNS" << std::endl;
+    measure_jump_misprediction_performance(arr_len, TAKING_TURNS);
+    std::cout << "RANDOM" << std::endl;
+    measure_jump_misprediction_performance(arr_len, RANDOM);
+}
+
+void measure_instruction_cache_performance(int arr_len, sort_type_t sort_type) {
+    polymorphic_vector<object, circle, line, rectangle, monster> pv;
+    fill_container(pv, arr_len, sort_type, 640, 480);
+    bitmap b(640, 480);
+    std::vector<int> random_nums(arr_len);
+
+    int n = 0;
+    std::generate(random_nums.begin(), random_nums.end(), [&n] {
+        n++;
+        if (n == 100) {
+            n = 0;
+        };
+        return n;
+    });
+    std::random_shuffle(random_nums.begin(), random_nums.end());
+
+    {
+        measure_time m("long_virtual_function");
+
+        int count = 0;
+        for (int i = 0; i < arr_len - 100; i++) {
+            object* o = pv.get(i);
+            count += o->long_virtual_function(random_nums, i, 100);
+        }
+        std::cout << "Count is " << count << std::endl;
+    }
+}
+
+void measure_instruction_cache_performance(int arr_len) {
+    std::cout << "SORTED" << std::endl;
+    measure_instruction_cache_performance(arr_len, SORTED);
+    std::cout << "TAKING_TURNS" << std::endl;
+    measure_instruction_cache_performance(arr_len, TAKING_TURNS);
+}
+
+void measure_virtual_function_performance(int arr_len) {
+#ifndef NOINLINE
+    std::cout << "Uncomment NOINLINE in object.h for accurate measurements";
+#endif
+
+    jsl::multivector<circle, line, rectangle, monster> mv;
+    fill_container(mv, arr_len, SORTED, 640, 480);
+    std::vector<object*> object_vector;
+    object_vector.reserve(arr_len);
+
+    bitmap b(640, 480);
+
+    mv.for_all([&object_vector](auto& o) { object_vector.push_back(&o); });
+
+    {
+        measure_time m("Small virtual function, direct call");
+        int tmp = 0;
+
+        mv.for_all([&tmp](auto& o) { tmp += o.get_id(); });
+        std::cout << "Tmp = " << tmp << std::endl;
+    }
+
+    {
+        measure_time m("Small virtual function, virtual call");
+        int tmp = 0;
+
+        for (auto& o : object_vector) {
+            tmp += o->get_id();
+        }
+        std::cout << "Tmp = " << tmp << std::endl;
+    }
+
+    {
+        measure_time m("Large virtual function, direct call");
+        int tmp = 0;
+
+        mv.for_all([&tmp, &b](auto& o) { tmp += o.draw(b); });
+        std::cout << "Tmp = " << tmp << std::endl;
+    }
+
+    {
+        measure_time m("Large virtual function, virtual call");
+        int tmp = 0;
+
+        for (auto& o : object_vector) {
+            tmp += o->draw(b);
+        }
+        std::cout << "Tmp = " << tmp << std::endl;
+    }
+}
+
 int main(int argc, const char** argv) {
     size_t out_size;
 
@@ -212,39 +349,11 @@ int main(int argc, const char** argv) {
         return -1;
     }
 
-    // measure_cache_performance(out_size, [](object* o) { return o->get_id2();
-    // });
-    measure_inlining_performance(out_size);
+    // measure_virtual_function_performance(out_size);
 
-    return 0;
-    // polymorphic_vector<object, circle, line, rectangle, monster> mv;
-    jsl::multivector<circle, line, rectangle, monster> mv;
-
-    bitmap b(640, 480);
-
-    fill_container(mv, out_size, TAKING_TURNS, 640, 480);
-    {
-        measure_time m("test");
-        int tmp = 0;
-        // mv.for_all([&tmp] (auto& o) { tmp += o.get_id(); });
-        /*for (int i = 0; i < mv.size(); i++) {
-            object* o = mv.get(i);
-            tmp += o->get_id2();
-        }*/
-        /*for(auto& c: mv.get_vector<circle>()) {
-            tmp += c.get_id();
-        }
-        for(auto& c: mv.get_vector<line>()) {
-            tmp += c.get_id();
-        }
-        for(auto& c: mv.get_vector<rectangle>()) {
-            tmp += c.get_id();
-        }
-        for(auto& c: mv.get_vector<monster>()) {
-            tmp += c.get_id();
-        }*/
-        std::cout << "Tmp = " << tmp << std::endl;
-    }
-
+    measure_cache_performance(out_size, [](object* o) { return o->get_id(); });
+    // measure_inlining_performance(out_size);
+    // measure_jump_misprediction_performance(out_size);
+    measure_instruction_cache_performance(out_size);
     return 0;
 }
