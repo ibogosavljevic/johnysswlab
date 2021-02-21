@@ -28,6 +28,8 @@ class measure_time_database {
         }
     }
 
+    void clear_database() { my_measurements.clear(); }
+
    private:
     class measurement {
         T all_time;

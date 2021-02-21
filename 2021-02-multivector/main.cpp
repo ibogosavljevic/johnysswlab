@@ -1,23 +1,54 @@
+#include <algorithm>
 #include "common/argparse.h"
 #include "measure_time.h"
 #include "multivector.h"
 #include "objects.h"
 #include "polymorphic_vector.h"
-#include <algorithm>
+
+#define SORT_TYPES \
+    X(ONE_TYPE)    \
+    X(SORTED)      \
+    X(RANDOM)      \
+    X(TAKING_TURNS)
 
 enum sort_type_t {
-    SORTED,
-    RANDOM,
-    TAKING_TURNS,
+#define X(t) t,
+    SORT_TYPES
+#undef X
+};
+
+std::string to_string(sort_type_t t) {
+    switch (t) {
+#define X(t) \
+    case t:  \
+        return std::string(#t);
+        SORT_TYPES
+#undef X
+        default:
+            return "Unknown";
+    };
+    return "Unreachable";
+}
+
+enum test_type_e {
+    INITIAL,
+    DATA_CACHE,
+    COMPILER_OPTIMIZATIONS,
+    JUMP_MISPREDICTIONS,
+    CACHE_EVICTIONS,
 };
 
 using namespace argparse;
 
-bool parse_args(int argc, const char* argv[], size_t& out_size) {
+bool parse_args(int argc,
+                const char* argv[],
+                size_t& out_size,
+                test_type_e& out_test_type) {
     ArgumentParser parser("test123", "123");
 
     parser.add_argument("-s", "--size", "Size of the input arrays (s, m, l)",
                         true);
+    parser.add_argument("-t", "--type", "Type of test", true);
 
     auto err = parser.parse(argc, argv);
     if (err) {
@@ -42,6 +73,26 @@ bool parse_args(int argc, const char* argv[], size_t& out_size) {
         return false;
     }
 
+    if (parser.exists("t")) {
+        std::string t = parser.get<std::string>("t");
+        if (t == "initial") {
+            out_test_type = INITIAL;
+        } else if (t == "datacache") {
+            out_test_type = DATA_CACHE;
+        } else if (t == "compileropt") {
+            out_test_type = COMPILER_OPTIMIZATIONS;
+        } else if (t == "jumpmispred") {
+            out_test_type = JUMP_MISPREDICTIONS;
+        } else if (t == "cacheevict") {
+            out_test_type = CACHE_EVICTIONS;
+        } else {
+            std::cout
+                << "Unknown option for type. allowed options are: initial, "
+                   "datacache, compileropt, jumpmispred, cacheevict.\n";
+            return false;
+        }
+    }
+
     return true;
 }
 
@@ -56,7 +107,36 @@ void fill_container(T& container,
                     int width,
                     int height) {
     container.reserve(count);
-    if (s == SORTED) {
+    if (s == ONE_TYPE) {
+        int type = std::rand() % 4;
+        switch (type) {
+            case 0:
+                for (int i = 0; i < count; i++) {
+                    container.template emplace_back<circle>(
+                        get_random_point(width, height), 50);
+                }
+                break;
+            case 1:
+                for (int i = 0; i < count; i++) {
+                    container.template emplace_back<line>(
+                        get_random_point(width, height),
+                        get_random_point(width, height));
+                }
+                break;
+            case 2:
+                for (int i = 0; i < count; i++) {
+                    container.template emplace_back<rectangle>(
+                        get_random_point(width, height),
+                        get_random_point(width, height));
+                }
+                break;
+            case 3:
+                for (int i = 0; i < count; i++) {
+                    container.template emplace_back<monster>();
+                }
+                break;
+        }
+    } else if (s == SORTED) {
         int count_per_type = count / 4;
         for (int i = 0; i < count_per_type; i++) {
             container.template emplace_back<circle>(
@@ -101,7 +181,7 @@ void fill_container(T& container,
                     break;
             }
         }
-    } else {
+    } else if (s == RANDOM) {
         for (int i = 0; i < count; i++) {
             int type = std::rand() % 4;
             switch (type) {
@@ -153,7 +233,7 @@ void measure_cache_performance(int arr_len, Functor fn) {
     std::iota(swap_array.begin(), swap_array.end(), 0);
     std::random_shuffle(swap_array.begin(), swap_array.end());
 
-    fill_container(pv, arr_len, RANDOM, 640, 480);
+    fill_container(pv, arr_len, ONE_TYPE, 640, 480);
     int repeat_count = 20 * 1024 * 1024 / arr_len;
 
     for (int i = 0; i < arr_len; i++) {
@@ -209,7 +289,7 @@ void measure_inlining_performance(int arr_len) {
         for (int i = 0; i < arr_len; i++) {
             object* o = pv.get(i);
             if (o->is_visible()) {
-                count += o->get_id2();
+                count += o->get_id3();
             }
         }
 
@@ -233,17 +313,6 @@ void measure_jump_misprediction_performance(int arr_len,
         }
         std::cout << "Count is " << count << std::endl;
     }
-    /*{
-        measure_time m("Function draw()");
-
-        int count = 0;
-        for (int i = 0; i < arr_len; i++) {
-            object* o = pv.get(i);
-            count += o->draw(b);
-        }
-
-        std::cout << "Count is " << count << std::endl;
-    }*/
 }
 
 void measure_jump_misprediction_performance(int arr_len) {
@@ -270,9 +339,8 @@ void measure_instruction_cache_performance(int arr_len, sort_type_t sort_type) {
         return n;
     });
     std::random_shuffle(random_nums.begin(), random_nums.end());
-
-    {
-        measure_time m("long_virtual_function");
+    for (int repeat = 0; repeat < 10; repeat++) {
+        measure_time m("long_virtual_function " + to_string(sort_type));
 
         int count = 0;
         for (int i = 0; i < arr_len - 100; i++) {
@@ -284,10 +352,14 @@ void measure_instruction_cache_performance(int arr_len, sort_type_t sort_type) {
 }
 
 void measure_instruction_cache_performance(int arr_len) {
+    measure_time_database<std::chrono::milliseconds>::get_instance()
+        ->clear_database();
     std::cout << "SORTED" << std::endl;
     measure_instruction_cache_performance(arr_len, SORTED);
     std::cout << "TAKING_TURNS" << std::endl;
     measure_instruction_cache_performance(arr_len, TAKING_TURNS);
+    measure_time_database<std::chrono::milliseconds>::get_instance()
+        ->dump_database();
 }
 
 void measure_virtual_function_performance(int arr_len) {
@@ -343,17 +415,35 @@ void measure_virtual_function_performance(int arr_len) {
 
 int main(int argc, const char** argv) {
     size_t out_size;
+    test_type_e t;
 
-    if (!parse_args(argc, argv, out_size)) {
+    if (!parse_args(argc, argv, out_size, t)) {
         std::cout << "Bad arguments" << std::endl;
         return -1;
     }
 
-    // measure_virtual_function_performance(out_size);
-
-    measure_cache_performance(out_size, [](object* o) { return o->get_id(); });
-    // measure_inlining_performance(out_size);
-    // measure_jump_misprediction_performance(out_size);
-    measure_instruction_cache_performance(out_size);
+    switch (t) {
+        case INITIAL:
+            measure_virtual_function_performance(out_size);
+            break;
+        case DATA_CACHE:
+            measure_cache_performance(out_size,
+                                      [](object* o) { return o->get_id(); });
+            measure_cache_performance(out_size,
+                                      [](object* o) { return o->get_id2(); });
+            break;
+        case COMPILER_OPTIMIZATIONS:
+            measure_inlining_performance(out_size);
+            break;
+        case JUMP_MISPREDICTIONS:
+            measure_jump_misprediction_performance(out_size);
+            break;
+        case CACHE_EVICTIONS:
+            measure_instruction_cache_performance(out_size);
+            break;
+        default:
+            std::cout << "Unreachable\n";
+            break;
+    }
     return 0;
 }

@@ -1,6 +1,6 @@
 #include <cmath>
 
-#define NOINLINE
+//#define NOINLINE
 
 #ifdef NOINLINE
 #define ATTRNOINLINE __attribute__((noinline))
@@ -11,7 +11,6 @@
 #define UNROLL_COUNT 20
 
 #define VARIABLES       \
-    V(0, -a)            \
     V(1, a* a* a)       \
     V(2, a / 3)         \
     V(3, a / 5)         \
@@ -40,64 +39,68 @@
     V(26, a - 1)        \
     V(27, a* a)         \
     V(28, a / 12)       \
-    V(29, a / (a - 1))
-
-//    V(30, a + 27) \
-//    V(31, a - (a / 2)) \
-//    V(32, a * a - a) \
-//    V(33, a / 7) \
-//    V(34, a / (a - 3)) \
-//    V(35, a + 2) \
-//    V(36, -a - 1) \
-//    V(37, a & a) \
-//    V(38, a & 12) \
-//    V(39, a | (a - 1)) \
-//    V(40, a & 27) \
-//    V(41, a + (a / 2)) \
-//    V(42, -a ^ a - a) \
-//    V(43, a / -1) \
-//    V(44, a / (-a - 3)) \
-//    V(45, a + 5) \
-//    V(46, a - 1) \
-//    V(47, a * a) \
-//    V(48, a / 12) \
-//    V(49, a / (a - 1)) \
-//    V(50, a + 27) \
-//    V(51, a - (a / 2)) \
-//    V(52, a * a - a) \
-//    V(53, a / 7) \
-//    V(54, a / (a - 3)) \
-//    V(55, a + 2) \
-//    V(56, -a - 1) \
-//    V(57, a & a) \
-//    V(58, a & 12) \
-//    V(59, a | (a - 1)) \
-//    V(60, a & 27) \
-//    V(61, a + (a / 2)) \
-//    V(62, -a ^ a - a) \
-//    V(63, a / -1) \
-//    V(64, a / (-a - 3)) \
-//    V(65, a + 5) \
-//    V(66, a - 1) \
-//    V(67, a * a) \
-//    V(68, a / 12) \
-//    V(69, a / (a - 1)) \
-//    V(70, a + 27) \
-//    V(71, a - (a / 2)) \
-//    V(72, a / a * a) \
-//    V(73, a / 7) \
-//    V(74, a / (a - 3)) \
-//    V(75, a + 2) \
-//    V(76, -a - 1) \
-//    V(77, a & a) \
-//    V(78, a & 12) \
-//    V(79, a | (a - 1)) \
-//    V(80, a & 27) \
-//    V(81, a + (a / 2)) \
-//    V(82, -a ^ a - a) \
-//    V(83, a / -1) \
-//    V(84, a / (-a - 3)) \
-
+    V(29, a / (a - 1))  \
+    V(30, a + 27)       \
+    V(31, a - (a / 2))  \
+    V(32, a* a - a)     \
+    V(33, a / 7)        \
+    V(34, a / (a - 3))  \
+    V(35, a + 2)        \
+    V(36, -a - 1)       \
+    V(37, a& a)         \
+    V(38, a & 12)       \
+    V(39, a | (a - 1))  \
+    V(40, a & 27)       \
+    V(41, a + (a / 2))  \
+    V(42, -a ^ a - a)   \
+    V(43, a / -1)       \
+    V(44, a / (-a - 3)) \
+    V(45, a + 5)        \
+    V(46, a - 1)        \
+    V(47, a* a)         \
+    V(48, a / 12)       \
+    V(49, a / (a - 1))  \
+    V(50, a + 27)       \
+    V(51, a - (a / 2))  \
+    V(52, a* a - a)     \
+    V(53, a / 7)        \
+    V(54, a / (a - 3))  \
+    V(55, a + 2)        \
+    V(56, -a - 1)       \
+    V(57, a& a)         \
+    V(58, a & 12)       \
+    V(59, a | (a - 1))  \
+    V(60, a & 27)       \
+    V(61, a + (a / 2))  \
+    V(62, -a ^ a - a)   \
+    V(63, a / -1)       \
+    V(64, a / (-a - 3)) \
+    V(65, a + 5)        \
+    V(66, a - 1)        \
+    V(67, a* a)         \
+    V(68, a / 12)       \
+    V(69, a / (a - 1))  \
+    V(70, a + 27)       \
+    V(71, a - (a / 2))  \
+    V(72, a / a * a)    \
+    V(73, a / 7)        \
+    V(74, a / (a - 3))  \
+    V(75, a + 2)        \
+    V(76, -a - 1)       \
+    V(77, a& a)         \
+    V(78, a & 12)       \
+    V(79, a | (a - 1))  \
+    V(80, a & 27)       \
+    V(81, a + (a / 2))  \
+    V(82, -a ^ a - a)   \
+    V(83, a / -1)       \
+    V(84, a / (-a - 3)) \
+    V(85, -a + 5)       \
+    V(86, -a - 1)       \
+    V(87, -a* a)        \
+    V(88, -a / 12)      \
+    V(89, -a / (a - 1)) \
+    V(90, -a + 27)
 
 class bitmap {
    private:
@@ -127,6 +130,8 @@ class object {
     bool m_is_visible;
     unsigned int m_id;
 
+    static unsigned int m_offset;
+
    public:
     object(unsigned int id) : m_id(id), m_is_visible(true) {}
 
@@ -146,10 +151,15 @@ class object {
     ATTRNOINLINE
     bool is_visible() { return m_is_visible; }
 
+    ATTRNOINLINE
+    unsigned int get_id3() { return m_id + m_offset; };
+
     void show() { m_is_visible = true; }
 
     void hide() { m_is_visible = false; }
 };
+
+unsigned int object::m_offset = 1;
 
 template <typename T>
 T dist(T x, T y) {
