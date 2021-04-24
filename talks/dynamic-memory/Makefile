@@ -13,13 +13,15 @@ CFLAGS+=-I. -I.. -std=c++14 -O$(OPT) -pthread -g -Werror $(RPATH) -DFUNC_OPT=$(F
 %: %.o $(DEPS)
 	$(CC) -o $@ $< $(LDFLAGS)
 
-all: access_pattern_test allocation_test
+all: access_pattern_test allocation_test min_max_test
 
 allocation_test.o: allocation_test.cpp
 
+min_max_test.o: min_max_test.cpp
+
 access_pattern_test.o: access_pattern_test.cpp utils.h  measure_time.h
 
-format: allocation_test.cpp access_pattern_test.cpp utils.h  measure_time.h
+format: min_max_test.cpp allocation_test.cpp access_pattern_test.cpp utils.h  measure_time.h
 	find . -name "*.cpp" | xargs clang-format -style="{BasedOnStyle: Chromium, IndentWidth: 4}" -i
 	find . -name "*.h" | xargs clang-format -style="{BasedOnStyle: Chromium, IndentWidth: 4}" -i
 
