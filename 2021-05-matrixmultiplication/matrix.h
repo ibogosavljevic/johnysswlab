@@ -1,4 +1,6 @@
-
+#include <iostream>
+#include <immintrin.h>
+#include <cassert>
 
 template <typename T>
 class matrix {
@@ -73,11 +75,13 @@ class matrix {
             return false;
         }
 
+        n = out.m_rows;
+
+
         if (n % tile_size != 0) {
             return false;
         }
 
-        n = out.m_rows;
 
         for (int i = 0; i < n; i++) {
             for (int j = 0; j < n; j++) {
@@ -99,6 +103,11 @@ class matrix {
         }
 
         return true;
+    }
+
+    static bool multiply_tiled_avx(matrix& out, matrix& in1, matrix& in2) {
+        assert(false);
+        return false;
     }
 
     int rows() { return m_rows; }
@@ -157,4 +166,82 @@ class matrix {
             return false;
         return true;
     }
+
+    template <typename Q>
+    friend std::ostream& operator<<(std::ostream& os, const matrix<Q>& m);
 };
+
+template <typename T>
+std::ostream& operator<<(std::ostream& os, const matrix<T>& m)
+{
+    for (int i = 0; i < m.m_rows; i++) {
+        for (int j = 0; j < m.m_cols; j++) {
+            os << m.m_data[i][j] << " ";
+        }
+        os << "\n";
+    }
+    return os;
+}
+
+template <>
+bool matrix<double>::multiply_tiled_avx(matrix<double>& out, matrix<double>& in1, matrix<double>& in2) {
+    double** c = out.m_data;
+    double** a = in1.m_data;
+    double** b = in2.m_data;
+    int n;
+    static constexpr int tile_size = 12; 
+
+    if (!verify_multiplication_params(out, in1, in2)) {
+        return false;
+    }
+
+    n = out.m_rows;
+
+    if (n % tile_size != 0) {
+        return false;
+    }
+
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < n; j++) {
+            c[i][j] = 0;
+        }
+    }
+
+
+    for (int ii = 0; ii < n; ii += tile_size) {
+        for (int kk = 0; kk < n; kk += tile_size) {
+            for (int jj = 0; jj < n; jj += tile_size) {
+                for (int i = ii; i < ii + tile_size; i++) {
+                    double* c_i = c[i];
+                    double* a_i = a[i];
+                    for (int k = kk; k < kk + tile_size; k++) {
+                        double * b_k = b[k];
+                        __m256d a_i_k = _mm256_set1_pd(a_i[k]);
+                        /*for (int j = jj; j < jj + tile_size; j++) {
+                            c_i[j] = c_i[j] + a_i[k] * b_k[j];
+                        }*/
+                        int j = jj;
+                        __m256d c_i_j = _mm256_loadu_pd(c_i + j);
+                        __m256d b_k_j = _mm256_loadu_pd(b_k + j);
+                        c_i_j = _mm256_fmadd_pd(a_i_k, b_k_j, c_i_j);
+                        _mm256_storeu_pd(c_i + j, c_i_j);
+                        j += 4;
+                        c_i_j = _mm256_loadu_pd(c_i + j);
+                        b_k_j = _mm256_loadu_pd(b_k + j);
+                        c_i_j = _mm256_fmadd_pd(a_i_k, b_k_j, c_i_j);
+                        _mm256_storeu_pd(c_i + j, c_i_j);
+                        j += 4;
+                        c_i_j = _mm256_loadu_pd(c_i + j);
+                        b_k_j = _mm256_loadu_pd(b_k + j);
+                        c_i_j = _mm256_fmadd_pd(a_i_k, b_k_j, c_i_j);
+                        _mm256_storeu_pd(c_i + j, c_i_j);
+                    }
+                }
+            }
+        }
+    }
+
+
+
+    return true;
+}
