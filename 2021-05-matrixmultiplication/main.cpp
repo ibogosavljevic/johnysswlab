@@ -3,7 +3,6 @@
 #include <iostream>
 #include <random>
 #include "matrix.h"
-#include "measure_time.h"
 #include <likwid.h>
 
 template <typename T>
