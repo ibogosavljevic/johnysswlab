@@ -121,6 +121,18 @@ int main(int argc, char** argv) {
             }
         }
         {
+            std::string name = "Tiled_AVX_8_" + std::to_string(n);
+            LIKWID_MARKER_START(name.c_str());
+            matrix<double>::multiply_tiled_avx(out2, in1, in2, 8);
+            LIKWID_MARKER_STOP(name.c_str());
+
+            if (out1 != out2) {
+                std::cout << "MATRICES NOT SAME!!!\n";
+            } else {
+                std::cout << "Matrices same!!!\n";
+            }
+        }
+        {
             std::string name = "Tiled_AVX_12_" + std::to_string(n);
             LIKWID_MARKER_START(name.c_str());
             matrix<double>::multiply_tiled_avx(out2, in1, in2, 12);
