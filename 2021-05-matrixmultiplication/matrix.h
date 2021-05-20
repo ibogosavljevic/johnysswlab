@@ -1,6 +1,6 @@
-#include <iostream>
 #include <immintrin.h>
 #include <cassert>
+#include <iostream>
 
 template <typename T>
 class matrix {
@@ -77,11 +77,9 @@ class matrix {
 
         n = out.m_rows;
 
-
         if (n % tile_size != 0) {
             return false;
         }
-
 
         for (int i = 0; i < n; i++) {
             for (int j = 0; j < n; j++) {
@@ -105,7 +103,10 @@ class matrix {
         return true;
     }
 
-    static bool multiply_tiled_avx(matrix& out, matrix& in1, matrix& in2) {
+    static bool multiply_tiled_avx(matrix& out,
+                                   matrix& in1,
+                                   matrix& in2,
+                                   int tile_size) {
         assert(false);
         return false;
     }
@@ -172,8 +173,7 @@ class matrix {
 };
 
 template <typename T>
-std::ostream& operator<<(std::ostream& os, const matrix<T>& m)
-{
+std::ostream& operator<<(std::ostream& os, const matrix<T>& m) {
     for (int i = 0; i < m.m_rows; i++) {
         for (int j = 0; j < m.m_cols; j++) {
             os << m.m_data[i][j] << " ";
@@ -184,12 +184,14 @@ std::ostream& operator<<(std::ostream& os, const matrix<T>& m)
 }
 
 template <>
-bool matrix<double>::multiply_tiled_avx(matrix<double>& out, matrix<double>& in1, matrix<double>& in2) {
+bool matrix<double>::multiply_tiled_avx(matrix<double>& out,
+                                        matrix<double>& in1,
+                                        matrix<double>& in2,
+                                        int tile_size) {
     double** c = out.m_data;
     double** a = in1.m_data;
     double** b = in2.m_data;
     int n;
-    static constexpr int tile_size = 12; 
 
     if (!verify_multiplication_params(out, in1, in2)) {
         return false;
@@ -201,12 +203,15 @@ bool matrix<double>::multiply_tiled_avx(matrix<double>& out, matrix<double>& in1
         return false;
     }
 
+    if (tile_size % 4 != 0) {
+        return false;
+    }
+
     for (int i = 0; i < n; i++) {
         for (int j = 0; j < n; j++) {
             c[i][j] = 0;
         }
     }
-
 
     for (int ii = 0; ii < n; ii += tile_size) {
         for (int kk = 0; kk < n; kk += tile_size) {
@@ -215,33 +220,23 @@ bool matrix<double>::multiply_tiled_avx(matrix<double>& out, matrix<double>& in1
                     double* c_i = c[i];
                     double* a_i = a[i];
                     for (int k = kk; k < kk + tile_size; k++) {
-                        double * b_k = b[k];
+                        double* b_k = b[k];
                         __m256d a_i_k = _mm256_set1_pd(a_i[k]);
                         /*for (int j = jj; j < jj + tile_size; j++) {
                             c_i[j] = c_i[j] + a_i[k] * b_k[j];
                         }*/
-                        int j = jj;
-                        __m256d c_i_j = _mm256_loadu_pd(c_i + j);
-                        __m256d b_k_j = _mm256_loadu_pd(b_k + j);
-                        c_i_j = _mm256_fmadd_pd(a_i_k, b_k_j, c_i_j);
-                        _mm256_storeu_pd(c_i + j, c_i_j);
-                        j += 4;
-                        c_i_j = _mm256_loadu_pd(c_i + j);
-                        b_k_j = _mm256_loadu_pd(b_k + j);
-                        c_i_j = _mm256_fmadd_pd(a_i_k, b_k_j, c_i_j);
-                        _mm256_storeu_pd(c_i + j, c_i_j);
-                        j += 4;
-                        c_i_j = _mm256_loadu_pd(c_i + j);
-                        b_k_j = _mm256_loadu_pd(b_k + j);
-                        c_i_j = _mm256_fmadd_pd(a_i_k, b_k_j, c_i_j);
-                        _mm256_storeu_pd(c_i + j, c_i_j);
+
+                        for (int j = jj; j < jj + tile_size; j += 4) {
+                            __m256d c_i_j = _mm256_loadu_pd(c_i + j);
+                            __m256d b_k_j = _mm256_loadu_pd(b_k + j);
+                            c_i_j = _mm256_fmadd_pd(a_i_k, b_k_j, c_i_j);
+                            _mm256_storeu_pd(c_i + j, c_i_j);
+                        }
                     }
                 }
             }
         }
     }
-
-
 
     return true;
 }

@@ -1,9 +1,9 @@
+#include <likwid.h>
 #include <array>
 #include <cstdio>
 #include <iostream>
 #include <random>
 #include "matrix.h"
-#include <likwid.h>
 
 template <typename T>
 void fill_random(matrix<T>& m) {
@@ -29,7 +29,6 @@ void fill(matrix<T>& m, T value) {
 static constexpr std::array<int, 3> array_size = {240, 1200, 1680};
 
 int main(int argc, char** argv) {
-
     LIKWID_MARKER_INIT;
     LIKWID_MARKER_THREADINIT;
 
@@ -122,9 +121,57 @@ int main(int argc, char** argv) {
             }
         }
         {
-            std::string name = "Tiled_AVX_" + std::to_string(n);
+            std::string name = "Tiled_AVX_12_" + std::to_string(n);
             LIKWID_MARKER_START(name.c_str());
-            matrix<double>::multiply_tiled_avx(out2, in1, in2);
+            matrix<double>::multiply_tiled_avx(out2, in1, in2, 12);
+            LIKWID_MARKER_STOP(name.c_str());
+
+            if (out1 != out2) {
+                std::cout << "MATRICES NOT SAME!!!\n";
+            } else {
+                std::cout << "Matrices same!!!\n";
+            }
+        }
+        {
+            std::string name = "Tiled_AVX_24_" + std::to_string(n);
+            LIKWID_MARKER_START(name.c_str());
+            matrix<double>::multiply_tiled_avx(out2, in1, in2, 24);
+            LIKWID_MARKER_STOP(name.c_str());
+
+            if (out1 != out2) {
+                std::cout << "MATRICES NOT SAME!!!\n";
+            } else {
+                std::cout << "Matrices same!!!\n";
+            }
+        }
+        {
+            std::string name = "Tiled_AVX_48_" + std::to_string(n);
+            LIKWID_MARKER_START(name.c_str());
+            matrix<double>::multiply_tiled_avx(out2, in1, in2, 48);
+            LIKWID_MARKER_STOP(name.c_str());
+
+            if (out1 != out2) {
+                std::cout << "MATRICES NOT SAME!!!\n";
+            } else {
+                std::cout << "Matrices same!!!\n";
+            }
+        }
+        {
+            std::string name = "Tiled_AVX_60_" + std::to_string(n);
+            LIKWID_MARKER_START(name.c_str());
+            matrix<double>::multiply_tiled_avx(out2, in1, in2, 60);
+            LIKWID_MARKER_STOP(name.c_str());
+
+            if (out1 != out2) {
+                std::cout << "MATRICES NOT SAME!!!\n";
+            } else {
+                std::cout << "Matrices same!!!\n";
+            }
+        }
+        {
+            std::string name = "Tiled_AVX_80_" + std::to_string(n);
+            LIKWID_MARKER_START(name.c_str());
+            matrix<double>::multiply_tiled_avx(out2, in1, in2, 80);
             LIKWID_MARKER_STOP(name.c_str());
 
             if (out1 != out2) {
