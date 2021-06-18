@@ -1,3 +1,4 @@
+#include <iostream>
 #include <vector>
 #include "utils.h"
 
@@ -23,7 +24,8 @@ int main(int argc, char** argv) {
     LIKWID_MARKER_INIT;
     LIKWID_MARKER_THREADINIT;
 
-    sum(test_array, 4);
+    double res = sum(test_array, 16);
+    std::cout << "Result is " << res << std::endl;
 
     LIKWID_MARKER_CLOSE;
 }
