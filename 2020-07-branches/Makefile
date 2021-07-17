@@ -6,9 +6,11 @@ DEPS=
 FUNC_OPT?=0
 CFLAGS=-I. -std=c++11 -O$(OPT) -pthread -g -Werror $(RPATH) -DFUNC_OPT=$(FUNC_OPT)
 
+SHELL := /bin/bash
 
 WORKING_SET=10000 100000 1000000 10000000 100000000
 NUMBER_OF_SEARCHES=10000000
+TYPE=regular cmov arithmetic
 PERF=perf stat -B -e cache-references,cache-misses,cache-misses:u,cycles,instructions,branches,branch-misses,faults,migrations 
 
 %.o: %.cpp $(DEPS)
@@ -28,33 +30,27 @@ clean:
 
 binary_search_runtimes: binary_search
 	for number in $(WORKING_SET) ; do \
-		./binary_search --working-set=$$number --prefetching-off --stride=0 --searches=$(NUMBER_OF_SEARCHES) ; \
+    for type in $(TYPE) ; do \
+		./binary_search --test=$$type --length=$$number --prefetching=0 --searches=$(NUMBER_OF_SEARCHES) ; \
+    done \
 	done
 	for number in $(WORKING_SET) ; do \
-		./binary_search --working-set=$$number --prefetching-on --stride=0 --searches=$(NUMBER_OF_SEARCHES); \
+    for type in $(TYPE) ; do \
+		./binary_search --test=$$type --length=$$number --prefetching=1 --searches=$(NUMBER_OF_SEARCHES); \
+    done \
 	done
-	for number in $(WORKING_SET) ; do \
-               ./binary_search --working-set=$$number --prefetching-off --stride=1 --searches=$(NUMBER_OF_SEARCHES) ; \
-        done
-	for number in $(WORKING_SET) ; do \
-                ./binary_search --working-set=$$number --prefetching-on --stride=1 --searches=$(NUMBER_OF_SEARCHES); \
-        done
-
 
 binary_search_cache_misses: binary_search
 	for number in $(WORKING_SET) ; do \
-		$(PERF) ./binary_search --working-set=$$number --prefetching-off --stride=0 --searches=$(NUMBER_OF_SEARCHES) ; \
-	done
+    for type in $(TYPE) ; do \
+		$(PERF) ./binary_search --test=$$type --length=$$number --prefetching=0 --searches=$(NUMBER_OF_SEARCHES) ; \
+	done \
+    done
 	for number in $(WORKING_SET) ; do \
-		$(PERF) ./binary_search --working-set=$$number --prefetching-on --stride=0 --searches=$(NUMBER_OF_SEARCHES); \
-	done
-	for number in $(WORKING_SET) ; do \
-                $(PERF) ./binary_search --working-set=$$number --prefetching-off --stride=1 --searches=$(NUMBER_OF_SEARCHES) ; \
-        done
-	for number in $(WORKING_SET) ; do \
-                $(PERF) ./binary_search --working-set=$$number --prefetching-on --stride=1 --searches=$(NUMBER_OF_SEARCHES); \
-        done
-
+    for type in $(TYPE) ; do \
+		$(PERF) ./binary_search --test=$$type --length=$$number --prefetching=1 --searches=$(NUMBER_OF_SEARCHES); \
+	done \
+    done
 
 
 profile:

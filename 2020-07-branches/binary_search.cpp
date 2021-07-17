@@ -30,7 +30,7 @@ bool parse_arguments(int argc, const char** argv, search_type& out_search_type,
     parser.add_argument("-t", "--test", "Name of the test to run", true);
     parser.add_argument("-s", "--searches", "Number of searches to perform", false);
     parser.add_argument("-l", "--length", "Array length", false);
-    parser.add_argument("-p", "--with-prefetching", "If prefetching should be enabled or not", false);
+    parser.add_argument("-p", "--prefetching", "If prefetching should be enabled or not", false);
     
     auto err = parser.parse(argc, argv);
     if (err) {
