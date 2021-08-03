@@ -80,13 +80,13 @@ int main(int argc, char** argv) {
 
             double result = 0.0;
 
+            LIKWID_MARKER_START(name.c_str());
             for (int i = 0; i < repeat_count; i++) {
-                LIKWID_MARKER_START(name.c_str());
 
                 result += sum(list_start);
 
-                LIKWID_MARKER_STOP(name.c_str());
             }
+            LIKWID_MARKER_STOP(name.c_str());
 
             std::cout << "Result = " << result << std::endl;
         }
