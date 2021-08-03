@@ -45,7 +45,7 @@ class vector_list {
             iterator_t to_delete = m_vector[current].next;
             iterator_t return_iterator = m_vector[m_vector[current].next].next;
             m_vector[current].next = return_iterator;
-            at(current).~T();
+            at(to_delete).~T();
             release_node(to_delete);
 
             m_size--;

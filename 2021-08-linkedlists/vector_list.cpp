@@ -24,6 +24,14 @@ bool compare_list(T1& reference_list, T2& test_list) {
     return true;
 }
 
+template <typename T>
+void print_list(T& list) {
+    for (auto it = list.begin(); it != list.end(); it = list.next(it)) {
+        std::cout << "[" << it << "]" << list.at(it) << ", ";
+    }
+    std::cout << std::endl;
+}
+
 int main(int argc, char** argv) {
     std::forward_list<int> reference_list;
     jsl::vector_list<int> test_list;
@@ -55,11 +63,14 @@ int main(int argc, char** argv) {
 
     LIKWID_MARKER_START("TEST:ERASE");
 
-    for (auto test_it = test_list.begin(); test_it != test_list.end();
-         test_it = test_list.next(test_it)) {
+    auto test_it = test_list.begin();
+    while (test_it != test_list.end()) {
         if (count == 0) {
             test_it = test_list.erase_after(test_it);
             count = 4;
+        } else {
+            test_it = test_list.next(test_it);
+            count--;
         }
     }
 
@@ -69,13 +80,17 @@ int main(int argc, char** argv) {
 
     LIKWID_MARKER_START("REF:ERASE");
 
-    for (auto ref_it = reference_list.begin(); ref_it != reference_list.end();
-         ++ref_it) {
+    auto ref_it = reference_list.begin();
+    while (ref_it != reference_list.end()) {
         if (count == 0) {
             ref_it = reference_list.erase_after(ref_it);
             count = 4;
+        } else {
+            ++ref_it;
+            count--;
         }
     }
+
     LIKWID_MARKER_STOP("REF:ERASE");
 
     compare_list(reference_list, test_list);
@@ -95,7 +110,9 @@ int main(int argc, char** argv) {
          test_it = test_list.next(test_it)) {
         if (count == 0) {
             test_it = test_list.insert_after(test_it, 4);
-            count = 4;
+            count = 2;
+        } else {
+            count--;
         }
     }
 
@@ -109,14 +126,28 @@ int main(int argc, char** argv) {
          ++ref_it) {
         if (count == 0) {
             ref_it = reference_list.insert_after(ref_it, 4);
-            count = 4;
+            count = 2;
+        } else {
+            count--;
         }
     }
     LIKWID_MARKER_STOP("REF:INSERT_AFTER");
 
-    LIKWID_MARKER_START("TEST:SUM_BEFORE_COMPACT");
+    LIKWID_MARKER_START("REF:SUM");
 
     int sum = 0;
+
+    for (auto ref_it = reference_list.begin(); ref_it != reference_list.end();
+         ++ref_it) {
+        sum += *ref_it;
+    }
+    LIKWID_MARKER_STOP("REF:SUM");
+
+    std::cout << "SUM = " << sum << std::endl;
+
+    LIKWID_MARKER_START("TEST:SUM_BEFORE_COMPACT");
+
+    sum = 0;
     for (auto test_it = test_list.begin(); test_it != test_list.end();
          test_it = test_list.next(test_it)) {
         sum += test_list.at(test_it);
