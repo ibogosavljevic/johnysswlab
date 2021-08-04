@@ -36,10 +36,21 @@ int main(int argc, char** argv) {
     static constexpr int list_size = 256 * 1024 * 1024;
     test_filter.reserve(list_size);
 
+    LIKWID_MARKER_START("REF:INSERT");
+
     for (int i = 0; i < list_size; ++i) {
         ref_filter.push_back(i);
+    }
+
+    LIKWID_MARKER_STOP("REF:INSERT");
+
+    LIKWID_MARKER_START("TEST:INSERT");
+
+    for (int i = 0; i < list_size; ++i) {
         test_filter.push_back(i);
     }
+
+    LIKWID_MARKER_STOP("TEST:INSERT");
 
     compare_list(ref_filter, test_filter);
 
