@@ -56,6 +56,30 @@ int main(int argc, char** argv) {
 
     test_filter.compact();
 
+    LIKWID_MARKER_START("REF:TRAVERSAL1");
+
+    int sum = 0;
+    for (auto it = ref_filter.begin(); it != ref_filter.end(); ++it) {
+        sum += *it;
+    }
+
+    LIKWID_MARKER_STOP("REF:TRAVERSAL1");
+
+    std::cout << "Sum ref = " << sum << std::endl;
+
+    LIKWID_MARKER_START("TEST:TRAVERSAL1");
+
+    sum = 0;
+    for (auto it = test_filter.begin(); it != test_filter.end();
+         it = test_filter.next(it)) {
+        sum += test_filter.at(it);
+    }
+
+    LIKWID_MARKER_STOP("TEST:TRAVERSAL1");
+
+    std::cout << "Sum test = " << sum << std::endl;
+
+
     compare_list(ref_filter, test_filter);
 
     LIKWID_MARKER_START("TEST:ERASURE");
@@ -90,18 +114,18 @@ int main(int argc, char** argv) {
 
     compare_list(ref_filter, test_filter);
 
-    LIKWID_MARKER_START("REF:TRAVERSAL");
+    LIKWID_MARKER_START("REF:TRAVERSAL2");
 
-    int sum = 0;
+    sum = 0;
     for (auto it = ref_filter.begin(); it != ref_filter.end(); ++it) {
         sum += *it;
     }
 
-    LIKWID_MARKER_STOP("REF:TRAVERSAL");
+    LIKWID_MARKER_STOP("REF:TRAVERSAL2");
 
     std::cout << "Sum ref = " << sum << std::endl;
 
-    LIKWID_MARKER_START("TEST:TRAVERSAL");
+    LIKWID_MARKER_START("TEST:TRAVERSAL2");
 
     sum = 0;
     for (auto it = test_filter.begin(); it != test_filter.end();
@@ -109,13 +133,13 @@ int main(int argc, char** argv) {
         sum += test_filter.at(it);
     }
 
-    LIKWID_MARKER_STOP("TEST:TRAVERSAL");
+    LIKWID_MARKER_STOP("TEST:TRAVERSAL2");
 
     std::cout << "Sum test = " << sum << std::endl;
 
     test_filter.compact();
 
-    LIKWID_MARKER_START("TEST:COMPACT_TRAVERSAL");
+    LIKWID_MARKER_START("TEST:COMPACT_TRAVERSAL2");
 
     sum = 0;
     for (auto it = test_filter.begin(); it != test_filter.end();
@@ -123,7 +147,7 @@ int main(int argc, char** argv) {
         sum += test_filter.at(it);
     }
 
-    LIKWID_MARKER_STOP("TEST:COMPACT_TRAVERSAL");
+    LIKWID_MARKER_STOP("TEST:COMPACT_TRAVERSAL2");
 
     std::cout << "Sum test = " << sum << std::endl;
 
