@@ -50,13 +50,13 @@ int main(int argc, char** argv) {
     LIKWID_MARKER_START("TEST:ERASURE");
 
     int count = 0;
-    for (auto it = test_filter.begin(); it != test_filter.end();
-         it = test_filter.next(it)) {
+    for (auto it = test_filter.begin(); it != test_filter.end();) {
         if (count != 0) {
             it = test_filter.erase(it);
             count--;
         } else {
             count = 5;
+            it = test_filter.next(it);
         }
     }
 
@@ -65,12 +65,13 @@ int main(int argc, char** argv) {
     LIKWID_MARKER_START("REF:ERASURE");
     count = 0;
 
-    for (auto it = ref_filter.begin(); it != ref_filter.end(); ++it) {
+    for (auto it = ref_filter.begin(); it != ref_filter.end();) {
         if (count != 0) {
             it = ref_filter.erase(it);
             count--;
         } else {
             count = 5;
+            ++it;
         }
     }
 
