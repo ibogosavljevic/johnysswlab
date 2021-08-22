@@ -20,6 +20,7 @@ public:
     }
 
     void dump_tree(std::ostream& os) {
+        os << "Start node " << m_start_node << std::endl;
         for (int i = 1; i < m_nodes.size(); i++) {
             os << "Node " << i << ": ";
             size_t count = m_nodes[i].m_count;
@@ -141,8 +142,8 @@ private:
         uint32_t len = end - start + 1;
 
         if (len <= node_count) {
-            node_t& node = allocate_node();
-            result = m_nodes.size() - 1;
+            result = allocate_node();
+            node_t& node = m_nodes[result];
             
             node.m_count = len;
             for (int i = 0; i < len; i++) {
@@ -155,8 +156,8 @@ private:
             size_t current_index;
             double stride = len / static_cast<double>(node_count + 1);
 
-            node_t& node = allocate_node();
-            result = m_nodes.size() - 1;
+            result = allocate_node();
+            node_t& node = m_nodes[result];
 
             size_t previous_index = start - 1;
             node.m_count = node_count;
@@ -198,10 +199,10 @@ private:
         std::random_shuffle(m_nodes_index.begin(), m_nodes_index.end());
     }
 
-    node_t& allocate_node() {
+    uint32_t allocate_node() {
         uint32_t free_node = m_free_node;
         m_free_node++;
-        return m_nodes.at(m_nodes_index.at(free_node));
+        return m_nodes_index.at(free_node);
     }
 
 };
@@ -218,6 +219,7 @@ void measure_time(const std::vector<int>& input, const std::vector<int>& search_
 
     std::cout << "Measure time " << len << std::endl;
     s.print(std::cout);
+    //s.dump_tree(std::cout);
 
     int start_value = input[0] - 5;
     int end_value = input[input.size() - 1] + 5;
