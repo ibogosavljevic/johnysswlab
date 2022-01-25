@@ -1,21 +1,5 @@
+#include "global.h"
 // Source: https://www.geeksforgeeks.org/quick-sort/
-
-template <typename T>
-void print_array(std::vector<T>& vec) {
-    for(const auto& v: vec) {
-        std::cout << v << ", ";
-    }
-    std::cout << std::endl;
-}
-
-template <typename T>
-void print_array2(std::vector<T>& vec, int low, int high) {
-    for(int i = low; i <= high; i++) {
-        std::cout << vec[i] << ", ";
-    }
-    std::cout << std::endl;
-}
-
 
 template <typename T>
 int partition(std::vector<T>& vector, int low, int high) {
@@ -34,6 +18,57 @@ int partition(std::vector<T>& vector, int low, int high) {
     return i;
 }
 
+template <>
+int partition(std::vector<float>& vector, int low, int high) {
+    float* vector_i = &vector[low];
+    float* vector_j = &vector[low];
+    float* vector_end = &vector[high];
+
+    __m128 pivot = _mm_load_ss(&vector[0] + high);
+    while(true) {
+        if (vector_j >= vector_end) break;
+        __m128 vec_i = _mm_load_ss(vector_i);
+        __m128 vec_j = _mm_load_ss(vector_j);
+
+        __m128 compare = _mm_cmplt_ss(vec_j, pivot); // if (vec_j < pivot)
+        __m128 new_vec_i = _mm_blendv_ps(vec_i, vec_j, compare);
+        __m128 new_vec_j = _mm_blendv_ps(vec_j, vec_i, compare);
+
+        int increment = _mm_extract_epi32(compare, 0) & 0x1;
+
+        _mm_store_ss(vector_i, new_vec_i);
+        _mm_store_ss(vector_j, new_vec_j);
+
+        vector_i += increment;
+
+        vector_j++;
+    }
+
+    std::swap(*vector_i, *vector_end);
+    return (vector_i - &vector[0]);
+}
+
+
+template <typename T>
+int partition_stat(std::vector<T>& vector, int low, int high, sorting_stats* stats) {
+    T pivot = vector[high];
+
+    int i = (low - 1);
+
+    stats->memory_accesses += (high - low);
+    stats->comparisons += (high - low);
+    for (int j = low; j < high; j++) {
+        if (vector[j] <= pivot) {
+            i++;
+            std::swap(vector[i], vector[j]);
+        }
+    }
+    i = i + 1;
+    std::swap(vector[i], vector[high]);
+    stats->swaps += (i + 1 - low);
+    return i;
+}
+
 template <typename T>
 void quicksort_internal(std::vector<T>& vector, int low, int high) {
     if (low < high) {
@@ -47,4 +82,22 @@ void quicksort_internal(std::vector<T>& vector, int low, int high) {
 template <typename T>
 void quicksort(std::vector<T>& vector) {
     quicksort_internal(vector, 0, vector.size() - 1);
+}
+
+
+template <typename T>
+void quicksort_internal_stat(std::vector<T>& vector, int low, int high, sorting_stats* stats) {
+    if (low < high) {
+        int pi = partition_stat(vector, low, high, stats);
+
+        quicksort_internal_stat(vector, low, pi - 1, stats);
+        quicksort_internal_stat(vector, pi + 1, high, stats);
+    }
+}
+
+template <typename T>
+sorting_stats quicksort_stat(std::vector<T>& vector) {
+    sorting_stats result;
+    quicksort_internal_stat(vector, 0, vector.size() - 1, &result);
+    return result;
 }
