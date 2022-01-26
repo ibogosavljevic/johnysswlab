@@ -17,7 +17,7 @@ int partition(std::vector<T>& vector, int low, int high) {
     std::swap(vector[i], vector[high]);
     return i;
 }
-
+/*
 template <>
 int partition(std::vector<float>& vector, int low, int high) {
     float* vector_i = &vector[low];
@@ -47,27 +47,7 @@ int partition(std::vector<float>& vector, int low, int high) {
     std::swap(*vector_i, *vector_end);
     return (vector_i - &vector[0]);
 }
-
-
-template <typename T>
-int partition_stat(std::vector<T>& vector, int low, int high, sorting_stats* stats) {
-    T pivot = vector[high];
-
-    int i = (low - 1);
-
-    stats->memory_accesses += (high - low);
-    stats->comparisons += (high - low);
-    for (int j = low; j < high; j++) {
-        if (vector[j] <= pivot) {
-            i++;
-            std::swap(vector[i], vector[j]);
-        }
-    }
-    i = i + 1;
-    std::swap(vector[i], vector[high]);
-    stats->swaps += (i + 1 - low);
-    return i;
-}
+*/
 
 template <typename T>
 void quicksort_internal(std::vector<T>& vector, int low, int high) {
@@ -82,22 +62,4 @@ void quicksort_internal(std::vector<T>& vector, int low, int high) {
 template <typename T>
 void quicksort(std::vector<T>& vector) {
     quicksort_internal(vector, 0, vector.size() - 1);
-}
-
-
-template <typename T>
-void quicksort_internal_stat(std::vector<T>& vector, int low, int high, sorting_stats* stats) {
-    if (low < high) {
-        int pi = partition_stat(vector, low, high, stats);
-
-        quicksort_internal_stat(vector, low, pi - 1, stats);
-        quicksort_internal_stat(vector, pi + 1, high, stats);
-    }
-}
-
-template <typename T>
-sorting_stats quicksort_stat(std::vector<T>& vector) {
-    sorting_stats result;
-    quicksort_internal_stat(vector, 0, vector.size() - 1, &result);
-    return result;
 }

@@ -37,51 +37,6 @@ void heapsort(std::vector<T>& vec) {
 }
 
 
-template <typename T>
-void heapify_stat(std::vector<T>& vec, int n, int i, sorting_stats* stats) {
-    int largest = i;
-    int l = 2 * i + 1;
-    int r = 2 * i + 2;
-
-    if (l < n && vec[l] > vec[largest])
-        largest = l;
-
-    if (r < n && vec[r] > vec[largest])
-        largest = r;
-
-    stats->comparisons += 3;
-    stats->memory_accesses += 2;
-
-    if (largest != i) {
-        std::swap(vec[i], vec[largest]);
-        stats->swaps++;
-
-        heapify_stat(vec, n, largest, stats);
-    }
-}
-
-template <typename T>
-sorting_stats heapsort_stat(std::vector<T>& vec) {
-    sorting_stats result;
-
-    int n = vec.size();
-
-    for (int i = n / 2 - 1; i >= 0; i--)
-        heapify_stat(vec, n, i, &result);
-
-    for (int i = n - 1; i > 0; i--) {
-        result.swaps++;
-        result.memory_accesses++;
-
-        std::swap(vec[0], vec[i]);
-
-        heapify_stat(vec, i, 0, &result);
-    }
-
-    return result;
-}
-
-
 template <typename T, int k>
 void heapify_k(std::vector<T>& vec, int n, int i) {
     int largest = i;

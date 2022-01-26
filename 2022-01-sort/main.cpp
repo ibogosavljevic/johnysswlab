@@ -31,7 +31,6 @@ int main(int argc, char** argv) {
         do_quick = std::string(argv[1]).find("q") != std::string::npos;
         do_heap = std::string(argv[1]).find("h") != std::string::npos;
         do_heap4 = std::string(argv[1]).find("k") != std::string::npos;
-        do_stats = std::string(argv[1]).find("s") != std::string::npos;
     } else {
         std::cout << "Unknown args\n";
         return -1;
@@ -42,29 +41,15 @@ int main(int argc, char** argv) {
     LIKWID_MARKER_INIT;
 
     if (do_quick) {
-        if (do_stats) {
-            LIKWID_MARKER_START("quicksort");
-            sorting_stats stats = quicksort_stat(quick_test_arr);
-            LIKWID_MARKER_STOP("quicksort");
-            std::cout << "Quicksort stats: " << stats;
-        } else {
-            LIKWID_MARKER_START("quicksort");
-            quicksort(quick_test_arr);
-            LIKWID_MARKER_STOP("quicksort");
-        }
+        LIKWID_MARKER_START("quicksort");
+        quicksort(quick_test_arr);
+        LIKWID_MARKER_STOP("quicksort");
     }
 
     if (do_heap) {
-        if (do_stats) {
-            LIKWID_MARKER_START("heapsort");
-            sorting_stats stats = heapsort_stat(heap_test_arr);
-            LIKWID_MARKER_STOP("heapsort");
-            std::cout << "Heapsort stats: " << stats;
-        } else {
-            LIKWID_MARKER_START("heapsort");
-            heapsort(heap_test_arr);
-            LIKWID_MARKER_STOP("heapsort");
-        }
+        LIKWID_MARKER_START("heapsort");
+        heapsort(heap_test_arr);
+        LIKWID_MARKER_STOP("heapsort");
     }
 
     if (do_heap4) {
