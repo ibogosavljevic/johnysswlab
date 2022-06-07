@@ -1,1 +1,1 @@
-likwid-perfctr -C 0 -m -g L3CACHE ./a.out
+likwid-perfctr -C 0 -m -g TMA ./binary_tree
