@@ -61,6 +61,7 @@ public:
                     }
 
                     current->value.~T();
+                    current->next = UINTPTR_MAX;
                 }
 
                 current = current->next;
@@ -84,6 +85,7 @@ public:
                         m_head = current->next;
                     }
                     current->value.~T();
+                    current->next = UINTPTR_MAX;
                     break;
                 }
             }
@@ -92,7 +94,7 @@ public:
         }
     }
 
-    std::vector<bool> lookup_values_simple(std::vector<T> values) {
+    std::vector<bool> lookup_values_simple(std::vector<T>& values) {
         std::vector<bool> result(values.size(), false);
         int size = values.size();
 
@@ -113,34 +115,7 @@ public:
         return result;
     }
 
-    std::vector<bool> lookup_values_depchains(std::vector<T> values) {
-        std::vector<bool> result(values.size(), false);
-        int size = values.size();
-
-        for (int i = 0; i < size; i++) {
-            T val = values[i];
-            node* current_node = m_head;
-
-            while (current_node != nullptr) {
-                if (current_node->value == val) {
-                    result[i] = true;
-                    break;
-                }
-
-                node* new_node = current_node + 1;
-                if (current_node->next == new_node) {
-                    current_node = new_node;
-                } else {
-                    current_node = current_node->next;
-                }
-
-            }
-        }
-
-        return result;
-    }
-
-    std::vector<bool> lookup_values_interleaved(std::vector<T> values) {
+    std::vector<bool> lookup_values_interleaved(std::vector<T>& values) {
         std::vector<bool> result(values.size(), false);
         int size = values.size();
 
@@ -158,6 +133,88 @@ public:
         }
 
         return result;
+    }
+
+    std::vector<bool> lookup_values_array(std::vector<T>& values) {
+        std::vector<bool> result(values.size(), false);
+        
+        for (int i = 0; i < values.size(); i++) {
+            for (node* n = m_nodes; n < m_free; n++) {
+                if (n->next != reinterpret_cast<node*>(UINTPTR_MAX)) {
+                    if (n->value == values[i]) {
+                        result[i] = true;
+                        break;
+                    }
+                }
+            }
+        }
+
+        return result;
+    }
+
+    std::vector<bool> lookup_values_index(std::vector<T>& values) {
+        std::vector<bool> result(values.size(), false);
+        std::vector<node*> index_vector;
+
+        node* current_node = m_head;
+        while (current_node != nullptr) {
+            index_vector.push_back(current_node);
+            current_node = current_node->next;
+        }
+        
+        for (int i = 0; i < values.size(); i++) {
+            for (int j = 0; j < index_vector.size(); j++) {
+                if (index_vector[j]->value == values[i]) {
+                    result[i] = true;
+                    break;
+                }
+            }
+        }
+
+        return result;
+    }
+
+    void shuffle_list(int count) {
+        std::vector<node*> index_vector;
+
+        node* current_node = m_head;
+        while (current_node != nullptr) {
+            index_vector.push_back(current_node);
+            current_node = current_node->next;
+        }
+
+        if (count > index_vector.size()) {
+            count = index_vector.size();
+        }
+
+        std::vector<int> indexes(index_vector.size());
+        std::iota(indexes.begin(), indexes.end(), 0);
+        std::random_shuffle(indexes.begin(), indexes.end());
+
+        for (int i = 0; i < count; i++) {
+            // Pick a random element between 0 and index_vector.size() - 1
+            int index = indexes[i];
+
+            // Exchange the place of element 0 and the random element
+            if (index > 0) {
+                node* zero = index_vector[0];
+                node* random = index_vector[index];
+                node* prev_random = index_vector[index - 1];
+                node* zero_next = index_vector[1];
+
+                zero->next = random->next;
+                prev_random->next = zero;
+
+                random->next = zero_next;
+                m_head = random;
+                
+                if (m_tail == random) {
+                    m_tail = zero;
+                }
+            }
+
+            std::swap(index_vector[0], index_vector[index]);
+        }
     }
 
 private:

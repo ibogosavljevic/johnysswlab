@@ -7,7 +7,7 @@
 #include "likwid.h"
 
 static constexpr int SIZE = 16 * 1024 * 1024;
-static constexpr int LOOKUP_SIZE = 256;
+static constexpr int LOOKUP_SIZE = 128;
 
 int main(int argc, char **argv) {
     LIKWID_MARKER_INIT;
@@ -29,19 +29,27 @@ int main(int argc, char **argv) {
         }
     }
 
+    test_list.shuffle_list(SIZE / 4);
+
     LIKWID_MARKER_START("Lookup_Simple");
     std::vector<bool> lookup_result_simple = test_list.lookup_values_simple(lookup_values);
     LIKWID_MARKER_STOP("Lookup_Simple");
-
-    LIKWID_MARKER_START("Lookup_Depchains");
-    std::vector<bool> lookup_result_depchains = test_list.lookup_values_depchains(lookup_values);
-    LIKWID_MARKER_STOP("Lookup_Depchains");
 
     LIKWID_MARKER_START("Lookup_Interleaved");
     std::vector<bool> lookup_result_interleaved = test_list.lookup_values_interleaved(lookup_values);
     LIKWID_MARKER_STOP("Lookup_Interleaved");
 
-    if (lookup_result_interleaved == lookup_result_simple && lookup_result_depchains == lookup_result_interleaved) {
+    LIKWID_MARKER_START("Lookup_Array");
+    std::vector<bool> lookup_result_array = test_list.lookup_values_array(lookup_values);
+    LIKWID_MARKER_STOP("Lookup_Array");
+
+    LIKWID_MARKER_START("Lookup_Index");
+    std::vector<bool> lookup_result_index = test_list.lookup_values_index(lookup_values);
+    LIKWID_MARKER_STOP("Lookup_Index");
+
+    if (   lookup_result_interleaved == lookup_result_simple && 
+           lookup_result_array == lookup_result_interleaved &&
+           lookup_result_interleaved == lookup_result_index) {
         std::cout << "Done\n";
     } else {
         std::cout << "Result mismatch\n";
