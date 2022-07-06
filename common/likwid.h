@@ -5,14 +5,20 @@
 #include <time.h>
 #include <iostream>
 #include <utility>
+#include <vector>
+#include <algorithm>
 
 template <typename UNUSED>
 class likwid_stub {
 public:
-    void init() {}
+    void init() { m_created_count = 0; }
     void close() {
+        struct compare_obj {
+            bool operator() (const measure_data_t& lhs, const measure_data_t& rhs) const { return lhs.created < rhs.created; }
+	};
 
-        std::map<std::string, measure_data_t> m_measure_data_sorted(m_measure_data.begin(), m_measure_data.end());
+        std::vector<std::pair<std::string, measure_data_t>> m_measure_data_sorted(m_measure_data.begin(), m_measure_data.end());
+	std::sort(m_measure_data_sorted.begin(), m_measure_data_sorted.end(), [](const auto& lhs, const auto& rhs) -> bool { return lhs.second.created < rhs.second.created; }); 
 
         for (auto d: m_measure_data_sorted) {
             std::cout << "Region: " << d.first << ", count " << d.second.total_count << ", total runtime " << timespec_tosec(&d.second.total_time) << std::endl;
@@ -22,6 +28,11 @@ public:
     void start(const char * region_name) {
         std::string str_reg_name(region_name);
         measure_data_t* my_datum = &m_measure_data[str_reg_name];
+
+	if (my_datum->created == -1) {
+            my_datum->created = m_created_count;
+	    m_created_count++;
+	}
 
         if (my_datum->started_time.tv_sec != 0 || my_datum->started_time.tv_nsec != 0) {
             std::cout << "Region " << str_reg_name << " already started. Restarting\n";
@@ -65,8 +76,11 @@ private:
         int total_count;
         struct timespec total_time;
         struct timespec started_time;
+	int created;
 
-        measure_data_t() : total_count(0), total_time{0,0}, started_time{0, 0} {}
+        measure_data_t() : total_count(0), total_time{0,0}, started_time{0, 0}, created(-1) {}
+
+	bool operator()(const measure_data_t& lhs, const measure_data_t& rhs) const { lhs.created < rhs.created; } 
     };
 
 
@@ -100,6 +114,7 @@ private:
 
 
     std::unordered_map<std::string, measure_data_t> m_measure_data;
+    int m_created_count;
 };
 
 #define LIKWID_MARKER_INIT (likwid_stub<int>::get_instance().init())
