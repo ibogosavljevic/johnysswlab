@@ -10,6 +10,7 @@
 
 static constexpr int TEST_SIZE = 64 * 1024 * 1024;
 
+#ifdef __AVX2__
 
 uint32_t hsum_epi32_avx(__m128i x)
 {
@@ -29,14 +30,19 @@ uint32_t hsum_8x32(__m256i v)
     return hsum_epi32_avx(sum128);
 }
 
+#endif
+
 template <int X>
 int run_test(std::vector<int>& data, std::vector<int>& indexes, std::string name) {
     assert(data.size() == indexes.size());
     int len = data.size();
     int* data_ptr = &data[0];
     int* indexes_ptr = &indexes[0];
+    int result;
 
     LIKWID_MARKER_START(name.c_str());
+
+#ifdef __AVX2__
 
     __m256i sum = {0, 0, 0, 0 };
 
@@ -46,6 +52,18 @@ int run_test(std::vector<int>& data, std::vector<int>& indexes, std::string name
         __m256i values = _mm256_i32gather_epi32(data_ptr, index_reg, 4);
         sum = _mm256_add_epi32(sum, values);
     }
+
+    result = hsum_8x32(sum);
+#else
+    
+    int sum = 0;
+    for (int i = 0; i < len; i++) {
+        sum += data_ptr[indexes_ptr[i]];
+    }
+
+    result = sum;
+
+#endif
 
     LIKWID_MARKER_STOP(name.c_str());
 
@@ -59,7 +77,7 @@ int run_test(std::vector<int>& data, std::vector<int>& indexes, std::string name
     LIKWID_MARKER_GET(name.c_str(), nullptr, nullptr, &time, &count);
     std::cout << "Calculated throughput = " << data_volume_mb / time << " MB/s\n";*/
 
-    return hsum_8x32(sum);
+    return result;
 }
 
 template <typename T>
