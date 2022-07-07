@@ -1,6 +1,5 @@
 #include <vector>
 #include "likwid.h"
-#include <immintrin.h>
 
 #include <cassert>
 #include <string>
@@ -11,6 +10,8 @@
 static constexpr int TEST_SIZE = 64 * 1024 * 1024;
 
 #ifdef __AVX2__
+
+#include <immintrin.h>
 
 uint32_t hsum_epi32_avx(__m128i x)
 {
