@@ -5,40 +5,40 @@
 
 template <typename T>
 void rotate_matrix_write(T* out, T* in, int n, int unused_count) {
-    int u = unused_count;
+    int r = n + unused_count;
     for (int i = 0; i < n; i++) {
         for (int j = 0; j < n; j++) {
-            out[(i + u) * n + j] = in[(j + u) * n + i];
+            out[i * r + j] = in[j * r + i];
         }
     }
 }
 
 template <typename T>
 void rotate_matrix_read(T* out, T* in, int n, int unused_count) {
-    int u = unused_count;
+    int r = n + unused_count;
     for (int i = 0; i < n; i++) {
         for (int j = 0; j < n; j++) {
-            out[(j + u) * n + i] = in[(i + u) * n + j];
+            out[j * r + i] = in[i * r + j];
         }
     }
 }
 
 template <typename T>
 void rotate_matrix_write_nontemporal(T* out, T* in, int n, int unused_count) {
-    int u = unused_count;
+    int r = n + unused_count;
     for (int i = 0; i < n; i++) {
         for (int j = 0; j < n; j++) {
-            __builtin_nontemporal_store(in[(j + u) * n + i], out + (i + u) * n + j);
+            __builtin_nontemporal_store(in[j * r + i], out + i * r + j);
         }
     }
 }
 
 template <typename T>
 void fill_matrix(T* out, int n, int unused_count) {
-    int u = unused_count;
+    int r = n + unused_count;
     for (int i = 0; i < n; i++) {
         for (int j = 0; j < n; j++) {
-            out[(j + u) * n + i] = i * n + j;
+            out[i * r + j] = i * n + j;
         }
     }
 }
