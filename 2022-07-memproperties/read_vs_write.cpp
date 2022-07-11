@@ -44,11 +44,13 @@ int main(int argc, char** argv) {
         int repeat_count = (end_size / n) * 4;
         std::string read_test_name = "READ" + get_test_suffix(n, repeat_count);
         std::string write_test_name = "WRITE" + get_test_suffix(n, repeat_count);
+        std::string read2_test_name = "READ_STRIDE2" + get_test_suffix(n, repeat_count);
+        std::string write2_test_name = "WRITE_STRIDE2" + get_test_suffix(n, repeat_count);
 
         double sum = 0.0;
         LIKWID_MARKER_START(read_test_name.c_str());
         for (int i = 0; i < repeat_count; i++) {
-            sum += test_read<2>(&test_vec[0], n);
+            sum += test_read<1>(&test_vec[0], n);
             clobber();
         }
         LIKWID_MARKER_STOP(read_test_name.c_str());
@@ -57,11 +59,29 @@ int main(int argc, char** argv) {
 
         LIKWID_MARKER_START(write_test_name.c_str());
         for (int i = 0; i < repeat_count; i++) {
-            test_write<2>(&test_vec[0], n, static_cast<double>(n + 1));
+            test_write<1>(&test_vec[0], n, static_cast<double>(n + 1));
             clobber();
         }
         LIKWID_MARKER_STOP(write_test_name.c_str());
-                
+
+        sum = 0.0;
+        LIKWID_MARKER_START(read2_test_name.c_str());
+        for (int i = 0; i < repeat_count; i++) {
+            sum += test_read<2>(&test_vec[0], n);
+            clobber();
+        }
+        LIKWID_MARKER_STOP(read2_test_name.c_str());
+
+        std::cout << "sum = " << sum << std::endl;
+
+        LIKWID_MARKER_START(write2_test_name.c_str());
+        for (int i = 0; i < repeat_count; i++) {
+            test_write<2>(&test_vec[0], n, static_cast<double>(n + 1));
+            clobber();
+        }
+        LIKWID_MARKER_STOP(write2_test_name.c_str());
+
+
     }
 
     LIKWID_MARKER_CLOSE;
