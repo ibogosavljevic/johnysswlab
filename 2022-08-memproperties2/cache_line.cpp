@@ -9,6 +9,12 @@
 #define CACHE_LINE_SIZE 64
 #endif
 
+#ifndef ARRAY_SIZE
+static constexpr int TEST_SIZE = 32*1024*1024;
+#else
+static constexpr int TEST_SIZE = ARRAY_SIZE;
+#endif
+
 template <int CacheLineSize = CACHE_LINE_SIZE>
 struct test_struct {
     unsigned char first_byte;
@@ -62,8 +68,6 @@ int sum_struct(test_struct<CACHE_LINE_SIZE> * p, int n, std::vector<int>& index_
 static void clobber() {
     asm volatile("" : : : "memory");
 }
-
-static constexpr int TEST_SIZE = 1*1024*1024;
 
 int main(int argc, char **argv) {
     std::vector<int> index_vector(TEST_SIZE);
