@@ -156,7 +156,7 @@ void left_dependency_scalar(float in[N][N], float out[N][N]) {
     }
 }
 
-#pragma omp declare simd uniform(in, out) linear(i)
+#pragma omp declare simd uniform(in, out) linear(i) notinbranch
 void outer_loop(float in[N][N], float out[N][N], int i) {
     out[i][0] = in[i][0];
     for (int j = 1; j < N; j++) {
