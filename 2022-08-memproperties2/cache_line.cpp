@@ -9,11 +9,7 @@
 #define CACHE_LINE_SIZE 64
 #endif
 
-#ifndef ARRAY_SIZE
-static constexpr int TEST_SIZE = 32*1024*1024;
-#else
-static constexpr int TEST_SIZE = ARRAY_SIZE;
-#endif
+static constexpr int TEST_SIZE = 8*1024*1024;
 
 template <int CacheLineSize = CACHE_LINE_SIZE>
 struct test_struct {
@@ -70,41 +66,70 @@ static void clobber() {
 }
 
 int main(int argc, char **argv) {
-    std::vector<int> index_vector(TEST_SIZE);
-    std::iota(index_vector.begin(), index_vector.end(), 0);
-    std::random_shuffle(index_vector.begin(), index_vector.end());
-
-    test_struct<CACHE_LINE_SIZE> * aligned_struct = allocate_aligned_struct(TEST_SIZE);
-    test_struct<CACHE_LINE_SIZE> * unaligned_struct = allocate_unaligned_struct(TEST_SIZE);
-
-    std::cout << aligned_struct << std::endl;
-    std::cout << unaligned_struct << std::endl;
-
     LIKWID_MARKER_INIT;
 
-    LIKWID_MARKER_START("init_aligned");
-    initialize_struct(aligned_struct, TEST_SIZE);
-    LIKWID_MARKER_STOP("init_aligned");
+    int start_size = 64;
+    int end_size = TEST_SIZE;
+
+    for (int size = start_size; size <= end_size; size *= 2) {
+        std::vector<int> index_vector(size);
+
+        std::iota(index_vector.begin(), index_vector.end(), 0);
+        std::random_shuffle(index_vector.begin(), index_vector.end());
+
+        test_struct<CACHE_LINE_SIZE> * aligned_struct = allocate_aligned_struct(size);
+        test_struct<CACHE_LINE_SIZE> * unaligned_struct = allocate_unaligned_struct(size);
+
+        std::cout << aligned_struct << std::endl;
+        std::cout << unaligned_struct << std::endl;
+        std::cout << "Running for size = " << size << std::endl;
+
+        int repeat_count = TEST_SIZE / size * 4;
+        int sum1, sum2;
+
+        std::string init_aligned_text = "init_aligned_" + std::to_string(size);
+        std::string init_unaligned_text = "init_unaligned_" + std::to_string(size);
+        std::string sum_aligned_text = "sum_aligned_" + std::to_string(size);
+        std::string sum_unaligned_text = "sum_unaligned_" + std::to_string(size);
+
+        LIKWID_MARKER_START(init_aligned_text.c_str());
+        for (int i = 0; i < repeat_count; i++) {
+            initialize_struct(aligned_struct, size);
+            clobber();
+        }
+        LIKWID_MARKER_STOP(init_aligned_text.c_str());
+
+
+        LIKWID_MARKER_START(init_unaligned_text.c_str());
+        for (int i = 0; i < repeat_count; i++) {
+            initialize_struct(unaligned_struct, size);
+            clobber();
+        }
+        LIKWID_MARKER_STOP(init_unaligned_text.c_str());
+
+
+        LIKWID_MARKER_START(sum_aligned_text.c_str());
+        for (int i = 0; i < repeat_count; i++) {
+            sum1 = sum_struct(aligned_struct, size, index_vector);
+            clobber();
+        }
+        LIKWID_MARKER_STOP(sum_aligned_text.c_str());
+        
+        LIKWID_MARKER_START(sum_unaligned_text.c_str());
+        for (int i = 0; i < repeat_count; i++) {
+            sum2 = sum_struct(unaligned_struct, size, index_vector);
+            clobber();
+        }
+        LIKWID_MARKER_STOP(sum_unaligned_text.c_str());
+
+        if (sum1 != sum2) {
+            std::cout << "Unexpected\n";
+        }
+   
+        free_struct(aligned_struct);
+        free_struct(unaligned_struct);
+    }
     
-    LIKWID_MARKER_START("init_unaligned");
-    initialize_struct(unaligned_struct, TEST_SIZE);
-    LIKWID_MARKER_STOP("init_unaligned");
-
-    LIKWID_MARKER_START("sum_aligned");
-    int sum1 = sum_struct(aligned_struct, TEST_SIZE, index_vector);
-    LIKWID_MARKER_STOP("sum_aligned");
-    
-    LIKWID_MARKER_START("sum_unaligned");
-    int sum2 = sum_struct(unaligned_struct, TEST_SIZE, index_vector);
-    LIKWID_MARKER_STOP("sum_unaligned");
-
-    clobber();
-
-    std::cout << sum1 << ", " << sum2 << std::endl;
-
-    free_struct(aligned_struct);
-    free_struct(unaligned_struct);
-
     LIKWID_MARKER_CLOSE;
 
     return 0;
