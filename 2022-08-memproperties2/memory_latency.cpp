@@ -36,17 +36,17 @@ std::vector<elem_t> generate_linked_list(int size, elem_t** head) {
 double calculate_min_sum(std::vector<elem_t*> heads) {
     std::vector<elem_t*> currents = heads;
     std::vector<double> sums(heads.size(), 0.0);
-    int size = heads.size();
+    int list_cnt = heads.size();
 
     while(currents[0] != nullptr) {
-        for (int i = 0; i < size; i++) {
+        for (int i = 0; i < list_cnt; i++) {
             sums[i] += i * currents[i]->value;
             currents[i] = currents[i]->next;
         }
     }
 
     double min = sums[0];
-    for (int i = 0; i < size; i++) {
+    for (int i = 0; i < list_cnt; i++) {
         min = std::min(sums[i], min);
     }
 
