@@ -1,5 +1,6 @@
 CC="clang++ -std=c++17 -g -O3 -mavx2 -mfma -fopenmp -DLIKWID_PERFMON -llikwid"
 
+$CC branch_prediction.cpp -o branch_prediction
 $CC vectorization.cpp -o vectorization
 $CC cache_conflicts.cpp -o cache_conflicts
 $CC memory_throughput.cpp -o memory_throughput
