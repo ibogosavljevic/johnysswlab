@@ -1,5 +1,6 @@
 #include <vector>
 #include "likwid.h"
+#include "omp.h"
 
 #include <cassert>
 #include <string>
@@ -7,20 +8,28 @@
 #include <numeric>
 #include <iostream>
 
-static constexpr int TEST_SIZE = 64 * 1024 * 1024;
+static void clobber() {
+  asm volatile("" : : : "memory");
+}
 
-__attribute__((noinline)) int run_test(std::vector<int>& data, std::vector<int>& indexes, std::string name) {
+__attribute__((noinline)) int run_test(std::vector<int>& data, std::vector<int>& indexes, std::string test_name, int repeat_count, int num_cores) {
     assert(data.size() == indexes.size());
     int len = data.size();
     int* data_ptr = &data[0];
     int* indexes_ptr = &indexes[0];
     int result;
 
+    std::string name = test_name + "_" + std::to_string(len) + "_" + std::to_string(num_cores) + "_" + std::to_string(repeat_count);
+
     LIKWID_MARKER_START(name.c_str());
 
     int sum = 0;
-    for (int i = 0; i < len; i++) {
-        sum += data_ptr[indexes_ptr[i]];
+    #pragma omp parallel for reduction(+:sum) num_threads(num_cores)
+    for (int r = 0; r < repeat_count; r++) {
+        for (int i = 0; i < len; i++) {
+            sum += data_ptr[indexes_ptr[i]];
+        }
+        clobber();
     }
 
     result = sum;
@@ -59,39 +68,56 @@ int main(int argc, char** argv) {
 
     LIKWID_MARKER_INIT;
 
-    std::vector<int> data(TEST_SIZE);
-    
-    std::iota(data.begin(), data.end(), 0);
-    std::random_shuffle(data.begin(), data.end());
+    int start_size = 4*1024;
+    int end_size = 64*1024*1024;
 
-    std::vector<int> indexes(TEST_SIZE);
-    std::iota(indexes.begin(), indexes.end(), 0);
-    int sum1 = run_test(data, indexes, "Sequential");
-    std::cout << sum1 << std::endl;
+    int max_core_count = omp_get_max_threads();
+    if (argc >= 2) {
+        max_core_count = std::atoi(argv[1]);
+    }
+    std::cout << "Max cores = " << max_core_count << std::endl;
 
-    std::random_shuffle(indexes.begin(), indexes.end());
-    int sum2 = run_test(data, indexes, "Random");
-    std::cout << sum2 << std::endl;
+    for (int cores = 1; cores <= max_core_count; ++cores) {
+        std::cout << "Running with " << cores << " cores\n";
+        for (int size = start_size; size <= end_size; size *= 2) {
+            std::cout << "Size = " << size/1024 << "KB\n";
+            int repeat_count = end_size / size * 8;
 
-    generate_random_index_vector(indexes.begin(), indexes.end(), TEST_SIZE, 4);
-    int sum3 = run_test(data, indexes, "Stride_4");
-    std::cout << sum3 << std::endl;
+            std::vector<int> data(size);
+            
+            std::iota(data.begin(), data.end(), 0);
+            std::random_shuffle(data.begin(), data.end());
 
-    generate_random_index_vector(indexes.begin(), indexes.end(), TEST_SIZE, 16);
-    int sum4 = run_test(data, indexes, "Stride_16");
-    std::cout << sum4 << std::endl;
+            std::vector<int> indexes(size);
+            std::iota(indexes.begin(), indexes.end(), 0);
+            int sum1 = run_test(data, indexes, "Sequential", repeat_count, cores);
+            std::cout << sum1 << std::endl;
 
-    generate_random_index_vector(indexes.begin(), indexes.end(), TEST_SIZE, 32);
-    int sum5 = run_test(data, indexes, "Stride_32");
-    std::cout << sum5 << std::endl;
+            std::random_shuffle(indexes.begin(), indexes.end());
+            int sum2 = run_test(data, indexes, "Random", repeat_count, cores);
+            std::cout << sum2 << std::endl;
 
-    generate_random_index_vector(indexes.begin(), indexes.end(), TEST_SIZE, 64);
-    int sum6 = run_test(data, indexes, "Stride_64");
-    std::cout << sum6 << std::endl;
+            generate_random_index_vector(indexes.begin(), indexes.end(), size, 4);
+            int sum3 = run_test(data, indexes, "Stride_4", repeat_count, cores);
+            std::cout << sum3 << std::endl;
 
-    generate_random_index_vector(indexes.begin(), indexes.end(), TEST_SIZE, 128);
-    int sum7 = run_test(data, indexes, "Stride_128");
-    std::cout << sum7 << std::endl;
+            generate_random_index_vector(indexes.begin(), indexes.end(), size, 16);
+            int sum4 = run_test(data, indexes, "Stride_16", repeat_count, cores);
+            std::cout << sum4 << std::endl;
+
+            generate_random_index_vector(indexes.begin(), indexes.end(), size, 32);
+            int sum5 = run_test(data, indexes, "Stride_32", repeat_count, cores);
+            std::cout << sum5 << std::endl;
+
+            generate_random_index_vector(indexes.begin(), indexes.end(), size, 64);
+            int sum6 = run_test(data, indexes, "Stride_64", repeat_count, cores);
+            std::cout << sum6 << std::endl;
+
+            generate_random_index_vector(indexes.begin(), indexes.end(), size, 128);
+            int sum7 = run_test(data, indexes, "Stride_128", repeat_count, cores);
+            std::cout << sum7 << std::endl;
+        }
+    }
 
     LIKWID_MARKER_CLOSE;
 
