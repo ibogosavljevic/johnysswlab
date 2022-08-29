@@ -16,7 +16,7 @@ def float2(val):
 
 def run_command(command_words, num_runs, save_to_file):
     outputs = []
-    time = "{0}".format(datetime.datetime.now())
+    pid = os.getpid()
     try:
         os.mkdir("stat")
     except FileExistsError:
@@ -28,8 +28,10 @@ def run_command(command_words, num_runs, save_to_file):
         output_str = (stream.stdout.decode('utf-8').split("\n"))
         outputs.append(output_str)
         if save_to_file:
-            text_file = open("stat/stat-{0}-{1}.txt".format(time, i), "w")
-            text_file.writelines(output_str)
+            text_file = open("stat/stat-{0}-{1}.txt".format(pid, i), "w")
+            for l in output_str:
+                text_file.write(l)
+                text_file.write("\n")
             text_file.close()
 
     return outputs
@@ -61,8 +63,11 @@ def tokenize_line(line):
         else:
             tokens.append(line[start:current])
             start = current
+    
+    tokens.append(line[start:current])
 
-    if len(tokens) > 0:
+    # Remove trailing whitespace 
+    if len(tokens) > 1:
         if tokens[len(tokens) - 1].isspace():
             del tokens[-1]
 
