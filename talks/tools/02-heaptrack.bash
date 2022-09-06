@@ -1,7 +1,7 @@
 export OMP_NUM_THREADS=1
 
 pushd LULESH/build
-rm heaptrack*.gz
+rm heaptrack*.zst
 heaptrack ./lulesh2.0
-heaptrack --analyze heaptrack*.gz
+heaptrack --analyze heaptrack*.zst
 popd
