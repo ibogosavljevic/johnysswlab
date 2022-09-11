@@ -7,6 +7,7 @@
 #include <utility>
 #include <vector>
 #include <algorithm>
+#include <mutex>
 #include "omp.h"
 
 
@@ -19,6 +20,8 @@ public:
             bool operator() (const measure_data_t& lhs, const measure_data_t& rhs) const { return lhs.created < rhs.created; }
 	    };
 
+	m_data_mutex.lock();
+
         std::vector<std::pair<std::string, measure_data_t>> m_measure_data_sorted(m_measure_data.begin(), m_measure_data.end());
 	    std::sort(m_measure_data_sorted.begin(), m_measure_data_sorted.end(), [](const auto& lhs, const auto& rhs) -> bool { return lhs.second.created < rhs.second.created; }); 
 
@@ -27,17 +30,36 @@ public:
 
             int id = 0;
             std::cout << "Region " << region_name << "\n";
+	    std::vector<double> second_runtime;
             for (const auto & m: d.second.thread_data) {
-                std::cout << "\tCPU id = " << id << ", count = " << m.second.total_count << ", runtime " << timespec_tosec(&m.second.total_time) << "\n";
+		double sec = timespec_tosec(&m.second.total_time);
+                std::cout << "\tCPU id = " << id << ", count = " << m.second.total_count << ", runtime " << sec << " s\n";
+		second_runtime.push_back(sec);
                 id++;
             }
 
+	    double min = second_runtime[0];
+	    double max = second_runtime[0];
+	    double total = 0.0;
+	    for (int i = 0; i < second_runtime.size(); i++) {
+                double v = second_runtime[i];
+		if (v < min) { min = v; }
+		if (v > max) { max = v; }
+		total += v;
+	    }
+	    std::cout << "\tSTAT, cummulative runtime = " << total << " s, min = " << min << " s, ";
+	    std::cout << "avg = " << total / second_runtime.size() << " s, max = " << max << " s\n";
+
         }
+
+	m_data_mutex.unlock();
     }
 
     void start(const char * region_name) {
         std::string str_reg_name(region_name);
-        measure_data_t* my_datum = &m_measure_data[str_reg_name];
+        m_data_mutex.lock();
+
+	measure_data_t* my_datum = &m_measure_data[str_reg_name];
 
         if (my_datum->created == -1) {
             my_datum->created = m_created_count;
@@ -56,10 +78,14 @@ public:
         }
 
         clock_gettime(CLOCK_MONOTONIC, &thread_datum.started_time);
+	m_data_mutex.unlock();
     }
 
     void stop(const char * region_name) {
         std::string str_reg_name(region_name);
+
+	m_data_mutex.lock();
+
         auto datum = m_measure_data.find(str_reg_name);
 
         if (datum == m_measure_data.end()) {
@@ -86,7 +112,7 @@ public:
         thread_datum.started_time.tv_sec = 0;
         thread_datum.started_time.tv_nsec = 0;
 
-        
+        m_data_mutex.unlock();
     }
 
     static likwid_stub& get_instance() {
@@ -149,6 +175,7 @@ private:
 
 
     std::unordered_map<std::string, measure_data_t> m_measure_data;
+    std::mutex m_data_mutex;
     int m_created_count;
 };
 
