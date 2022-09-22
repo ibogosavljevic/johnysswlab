@@ -9,7 +9,7 @@
 #include <immintrin.h>
 #endif
 
-#ifdef __ARM_NEON__
+#ifdef __ARM_NEON
 #include <arm_neon.h>
 #endif
 
@@ -55,9 +55,9 @@ double_vec set_vec(double val) {
 }
 
 
-#elif defined(__ARM_NEON__)
+#elif defined(__ARM_NEON)
 
-static constexpr int VECTOR_SIZE = 4;
+static constexpr int VECTOR_SIZE = 2;
 using double_vec = float64x2_t;
 
 double_vec load_vec(const double* addr) {
@@ -192,7 +192,7 @@ std::pair<__m256d, __m256d> cos_vector_interleaved(__m256d x1, __m256d x2) noexc
     return {x1, x2};
 }
 
-#elif defined(__ARM_NEON__)
+#elif defined(__ARM_NEON)
 
 float64x2_t cos_vector(float64x2_t x) noexcept
 {
@@ -329,7 +329,11 @@ void print(const double_vec v)
     double vec[VECTOR_SIZE];
 
     store_vec(vec, v);
-    std::cout << "[ " << vec[0] << ", " << vec[1] << ", " << vec[2] << ", " << vec[3] << " ]";
+    std::cout << "[ ";
+    for (int i = 0; i < (VECTOR_SIZE - 1); i++) {
+        std::cout << v[i] << ", ";
+    }
+    std::cout << v[VECTOR_SIZE - 1] << " ]";
 }
 
 
