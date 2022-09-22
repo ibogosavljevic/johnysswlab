@@ -5,8 +5,6 @@
 #include "omp.h"
 #include "likwid.h"
 
-#define __ARM_NEON__
-
 #ifdef __AVX2__
 #include <immintrin.h>
 #endif
