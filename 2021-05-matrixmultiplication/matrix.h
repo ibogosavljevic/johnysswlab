@@ -1,4 +1,6 @@
+#ifdef AVX
 #include <immintrin.h>
+#endif
 #include <cassert>
 #include <iostream>
 
@@ -183,6 +185,8 @@ std::ostream& operator<<(std::ostream& os, const matrix<T>& m) {
     return os;
 }
 
+#ifdef AVX
+
 template <>
 bool matrix<double>::multiply_tiled_avx(matrix<double>& out,
                                         matrix<double>& in1,
@@ -240,3 +244,5 @@ bool matrix<double>::multiply_tiled_avx(matrix<double>& out,
 
     return true;
 }
+
+#endif
