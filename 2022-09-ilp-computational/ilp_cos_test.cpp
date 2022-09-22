@@ -203,7 +203,7 @@ float64x2_t cos_vector(float64x2_t x) noexcept
 
     // x = x * tp;
     const float64x2_t tp =  vmovq_n_f64(tp_scalar);
-    x = float64x2_t(x, tp);
+    x = vmulq_f64(x, tp);
 
     // x = x - (double(.25) + std::floor(x + double(.25)));
     const float64x2_t v_25 =  vmovq_n_f64(0.25);
@@ -451,8 +451,8 @@ void __attribute__((noinline)) run_test_longchain(const std::vector<double> v, i
     LIKWID_MARKER_START(name3.c_str());
     for (int i = 0; i < cnt1; i += 2*VECTOR_SIZE)
     {
-        double_vec val1 = _mm256_loadu_pd(v_ptr + i);
-        double_vec val2 = _mm256_loadu_pd(v_ptr + i + VECTOR_SIZE);
+        double_vec val1 = load_vec(v_ptr + i);
+        double_vec val2 = load_vec(v_ptr + i + VECTOR_SIZE);
         for (int j = 0; j < cnt2; ++j)
         {
             auto r = cos_vector_interleaved(val1, val2);
