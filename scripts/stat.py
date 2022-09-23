@@ -14,7 +14,7 @@ def float2(val):
     """
     return float(val.replace(',', '.'))
 
-def run_command(command_words, num_runs, save_to_file):
+def run_command(command_words, num_runs, save_to_file, silent):
     outputs = []
     pid = os.getpid()
     try:
@@ -23,10 +23,16 @@ def run_command(command_words, num_runs, save_to_file):
         print("")
 
     for i in range(num_runs):
-        print("Running %d. time" % i)
-        stream = subprocess.run(command_words, stdout=subprocess.PIPE, stderr = subprocess.STDOUT, shell=True)
-        output_str = (stream.stdout.decode('utf-8').split("\n"))
+        print("+++ Running %d/%d +++" % ((i + 1), num_runs))
+        output_str = []
+        with subprocess.Popen(command_words[0].split(), stdout=subprocess.PIPE, universal_newlines=True) as p:
+            for line in p.stdout:
+                if not silent:
+                    print(line, end = '')
+                output_str.append(line)
+
         outputs.append(output_str)
+
         if save_to_file:
             text_file = open("stat/stat-{0}-{1}.txt".format(pid, i), "w")
             for l in output_str:
@@ -78,15 +84,17 @@ def main():
     parser = argparse.ArgumentParser(description='Description of your program')
     parser.add_argument('-n','--num-runs', help='Number of time to run your program', required=True, type=int)
     parser.add_argument('-c','--command', help='Command to execute', nargs='+',required=True)
-    parser.add_argument('-s','--save-to-file', help='Save output to file', required=False, default=True)
+    parser.add_argument('-f','--save-to-file', help='Save output to file', required=False, default=True, type=bool)
+    parser.add_argument('-s','--silent', help='Don\'t display info on the screen', required=False, default=False, type=bool)
     args = vars(parser.parse_args())
 
     num_runs = args['num_runs']
     command_words = args['command']
     save_to_file = args['save_to_file']
+    silent = args['silent']
     
     # outputs[n][i] refers to the i-th line in n-th execution of the command  
-    outputs = run_command(command_words, num_runs, save_to_file)
+    outputs = run_command(command_words, num_runs, save_to_file, silent)
 
     if not verify_line_counts(outputs, num_runs):
         print("Line count missmatch")
