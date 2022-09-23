@@ -1,0 +1,8 @@
+sudo python3 ../scripts/stat.py -n 10 -c likwid-perfctr -C 0-3 -g MEM -m ./ilp_cos_test > ilp_res.txt
+echo "Scalar"
+cat ilp_res.txt | grep \(RDTSC | grep -Eo '\|[[:space:]]+([0-9]+\.[0-9]*|\.^C-9]+)([eE][+-][0-9]+)?' | grep -Eo '([0-9]+\.[0-9]*|\.[0-9]+)([eE][+-][0-9]+)?' | awk '(NR - 1) % 3 == 0'
+echo "Vector"
+cat ilp_res.txt | grep \(RDTSC | grep -Eo '\|[[:space:]]+([0-9]+\.[0-9]*|\.^C-9]+)([eE][+-][0-9]+)?' | grep -Eo '([0-9]+\.[0-9]*|\.[0-9]+)([eE][+-][0-9]+)?' | awk '(NR - 1) % 3 == 1'
+echo "Vector Interleaved"
+cat ilp_res.txt | grep \(RDTSC | grep -Eo '\|[[:space:]]+([0-9]+\.[0-9]*|\.^C-9]+)([eE][+-][0-9]+)?' | grep -Eo '([0-9]+\.[0-9]*|\.[0-9]+)([eE][+-][0-9]+)?' | awk '(NR - 1) % 3 == 2'
+
