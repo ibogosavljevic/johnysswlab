@@ -403,7 +403,7 @@ void __attribute__((noinline)) run_test(const std::vector<double> v)
 
 void __attribute__((noinline)) run_test_longchain(const std::vector<double> v, int cnt1, int cnt2)
 {
-    std::string name = "longchain";
+    std::string name = "longchain_" + std::to_string(cnt1) + "_" + std::to_string(cnt2);
 
     int size = v.size();
     const double *v_ptr = &v[0];
@@ -483,7 +483,15 @@ int main(int argc, char **argv)
     initialize_data(data_single, SIZE);
 
     run_test(data_single);
-    run_test_longchain(data_single, 64, 1024 * 1024);
+    
+    const int SIZE2 = 60 * 1024 * 1024;
+    for (int i = 1; i < 50; i++) {
+        
+        run_test_longchain(data_single, SIZE2 / i, i);
+    }
+
+    int largest_index = 1024 * 1024;
+    run_test_longchain(data_single, SIZE2/largest_index, largest_index);
 
     LIKWID_MARKER_CLOSE;
 }
