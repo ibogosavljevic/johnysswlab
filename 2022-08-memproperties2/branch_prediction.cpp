@@ -68,7 +68,7 @@ int binary_search_bracnhless_asm(int* array, int number_of_elements, int key) {
                 : [new_low] "r"(new_low), [new_high] "r"(new_high), [mid_value] "r"(mid_value), [key] "r"(key)
                 : "cc"
             );
-#elif defined(__arm64__)
+#elif defined(__aarch64__)
             __asm__ (
                 "cmp %[array_middle], %[key];"
                 "csel %[low], %[new_low], %[low], le;"
