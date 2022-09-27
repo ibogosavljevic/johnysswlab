@@ -11,7 +11,7 @@ static void clobber() {
 void initialize_data_single_threaded(std::vector<double>& values, size_t size) {
     values.resize(size);
     for (size_t i = 0; i < size; i++) {
-        values[i] = 1.0 / static_cast<double>(i);
+        values[i] = 1.0 / (1.0 + static_cast<double>(i));
     }
 }
 
@@ -99,6 +99,7 @@ int main(int argc, char **argv) {
 
     LIKWID_MARKER_INIT;
 
+    for (int rep = 0; rep < 1; rep++) {
     initialize_data_single_threaded(data_single, SIZE);
     r = run_test(data_single, num_threads, "SINGLE");
     std::cout << "r = " << r << std::endl;
@@ -110,9 +111,7 @@ int main(int argc, char **argv) {
     copy_data_multithreaded_static(data_multi_static, data_single, 4);
     r = run_test(data_multi_random, num_threads, "STATIC");
     std::cout << "r = " << r << std::endl;
-
-    r = run_test(data_single, num_threads, "SINGLE2");
-    std::cout << "r = " << r << std::endl;
+  }
 
 
     LIKWID_MARKER_CLOSE;
