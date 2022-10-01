@@ -150,7 +150,7 @@ __attribute__((noinline)) binary_search_result_t run_test(std::vector<int>& sort
 
 
 void generate_data(int data_size, int lookup_size, std::vector<int>& sorted_data, std::vector<int>& lookup_data) {
-    assert(lookup_size % data_size == 0);
+    //assert(lookup_size % data_size == 0);
 
     sorted_data.resize(data_size * 2);
     std::iota(sorted_data.begin(), sorted_data.end(), 0);
