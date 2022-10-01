@@ -205,7 +205,8 @@ int main(int argc, char** argv) {
 
     for (int cores = 1; cores <= max_core_count; ++cores) {
         std::cout << "Running with " << cores << " cores\n";
-        for (int size = start_size; size <= end_size; size *= 2) {
+        for (int s = start_size; s <= end_size; s *= 2) {
+            int size = s - 80;
             binary_search_result_t res;
             std::vector<int> sorted_data, lookup_data;
             generate_data(size, total_lookups, sorted_data, lookup_data);
