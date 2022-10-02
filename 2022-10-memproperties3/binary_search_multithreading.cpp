@@ -215,7 +215,7 @@ int main(int argc, char** argv) {
             std::cout << "NOPART, cores = " << cores << ", size = " << size/1024 << "K, " << "memory accesses = " 
                       << res.memory_accesses << ", found = " << res.index << "\n";
 
-            quickpartition(&lookup_data[0], 0, lookup_data.size() - 1, lookup_data.size()/(2 * cores));
+            quickpartition(&lookup_data[0], 0, lookup_data.size() - 1, lookup_data.size()/(2 * max_core_count));
 
             res = run_test(sorted_data, lookup_data, "BINARYSEARCHPART", cores);
             std::cout << "YEPART, cores = " << cores << ", size = " << size/1024 << "K, " << "memory accesses = " 
