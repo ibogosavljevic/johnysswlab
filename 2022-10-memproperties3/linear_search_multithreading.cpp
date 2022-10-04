@@ -25,8 +25,6 @@ struct binary_search_result_t {
     long memory_accesses;
 };
 
-#undef __AVX2__
-
 #ifdef __AVX2__
 
 #define VECTOR_SIZE 8
@@ -92,16 +90,14 @@ void store_vec(int* addr, int_vec value) {
 #endif
 
 __attribute__((noinline)) binary_search_result_t run_test(std::vector<int>& dataset1, std::vector<int>& dataset2, std::string test_name, int num_cores) {
-    assert(dataset1.size() % VECTOR_SIZE == 0);
-    assert(dataset1.size() == dataset2.size());
-
-    int n = dataset1.size();
+    int n1 = dataset1.size();
+    int n2 = dataset2.size();
     int* v1 = dataset1.data();
     int* v2 = dataset2.data();
 
     binary_search_result_t result;
 
-    std::string name = test_name + "_" + std::to_string(n) + "_" + std::to_string(num_cores);
+    std::string name = test_name + "_" + std::to_string(n2) + "_" + std::to_string(num_cores);
 
     LIKWID_MARKER_START(name.c_str());
 
@@ -109,14 +105,14 @@ __attribute__((noinline)) binary_search_result_t run_test(std::vector<int>& data
     long mem_accesses = 0;
 
     #pragma omp parallel for reduction(+:sum, mem_accesses) num_threads(num_cores) schedule(static)
-    for (int i = 0; i < n; i++) {
-        for (int j = 0; j < n; j++) {
+    for (int i = 0; i < n1; i++) {
+        for (int j = 0; j < n2; j++) {
             if (v1[i] == v2[j]) {
                 sum++;
             }
         }
 
-        mem_accesses += n;
+        mem_accesses += n2;
     }
 
     LIKWID_MARKER_STOP(name.c_str());
@@ -129,17 +125,14 @@ __attribute__((noinline)) binary_search_result_t run_test(std::vector<int>& data
 
 
 __attribute__((noinline)) binary_search_result_t run_test2(std::vector<int>& dataset1, std::vector<int>& dataset2, std::string test_name, int num_cores) {
-    assert(dataset1.size() % VECTOR_SIZE == 0);
-    assert(dataset2.size() % VECTOR_SIZE == 0);
-    assert(dataset1.size() == dataset2.size());
-
-    int n = dataset1.size();
+    int n1 = dataset1.size();
+    int n2 = dataset2.size();
     int* v1 = dataset1.data();
     int* v2 = dataset2.data();
 
     binary_search_result_t result;
 
-    std::string name = test_name + "_" + std::to_string(n) + "_" + std::to_string(num_cores);
+    std::string name = test_name + "_" + std::to_string(n2) + "_" + std::to_string(num_cores);
 
     LIKWID_MARKER_START(name.c_str());
 
@@ -148,15 +141,15 @@ __attribute__((noinline)) binary_search_result_t run_test2(std::vector<int>& dat
 
     #pragma omp parallel num_threads(num_cores)
     {
-        for (int i = 0; i < n; i++) {
+        for (int i = 0; i < n1; i++) {
             #pragma omp for reduction(+:sum, mem_accesses) schedule(static) nowait
-            for (int j = 0; j < n; j++) {
+            for (int j = 0; j < n2; j++) {
                 if (v1[i] == v2[j]) {
                     sum++;
                 }
             }
 
-            mem_accesses += n;
+            mem_accesses += n2;
         }
     }
 
@@ -188,9 +181,10 @@ void print(const std::vector<int>& v) {
 int main(int argc, char** argv) {
 
     LIKWID_MARKER_INIT;
-    static constexpr int start_size = 20*1000;
-    static constexpr int end_size = 100*1024;
-    static constexpr double diff = 1.41;
+    static constexpr int start_size = 8*1000;
+    static constexpr int end_size = 8*1024*1000;
+    static constexpr double diff = 1.98;
+    static constexpr int LOOKUP_SIZE = 4*100;
 
     int max_core_count = omp_get_max_threads();
     if (argc >= 2) {
@@ -198,22 +192,25 @@ int main(int argc, char** argv) {
     }
     std::cout << "Max cores = " << max_core_count << std::endl;
 
+    std::vector<int> lookup_from;
+    generate_data(LOOKUP_SIZE, lookup_from);
+
     for (int cores = 1; cores <= max_core_count; ++cores) {
         std::cout << "Running with " << cores << " cores\n";
         for (int size= start_size; size <= end_size; size *= diff) {
             binary_search_result_t res;
-            std::vector<int> dataset1, dataset2;
-            generate_data(size, dataset1);
-            generate_data(size, dataset2);
+            std::vector<int> lookup_in;
+            
+            generate_data(size, lookup_in);
 
-            res = run_test2(dataset1, dataset2, "PARTITONED", cores);
+            res = run_test2(lookup_from, lookup_in, "PARTITONED", cores);
             std::cout << "PARTITONED, cores = " << cores << ", size = " << size << ", " << "memory accesses = " 
-                      << res.memory_accesses << ", found = " << res.index << "\n";
+                      << res.memory_accesses << ", found = " << res.index << std::endl;
 
 
-            res = run_test(dataset1, dataset2, "DEFAULT", cores);
+            /*res = run_test(lookup_from, lookup_in, "DEFAULT", cores);
             std::cout << "DEFAULT, cores = " << cores << ", size = " << size << ", " << "memory accesses = " 
-                      << res.memory_accesses << ", found = " << res.index << "\n";
+                      << res.memory_accesses << ", found = " << res.index << std::endl;*/
         }
     }
 
