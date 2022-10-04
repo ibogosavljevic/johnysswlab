@@ -86,12 +86,14 @@ def main():
     parser.add_argument('-c','--command', help='Command to execute', nargs='+',required=True)
     parser.add_argument('-f','--save-to-file', help='Save output to file', required=False, default=True, type=bool)
     parser.add_argument('-s','--silent', help='Don\'t display info on the screen', required=False, default=False, type=bool)
+    parser.add_argument('-p','--precision', help='Precision (in number of digit)', required=False, default=3, type=int)
     args = vars(parser.parse_args())
 
     num_runs = args['num_runs']
     command_words = args['command']
     save_to_file = args['save_to_file']
     silent = args['silent']
+    precision = args['precision']
     
     # outputs[n][i] refers to the i-th line in n-th execution of the command  
     outputs = run_command(command_words, num_runs, save_to_file, silent)
@@ -179,8 +181,8 @@ def main():
                         left = right - 1
                         median = (values[left] + values[right]) / 2
 
-                    output_text += '{0:.{1}f}'.format(mean, 3) + " (" + '{0:.{1}f}'.format(stddev, 3) + ")" 
-                    output_text += '[ {0:.{1}f}'.format(min, 3) + ', {0:.{1}f}'.format(median, 3) + ', {0:.{1}f} ]'.format(max, 3) 
+                    output_text += '{0:.{1}f}'.format(mean, precision) + " (" + '{0:.{1}f}'.format(stddev, precision) + ")" 
+                    output_text += '[ {0:.{1}f}'.format(min, precision) + ', {0:.{1}f}'.format(median, precision) + ', {0:.{1}f} ]'.format(max, 3) 
             
        
         output_text += ("\n")
