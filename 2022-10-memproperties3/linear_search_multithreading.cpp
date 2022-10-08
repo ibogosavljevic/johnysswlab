@@ -208,9 +208,9 @@ int main(int argc, char** argv) {
                       << res.memory_accesses << ", found = " << res.index << std::endl;
 
 
-            /*res = run_test(lookup_from, lookup_in, "DEFAULT", cores);
+            res = run_test(lookup_from, lookup_in, "DEFAULT", cores);
             std::cout << "DEFAULT, cores = " << cores << ", size = " << size << ", " << "memory accesses = " 
-                      << res.memory_accesses << ", found = " << res.index << std::endl;*/
+                      << res.memory_accesses << ", found = " << res.index << std::endl;
         }
     }
 
