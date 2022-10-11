@@ -129,18 +129,19 @@ __attribute__((noinline)) binary_search_result_t run_test(std::vector<int>& sort
 
     std::string name = test_name + "_" + std::to_string(sorted_data.size()) + "_" + std::to_string(num_cores);
 
-    LIKWID_MARKER_START(name.c_str());
-
     int sum = 0;
     long mem_accesses = 0;
-    #pragma omp parallel for reduction(+:sum, mem_accesses) num_threads(num_cores) schedule(static)
+    #pragma omp parallel reduction(+:sum, mem_accesses) num_threads(num_cores)
+    {
+    LIKWID_MARKER_START(name.c_str());
+    #pragma omp for schedule(static)
     for (int i = 0; i < lookup_cnt; i++) {
         binary_search_result_t res = binary_search_bracnhless_asm(sorted_data_ptr, sorted_cnt, lookup_data_ptr[i]);
         mem_accesses += res.memory_accesses;
         sum += (res.index != -1);
     }
-
     LIKWID_MARKER_STOP(name.c_str());
+    }
 
     result.memory_accesses = mem_accesses;
     result.index = sum;
@@ -213,13 +214,13 @@ int main(int argc, char** argv) {
 
             res = run_test(sorted_data, lookup_data, "BINARYSEARCHNOPART", cores);
             std::cout << "NOPART, cores = " << cores << ", size = " << size/1024 << "K, " << "memory accesses = " 
-                      << res.memory_accesses << ", found = " << res.index << "\n";
+                      << res.memory_accesses << ", found = " << res.index << std::endl;
 
             quickpartition(&lookup_data[0], 0, lookup_data.size() - 1, lookup_data.size()/(2 * max_core_count));
 
             res = run_test(sorted_data, lookup_data, "BINARYSEARCHPART", cores);
             std::cout << "YEPART, cores = " << cores << ", size = " << size/1024 << "K, " << "memory accesses = " 
-                      << res.memory_accesses << ", found = " << res.index << "\n";
+                      << res.memory_accesses << ", found = " << res.index << std::endl;
         }
     }
 
