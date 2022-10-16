@@ -40,11 +40,14 @@ public:
             std::cout << "Region " << region_name << "\n";
 	        std::vector<double> second_runtime;
             for (const auto & m: d.second.thread_data) {
-		        double sec = timespec_tosec(&m.second.total_time);
+		        double sec = timespec_tosec(&m.second.time.total);
                 std::cout << "\tCPU id = " << id << ", count = " << m.second.total_count << ", runtime " << sec << " s\n";
                 if (likwid_collect_all()) {
-                    std::cout << "\t\t Minor faults = " << m.second.total_minor_faults << ", major faults = " << m.second.total_minor_faults << ", ";
-                    std::cout << "context switches = " << m.second.total_context_switches << "\n";
+                    double user_time_s = timeval_tosec(&m.second.user_time.total);
+                    double sys_time_s = timeval_tosec(&m.second.system_time.total);
+                    std::cout << "\t\tUser time = " << user_time_s << " s, system time = " << sys_time_s << " s\n";
+                    std::cout << "\t\tMinor faults = " << m.second.minor_faults.total << ", major faults = " << m.second.minor_faults.total << ", ";
+                    std::cout << "context switches = " << m.second.context_switches.total << "\n";
                 }
 		        second_runtime.push_back(sec);
                 id++;
@@ -60,7 +63,7 @@ public:
                 total_runtime += v;
 	        }
 	        std::cout << "\tSTAT, cummulative runtime = " << total_runtime << " s, min = " << min_runtime << " s, ";
-	        std::cout << "avg = " << total_runtime / second_runtime.size() << " s, max = " << max_runtime << " s\n";
+	        std::cout << "avg = " << total_runtime / second_runtime.size() << " s, max = " << max_runtime << " s" << std::endl;
         }
 
 	    m_data_mutex.unlock();
@@ -84,17 +87,19 @@ public:
 
         typename measure_data_t::thread_measure_data_t& thread_datum = my_datum->thread_data[cpu_id];
 
-        if (thread_datum.started_time.tv_sec != 0 || thread_datum.started_time.tv_nsec != 0) {
+        if (thread_datum.time.started.tv_sec != 0 || thread_datum.time.started.tv_nsec != 0) {
             std::cout << "Region " << str_reg_name << " already started. Restarting\n";
         }
 
-        clock_gettime(CLOCK_MONOTONIC, &thread_datum.started_time);
+        clock_gettime(CLOCK_MONOTONIC, &thread_datum.time.started);
         if (likwid_collect_all()) {
             struct rusage usage;
             if (getrusage(RUSAGE_THREAD, &usage) == 0) {
-                thread_datum.started_minor_faults = usage.ru_minflt;
-                thread_datum.started_major_faults = usage.ru_majflt;
-                thread_datum.started_context_switches = usage.ru_nivcsw + usage.ru_nvcsw;
+                thread_datum.user_time.started = usage.ru_utime;
+                thread_datum.system_time.started = usage.ru_stime;
+                thread_datum.minor_faults.started = usage.ru_minflt;
+                thread_datum.major_faults.started = usage.ru_majflt;
+                thread_datum.context_switches.started = usage.ru_nivcsw + usage.ru_nvcsw;
             }
         }
 
@@ -117,7 +122,7 @@ public:
 
         typename measure_data_t::thread_measure_data_t& thread_datum = datum->second.thread_data[cpu_id];
 
-        if (thread_datum.started_time.tv_sec == 0 && thread_datum.started_time.tv_sec == 0) {
+        if (thread_datum.time.started.tv_sec == 0 && thread_datum.time.started.tv_sec == 0) {
             std::cout << "Region " << str_reg_name << " not started\n";
             return;
         }
@@ -125,19 +130,26 @@ public:
         struct timespec finish, runtime;
         clock_gettime(CLOCK_MONOTONIC, &finish);
 
-        timespec_sub(&runtime, &finish, &thread_datum.started_time);
-        timespec_add(&thread_datum.total_time, &thread_datum.total_time, &runtime);
+        timespec_sub(&runtime, &finish, &thread_datum.time.started);
+        timespec_add(&thread_datum.time.total, &thread_datum.time.total, &runtime);
 
         thread_datum.total_count++;
-        thread_datum.started_time.tv_sec = 0;
-        thread_datum.started_time.tv_nsec = 0;
+        thread_datum.time.started.tv_sec = 0;
+        thread_datum.time.started.tv_nsec = 0;
 
         if (likwid_collect_all()) {
             struct rusage usage;
             if (getrusage(RUSAGE_THREAD, &usage) == 0) {
-                thread_datum.total_minor_faults += usage.ru_minflt - thread_datum.started_minor_faults;
-                thread_datum.total_major_faults += usage.ru_majflt - thread_datum.started_major_faults;
-                thread_datum.total_context_switches += (usage.ru_nivcsw + usage.ru_nvcsw) - thread_datum.started_context_switches;
+                struct timeval runtime_user, runtime_system;
+                timeval_sub(&runtime_user, &usage.ru_utime, &thread_datum.user_time.started);
+                timeval_sub(&runtime_system, &usage.ru_stime, &thread_datum.system_time.started);
+                
+                timeval_add(&thread_datum.user_time.total, &thread_datum.user_time.total, &runtime_user);
+                timeval_add(&thread_datum.system_time.total, &thread_datum.system_time.total, &runtime_system);
+                
+                thread_datum.minor_faults.total += usage.ru_minflt - thread_datum.minor_faults.started;
+                thread_datum.major_faults.total += usage.ru_majflt - thread_datum.major_faults.started;
+                thread_datum.context_switches.total += (usage.ru_nivcsw + usage.ru_nvcsw) - thread_datum.context_switches.started;
             }
         }
 
@@ -153,21 +165,29 @@ private:
     using cpu_id_t = int;
     using cpu_affinity_mask_t = cpu_set_t;
 
+    template <typename T>
+    struct measurement_t {
+        T total;
+        T started;
+
+        measurement_t(T val) : total(val), started(val) {}
+    };
+
     struct measure_data_t {
         struct thread_measure_data_t {
             int total_count;
-            struct timespec total_time;
-            struct timespec started_time;
-            long total_minor_faults;
-            long started_minor_faults;
-            long total_major_faults;
-            long started_major_faults;
-            long total_context_switches;
-            long started_context_switches;
+            measurement_t<struct timespec> time;
+            measurement_t<struct timeval> user_time;
+            measurement_t<struct timeval> system_time;
+            measurement_t<long> minor_faults;
+            measurement_t<long> major_faults;
+            measurement_t<long> context_switches;
 
-            thread_measure_data_t() : total_count(0), total_time{0,0}, started_time{0, 0}, 
-                total_minor_faults(0), started_minor_faults(0), total_major_faults(0),
-                started_major_faults(0), total_context_switches(0), started_context_switches(0) 
+            thread_measure_data_t() : 
+                total_count(0), time({0,0}),
+                user_time({0, 0}), system_time({0, 0}),
+                minor_faults(0), major_faults(0),
+                context_switches(0)
             {}
         };
     	int created;
@@ -204,6 +224,35 @@ private:
         double seconds;
 
         seconds = diff->tv_sec + (diff->tv_nsec / 1000000000.0);
+        return seconds;
+    }
+
+
+    static void timeval_add (struct timeval *sum, const struct timeval *left,
+                const struct timeval *right)
+    {
+        sum->tv_sec = left->tv_sec + right->tv_sec;
+        sum->tv_usec = left->tv_usec + right->tv_usec;
+        if (sum->tv_usec >= 1000000) {
+            ++sum->tv_sec;
+            sum->tv_usec -= 1000000;
+        }
+    }
+
+    static void timeval_sub (struct timeval *diff, const struct timeval *left,
+                const struct timeval *right) {
+        diff->tv_sec = left->tv_sec - right->tv_sec;
+        diff->tv_usec = left->tv_usec - right->tv_usec;
+        if (diff->tv_usec < 0) {
+            --diff->tv_sec;
+            diff->tv_usec += 1000000;
+        }
+    }
+
+    static double timeval_tosec(const struct timeval* diff) {
+        double seconds;
+
+        seconds = diff->tv_sec + (diff->tv_usec / 1000000.0);
         return seconds;
     }
 
