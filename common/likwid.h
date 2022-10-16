@@ -9,7 +9,15 @@
 #include <algorithm>
 #include <mutex>
 #include "omp.h"
+#include <sys/resource.h>
 
+#define LIKWID_COLLECT_ALL
+
+#ifdef LIKWID_COLLECT_ALL
+bool likwid_collect_all() { return true; }
+#else
+bool likwid_collect_all() { return false; }
+#endif
 
 template <typename UNUSED>
 class likwid_stub {
@@ -20,7 +28,7 @@ public:
             bool operator() (const measure_data_t& lhs, const measure_data_t& rhs) const { return lhs.created < rhs.created; }
 	    };
 
-	m_data_mutex.lock();
+	    m_data_mutex.lock();
 
         std::vector<std::pair<std::string, measure_data_t>> m_measure_data_sorted(m_measure_data.begin(), m_measure_data.end());
 	    std::sort(m_measure_data_sorted.begin(), m_measure_data_sorted.end(), [](const auto& lhs, const auto& rhs) -> bool { return lhs.second.created < rhs.second.created; }); 
@@ -30,36 +38,39 @@ public:
 
             int id = 0;
             std::cout << "Region " << region_name << "\n";
-	    std::vector<double> second_runtime;
+	        std::vector<double> second_runtime;
             for (const auto & m: d.second.thread_data) {
-		double sec = timespec_tosec(&m.second.total_time);
+		        double sec = timespec_tosec(&m.second.total_time);
                 std::cout << "\tCPU id = " << id << ", count = " << m.second.total_count << ", runtime " << sec << " s\n";
-		second_runtime.push_back(sec);
+                if (likwid_collect_all()) {
+                    std::cout << "\t\t Minor faults = " << m.second.total_minor_faults << ", major faults = " << m.second.total_minor_faults << ", ";
+                    std::cout << "context switches = " << m.second.total_context_switches << "\n";
+                }
+		        second_runtime.push_back(sec);
                 id++;
             }
 
-	    double min = second_runtime[0];
-	    double max = second_runtime[0];
-	    double total = 0.0;
-	    for (int i = 0; i < second_runtime.size(); i++) {
+	        double min_runtime = second_runtime[0];
+	        double max_runtime = second_runtime[0];
+	        double total_runtime = 0.0;
+	        for (int i = 0; i < second_runtime.size(); i++) {
                 double v = second_runtime[i];
-		if (v < min) { min = v; }
-		if (v > max) { max = v; }
-		total += v;
-	    }
-	    std::cout << "\tSTAT, cummulative runtime = " << total << " s, min = " << min << " s, ";
-	    std::cout << "avg = " << total / second_runtime.size() << " s, max = " << max << " s\n";
-
+                if (v < min_runtime) { min_runtime = v; }
+                if (v > max_runtime) { max_runtime = v; }
+                total_runtime += v;
+	        }
+	        std::cout << "\tSTAT, cummulative runtime = " << total_runtime << " s, min = " << min_runtime << " s, ";
+	        std::cout << "avg = " << total_runtime / second_runtime.size() << " s, max = " << max_runtime << " s\n";
         }
 
-	m_data_mutex.unlock();
+	    m_data_mutex.unlock();
     }
 
     void start(const char * region_name) {
         std::string str_reg_name(region_name);
         m_data_mutex.lock();
 
-	measure_data_t* my_datum = &m_measure_data[str_reg_name];
+	    measure_data_t* my_datum = &m_measure_data[str_reg_name];
 
         if (my_datum->created == -1) {
             my_datum->created = m_created_count;
@@ -78,13 +89,22 @@ public:
         }
 
         clock_gettime(CLOCK_MONOTONIC, &thread_datum.started_time);
-	m_data_mutex.unlock();
+        if (likwid_collect_all()) {
+            struct rusage usage;
+            if (getrusage(RUSAGE_THREAD, &usage) == 0) {
+                thread_datum.started_minor_faults = usage.ru_minflt;
+                thread_datum.started_major_faults = usage.ru_majflt;
+                thread_datum.started_context_switches = usage.ru_nivcsw + usage.ru_nvcsw;
+            }
+        }
+
+	    m_data_mutex.unlock();
     }
 
     void stop(const char * region_name) {
         std::string str_reg_name(region_name);
 
-	m_data_mutex.lock();
+	    m_data_mutex.lock();
 
         auto datum = m_measure_data.find(str_reg_name);
 
@@ -112,6 +132,15 @@ public:
         thread_datum.started_time.tv_sec = 0;
         thread_datum.started_time.tv_nsec = 0;
 
+        if (likwid_collect_all()) {
+            struct rusage usage;
+            if (getrusage(RUSAGE_THREAD, &usage) == 0) {
+                thread_datum.total_minor_faults += usage.ru_minflt - thread_datum.started_minor_faults;
+                thread_datum.total_major_faults += usage.ru_majflt - thread_datum.started_major_faults;
+                thread_datum.total_context_switches += (usage.ru_nivcsw + usage.ru_nvcsw) - thread_datum.started_context_switches;
+            }
+        }
+
         m_data_mutex.unlock();
     }
 
@@ -129,8 +158,17 @@ private:
             int total_count;
             struct timespec total_time;
             struct timespec started_time;
+            long total_minor_faults;
+            long started_minor_faults;
+            long total_major_faults;
+            long started_major_faults;
+            long total_context_switches;
+            long started_context_switches;
 
-            thread_measure_data_t() : total_count(0), total_time{0,0}, started_time{0, 0} {}
+            thread_measure_data_t() : total_count(0), total_time{0,0}, started_time{0, 0}, 
+                total_minor_faults(0), started_minor_faults(0), total_major_faults(0),
+                started_major_faults(0), total_context_switches(0), started_context_switches(0) 
+            {}
         };
     	int created;
         std::unordered_map<cpu_id_t, thread_measure_data_t> thread_data;
