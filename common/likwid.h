@@ -46,7 +46,7 @@ public:
                     double user_time_s = timeval_tosec(&m.second.user_time.total);
                     double sys_time_s = timeval_tosec(&m.second.system_time.total);
                     std::cout << "\t\tUser time = " << user_time_s << " s, system time = " << sys_time_s << " s\n";
-                    std::cout << "\t\tMinor faults = " << m.second.minor_faults.total << ", major faults = " << m.second.minor_faults.total << ", ";
+                    std::cout << "\t\tMinor faults = " << m.second.minor_faults.total << ", major faults = " << m.second.major_faults.total << ", ";
                     std::cout << "context switches = " << m.second.context_switches.total << "\n";
                 }
 		        second_runtime.push_back(sec);
