@@ -86,7 +86,7 @@ std::vector<double> calculate_sqrt_emplaceback(const std::vector<double>& in) {
 
     LIKWID_MARKER_START("EMPLACEBACK");
     for (size_t i = 0; i < size; i++) {
-        result.push_back(std::sqrt(in[i]));
+        result.emplace_back(std::sqrt(in[i]));
     }
     LIKWID_MARKER_STOP("EMPLACEBACK");
 
@@ -144,7 +144,7 @@ std::vector<double, malloc_wrapper<double>> calculate_sqrt_emplaceback_preinitia
 
     LIKWID_MARKER_START("OPERATOR_EMPLACEBACK_PREINITIALIZED");
     for (size_t i = 0; i < size; i++) {
-        result.push_back(std::sqrt(in[i]));
+        result.emplace_back(std::sqrt(in[i]));
     }
     LIKWID_MARKER_STOP("OPERATOR_EMPLACEBACK_PREINITIALIZED");
 
