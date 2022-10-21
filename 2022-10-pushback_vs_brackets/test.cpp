@@ -59,7 +59,10 @@ class malloc_wrapper
         {
             std::cout << "Allocate, size = " << n << " bytes" << std::endl;
             pointer p = (pointer) malloc(n * sizeof(T));
-            memset(p, 0, n * sizeof(T));
+            T default_val = T();
+            for (size_type i = 0; i < n; i++) {
+                p[i] = default_val;
+            }
             return p;
         }
 
@@ -138,9 +141,9 @@ my_vector<double> calculate_sqrt_my_vector(const std::vector<double>& in) {
 
 
 std::vector<double, malloc_wrapper<double>> calculate_sqrt_emplaceback_preinitialized(const std::vector<double>& in) {
-    std::vector<double, malloc_wrapper<double>> result(in.size());
-    result.reserve(in.size());
+    std::vector<double, malloc_wrapper<double>> result;
     size_t size = in.size();
+    result.reserve(size);
 
     LIKWID_MARKER_START("OPERATOR_EMPLACEBACK_PREINITIALIZED");
     for (size_t i = 0; i < size; i++) {
