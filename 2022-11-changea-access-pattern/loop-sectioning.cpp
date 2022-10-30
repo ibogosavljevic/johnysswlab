@@ -69,7 +69,7 @@ std::pair<size_t, size_t> distance_fission(point_t* p1, point_t* p2, distance_t 
     return { smaller_size, larger_size };
 }
 
-template <int SECTION_SIZE = 4096>
+template <int SECTION_SIZE = 1024>
 std::pair<size_t, size_t> distance_sectioning(point_t* p1, point_t* p2, distance_t pivot, distance_t* smaller, distance_t* larger, size_t n) {
     size_t smaller_size = 0;
     size_t larger_size = 0;
