@@ -61,42 +61,6 @@ int main(int argc, char** argv) {
         }
 
         {
-            std::string name = "Tiled_2_" + std::to_string(n);
-            LIKWID_MARKER_START(name.c_str());
-            matrix<double>::multiply_tiled<2>(out2, in1, in2);
-            LIKWID_MARKER_STOP(name.c_str());
-
-            if (out1 != out2) {
-                std::cout << "MATRICES NOT SAME!!!\n";
-            } else {
-                std::cout << "Matrices same!!!\n";
-            }
-        }
-        {
-            std::string name = "Tiled_3_" + std::to_string(n);
-            LIKWID_MARKER_START(name.c_str());
-            matrix<double>::multiply_tiled<3>(out2, in1, in2);
-            LIKWID_MARKER_STOP(name.c_str());
-
-            if (out1 != out2) {
-                std::cout << "MATRICES NOT SAME!!!\n";
-            } else {
-                std::cout << "Matrices same!!!\n";
-            }
-        }
-        {
-            std::string name = "Tiled_4_" + std::to_string(n);
-            LIKWID_MARKER_START(name.c_str());
-            matrix<double>::multiply_tiled<4>(out2, in1, in2);
-            LIKWID_MARKER_STOP(name.c_str());
-
-            if (out1 != out2) {
-                std::cout << "MATRICES NOT SAME!!!\n";
-            } else {
-                std::cout << "Matrices same!!!\n";
-            }
-        }
-        {
             std::string name = "Tiled_8_" + std::to_string(n);
             LIKWID_MARKER_START(name.c_str());
             matrix<double>::multiply_tiled<8>(out2, in1, in2);
@@ -112,6 +76,42 @@ int main(int argc, char** argv) {
             std::string name = "Tiled_12_" + std::to_string(n);
             LIKWID_MARKER_START(name.c_str());
             matrix<double>::multiply_tiled<12>(out2, in1, in2);
+            LIKWID_MARKER_STOP(name.c_str());
+
+            if (out1 != out2) {
+                std::cout << "MATRICES NOT SAME!!!\n";
+            } else {
+                std::cout << "Matrices same!!!\n";
+            }
+        }
+        {
+            std::string name = "Tiled_16_" + std::to_string(n);
+            LIKWID_MARKER_START(name.c_str());
+            matrix<double>::multiply_tiled<16>(out2, in1, in2);
+            LIKWID_MARKER_STOP(name.c_str());
+
+            if (out1 != out2) {
+                std::cout << "MATRICES NOT SAME!!!\n";
+            } else {
+                std::cout << "Matrices same!!!\n";
+            }
+        }
+        {
+            std::string name = "Tiled_32_" + std::to_string(n);
+            LIKWID_MARKER_START(name.c_str());
+            matrix<double>::multiply_tiled<32>(out2, in1, in2);
+            LIKWID_MARKER_STOP(name.c_str());
+
+            if (out1 != out2) {
+                std::cout << "MATRICES NOT SAME!!!\n";
+            } else {
+                std::cout << "Matrices same!!!\n";
+            }
+        }
+        {
+            std::string name = "Tiled_48_" + std::to_string(n);
+            LIKWID_MARKER_START(name.c_str());
+            matrix<double>::multiply_tiled<48>(out2, in1, in2);
             LIKWID_MARKER_STOP(name.c_str());
 
             if (out1 != out2) {
