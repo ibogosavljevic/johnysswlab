@@ -1,0 +1,1705 @@
+
+<html>
+<title>move.h</title>
+<meta charset="utf-8" />
+<head>
+<link rel='stylesheet' type='text/css' href='style.css'>
+<script type="text/javascript">
+/* Simple helper to show/hide the expanded message of a remark. */
+function toggleExpandedMessage(e) {
+  var FullTextElems = e.parentElement.parentElement.getElementsByClassName("full-info");
+  if (!FullTextElems || FullTextElems.length < 1) {
+      return false;
+  }
+  var FullText = FullTextElems[0];
+  if (FullText.style.display == 'none') {
+    e.innerHTML = '-';
+    FullText.style.display = 'block';
+  } else {
+    e.innerHTML = '+';
+    FullText.style.display = 'none';
+  }
+}
+</script>
+</head>
+<body>
+<div class="centered">
+<table class="source">
+<thead>
+<tr>
+<th style="width: 2%">Line</td>
+<th style="width: 3%">Hotness</td>
+<th style="width: 10%">Optimization</td>
+<th style="width: 70%">Source</td>
+<th style="width: 15%">Inline Context</td>
+</tr>
+</thead>
+<tbody>
+
+<tr>
+<td><a name="L1">1</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre><span></span><span class="c1">// Move, forward and identity for C++11 + swap -*- C++ -*-</span></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L2">2</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L3">3</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre><span class="c1">// Copyright (C) 2007-2021 Free Software Foundation, Inc.</span></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L4">4</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre><span class="c1">//</span></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L5">5</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre><span class="c1">// This file is part of the GNU ISO C++ Library.  This library is free</span></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L6">6</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre><span class="c1">// software; you can redistribute it and/or modify it under the</span></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L7">7</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre><span class="c1">// terms of the GNU General Public License as published by the</span></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L8">8</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre><span class="c1">// Free Software Foundation; either version 3, or (at your option)</span></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L9">9</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre><span class="c1">// any later version.</span></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L10">10</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L11">11</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre><span class="c1">// This library is distributed in the hope that it will be useful,</span></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L12">12</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre><span class="c1">// but WITHOUT ANY WARRANTY; without even the implied warranty of</span></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L13">13</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre><span class="c1">// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L14">14</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre><span class="c1">// GNU General Public License for more details.</span></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L15">15</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L16">16</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre><span class="c1">// Under Section 7 of GPL version 3, you are granted additional</span></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L17">17</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre><span class="c1">// permissions described in the GCC Runtime Library Exception, version</span></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L18">18</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre><span class="c1">// 3.1, as published by the Free Software Foundation.</span></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L19">19</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L20">20</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre><span class="c1">// You should have received a copy of the GNU General Public License and</span></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L21">21</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre><span class="c1">// a copy of the GCC Runtime Library Exception along with this program;</span></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L22">22</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre><span class="c1">// see the files COPYING3 and COPYING.RUNTIME respectively.  If not, see</span></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L23">23</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre><span class="c1">// &lt;http://www.gnu.org/licenses/&gt;.</span></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L24">24</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L25">25</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre><span class="cm">/** @file bits/move.h</span></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L26">26</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre><span class="cm"> *  This is an internal header file, included by other library headers.</span></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L27">27</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre><span class="cm"> *  Do not attempt to use it directly. @headername{utility}</span></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L28">28</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre><span class="cm"> */</span><span class="w"></span></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L29">29</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L30">30</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre><span class="cp">#ifndef _MOVE_H</span></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L31">31</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre><span class="cp">#define _MOVE_H 1</span></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L32">32</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L33">33</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;bits/c++config.h&gt;</span><span class="cp"></span></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L34">34</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre><span class="cp">#if __cplusplus &lt; 201103L</span></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L35">35</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre><span class="cp">#</span><span class="w"> </span><span class="cp">include</span><span class="w"> </span><span class="cpf">&lt;bits/concept_check.h&gt;</span><span class="cp"></span></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L36">36</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre><span class="cp">#endif</span></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L37">37</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L38">38</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre><span class="k">namespace</span><span class="w"> </span><span class="nn">std</span><span class="w"> </span><span class="nn">_GLIBCXX_VISIBILITY</span><span class="p">(</span><span class="nn">default</span><span class="p">)</span><span class="w"></span></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L39">39</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre><span class="p">{</span><span class="w"></span></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L40">40</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre><span class="n">_GLIBCXX_BEGIN_NAMESPACE_VERSION</span><span class="w"></span></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L41">41</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L42">42</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre><span class="w">  </span><span class="c1">// Used, in C++03 mode too, by allocators, etc.</span></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L43">43</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre><span class="w">  </span><span class="cm">/**</span></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L44">44</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre><span class="cm">   *  @brief Same as C++11 std::addressof</span></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L45">45</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre><span class="cm">   *  @ingroup utilities</span></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L46">46</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre><span class="cm">   */</span><span class="w"></span></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L47">47</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre><span class="w">  </span><span class="k">template</span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">_Tp</span><span class="o">&gt;</span><span class="w"></span></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L48">48</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre><span class="w">    </span><span class="kr">inline</span><span class="w"> </span><span class="n">_GLIBCXX_CONSTEXPR</span><span class="w"> </span><span class="n">_Tp</span><span class="o">*</span><span class="w"></span></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L49">49</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre><span class="w">    </span><span class="n">__addressof</span><span class="p">(</span><span class="n">_Tp</span><span class="o">&amp;</span><span class="w"> </span><span class="n">__r</span><span class="p">)</span><span class="w"> </span><span class="n">_GLIBCXX_NOEXCEPT</span><span class="w"></span></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L50">50</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre><span class="w">    </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">__builtin_addressof</span><span class="p">(</span><span class="n">__r</span><span class="p">);</span><span class="w"> </span><span class="p">}</span><span class="w"></span></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L51">51</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L52">52</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre><span class="cp">#if __cplusplus &gt;= 201103L</span></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L53">53</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L54">54</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre><span class="n">_GLIBCXX_END_NAMESPACE_VERSION</span><span class="w"></span></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L55">55</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre><span class="p">}</span><span class="w"> </span><span class="c1">// namespace</span></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L56">56</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L57">57</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;type_traits&gt;</span><span class="c1"> // Brings in std::declval too.</span><span class="cp"></span></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L58">58</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L59">59</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre><span class="k">namespace</span><span class="w"> </span><span class="nn">std</span><span class="w"> </span><span class="nn">_GLIBCXX_VISIBILITY</span><span class="p">(</span><span class="nn">default</span><span class="p">)</span><span class="w"></span></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L60">60</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre><span class="p">{</span><span class="w"></span></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L61">61</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre><span class="n">_GLIBCXX_BEGIN_NAMESPACE_VERSION</span><span class="w"></span></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L62">62</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L63">63</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre><span class="w">  </span><span class="cm">/**</span></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L64">64</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre><span class="cm">   *  @addtogroup utilities</span></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L65">65</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre><span class="cm">   *  @{</span></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L66">66</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre><span class="cm">   */</span><span class="w"></span></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L67">67</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L68">68</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre><span class="w">  </span><span class="cm">/**</span></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L69">69</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre><span class="cm">   *  @brief  Forward an lvalue.</span></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L70">70</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre><span class="cm">   *  @return The parameter cast to the specified type.</span></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L71">71</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre><span class="cm">   *</span></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L72">72</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre><span class="cm">   *  This function is used to implement &quot;perfect forwarding&quot;.</span></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L73">73</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre><span class="cm">   */</span><span class="w"></span></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L74">74</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre><span class="w">  </span><span class="k">template</span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">_Tp</span><span class="o">&gt;</span><span class="w"></span></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L75">75</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre><span class="w">    </span><span class="n">_GLIBCXX_NODISCARD</span><span class="w"></span></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L76">76</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre><span class="w">    </span><span class="k">constexpr</span><span class="w"> </span><span class="n">_Tp</span><span class="o">&amp;&amp;</span><span class="w"></span></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L77">77</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre><span class="w">    </span><span class="n">forward</span><span class="p">(</span><span class="k">typename</span><span class="w"> </span><span class="nc">std</span><span class="o">::</span><span class="n">remove_reference</span><span class="o">&lt;</span><span class="n">_Tp</span><span class="o">&gt;::</span><span class="n">type</span><span class="o">&amp;</span><span class="w"> </span><span class="n">__t</span><span class="p">)</span><span class="w"> </span><span class="k">noexcept</span><span class="w"></span></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L78">78</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre><span class="w">    </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="n">_Tp</span><span class="o">&amp;&amp;&gt;</span><span class="p">(</span><span class="n">__t</span><span class="p">);</span><span class="w"> </span><span class="p">}</span><span class="w"></span></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L79">79</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L80">80</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre><span class="w">  </span><span class="cm">/**</span></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L81">81</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre><span class="cm">   *  @brief  Forward an rvalue.</span></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L82">82</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre><span class="cm">   *  @return The parameter cast to the specified type.</span></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L83">83</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre><span class="cm">   *</span></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L84">84</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre><span class="cm">   *  This function is used to implement &quot;perfect forwarding&quot;.</span></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L85">85</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre><span class="cm">   */</span><span class="w"></span></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L86">86</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre><span class="w">  </span><span class="k">template</span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">_Tp</span><span class="o">&gt;</span><span class="w"></span></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L87">87</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre><span class="w">    </span><span class="n">_GLIBCXX_NODISCARD</span><span class="w"></span></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L88">88</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre><span class="w">    </span><span class="k">constexpr</span><span class="w"> </span><span class="n">_Tp</span><span class="o">&amp;&amp;</span><span class="w"></span></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L89">89</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre><span class="w">    </span><span class="n">forward</span><span class="p">(</span><span class="k">typename</span><span class="w"> </span><span class="nc">std</span><span class="o">::</span><span class="n">remove_reference</span><span class="o">&lt;</span><span class="n">_Tp</span><span class="o">&gt;::</span><span class="n">type</span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">__t</span><span class="p">)</span><span class="w"> </span><span class="k">noexcept</span><span class="w"></span></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L90">90</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre><span class="w">    </span><span class="p">{</span><span class="w"></span></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L91">91</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre><span class="w">      </span><span class="k">static_assert</span><span class="p">(</span><span class="o">!</span><span class="n">std</span><span class="o">::</span><span class="n">is_lvalue_reference</span><span class="o">&lt;</span><span class="n">_Tp</span><span class="o">&gt;::</span><span class="n">value</span><span class="p">,</span><span class="w"></span></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L92">92</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre><span class="w">	  </span><span class="s">&quot;std::forward must not be used to convert an rvalue to an lvalue&quot;</span><span class="p">);</span><span class="w"></span></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L93">93</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre><span class="w">      </span><span class="k">return</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="n">_Tp</span><span class="o">&amp;&amp;&gt;</span><span class="p">(</span><span class="n">__t</span><span class="p">);</span><span class="w"></span></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L94">94</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre><span class="w">    </span><span class="p">}</span><span class="w"></span></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L95">95</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L96">96</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre><span class="w">  </span><span class="cm">/**</span></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L97">97</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre><span class="cm">   *  @brief  Convert a value to an rvalue.</span></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L98">98</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre><span class="cm">   *  @param  __t  A thing of arbitrary type.</span></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L99">99</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre><span class="cm">   *  @return The parameter cast to an rvalue-reference to allow moving it.</span></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L100">100</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre><span class="cm">  */</span><span class="w"></span></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L101">101</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre><span class="w">  </span><span class="k">template</span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">_Tp</span><span class="o">&gt;</span><span class="w"></span></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L102">102</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre><span class="w">    </span><span class="n">_GLIBCXX_NODISCARD</span><span class="w"></span></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L103">103</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre><span class="w">    </span><span class="k">constexpr</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">std</span><span class="o">::</span><span class="n">remove_reference</span><span class="o">&lt;</span><span class="n">_Tp</span><span class="o">&gt;::</span><span class="n">type</span><span class="o">&amp;&amp;</span><span class="w"></span></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L104">104</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre><span class="w">    </span><span class="n">move</span><span class="p">(</span><span class="n">_Tp</span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">__t</span><span class="p">)</span><span class="w"> </span><span class="k">noexcept</span><span class="w"></span></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L105">105</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre><span class="w">    </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">std</span><span class="o">::</span><span class="n">remove_reference</span><span class="o">&lt;</span><span class="n">_Tp</span><span class="o">&gt;::</span><span class="n">type</span><span class="o">&amp;&amp;&gt;</span><span class="p">(</span><span class="n">__t</span><span class="p">);</span><span class="w"> </span><span class="p">}</span><span class="w"></span></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L106">106</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L107">107</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L108">108</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre><span class="w">  </span><span class="k">template</span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">_Tp</span><span class="o">&gt;</span><span class="w"></span></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L109">109</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre><span class="w">    </span><span class="k">struct</span><span class="w"> </span><span class="nc">__move_if_noexcept_cond</span><span class="w"></span></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L110">110</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre><span class="w">    </span><span class="o">:</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">__and_</span><span class="o">&lt;</span><span class="n">__not_</span><span class="o">&lt;</span><span class="n">is_nothrow_move_constructible</span><span class="o">&lt;</span><span class="n">_Tp</span><span class="o">&gt;&gt;</span><span class="p">,</span><span class="w"></span></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L111">111</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre><span class="w">                    </span><span class="n">is_copy_constructible</span><span class="o">&lt;</span><span class="n">_Tp</span><span class="o">&gt;&gt;::</span><span class="n">type</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="p">};</span><span class="w"></span></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L112">112</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L113">113</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre><span class="w">  </span><span class="cm">/**</span></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L114">114</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre><span class="cm">   *  @brief  Conditionally convert a value to an rvalue.</span></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L115">115</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre><span class="cm">   *  @param  __x  A thing of arbitrary type.</span></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L116">116</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre><span class="cm">   *  @return The parameter, possibly cast to an rvalue-reference.</span></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L117">117</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre><span class="cm">   *</span></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L118">118</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre><span class="cm">   *  Same as std::move unless the type&#39;s move constructor could throw and the</span></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L119">119</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre><span class="cm">   *  type is copyable, in which case an lvalue-reference is returned instead.</span></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L120">120</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre><span class="cm">   */</span><span class="w"></span></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L121">121</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre><span class="w">  </span><span class="k">template</span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">_Tp</span><span class="o">&gt;</span><span class="w"></span></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L122">122</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre><span class="w">    </span><span class="n">_GLIBCXX_NODISCARD</span><span class="w"></span></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L123">123</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre><span class="w">    </span><span class="k">constexpr</span><span class="w"> </span><span class="k">typename</span><span class="w"></span></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L124">124</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre><span class="w">    </span><span class="nc">conditional</span><span class="o">&lt;</span><span class="n">__move_if_noexcept_cond</span><span class="o">&lt;</span><span class="n">_Tp</span><span class="o">&gt;::</span><span class="n">value</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">_Tp</span><span class="o">&amp;</span><span class="p">,</span><span class="w"> </span><span class="n">_Tp</span><span class="o">&amp;&amp;&gt;::</span><span class="n">type</span><span class="w"></span></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L125">125</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre><span class="w">    </span><span class="n">move_if_noexcept</span><span class="p">(</span><span class="n">_Tp</span><span class="o">&amp;</span><span class="w"> </span><span class="n">__x</span><span class="p">)</span><span class="w"> </span><span class="k">noexcept</span><span class="w"></span></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L126">126</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre><span class="w">    </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="n">__x</span><span class="p">);</span><span class="w"> </span><span class="p">}</span><span class="w"></span></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L127">127</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L128">128</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre><span class="w">  </span><span class="c1">// declval, from type_traits.</span></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L129">129</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L130">130</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre><span class="cp">#if __cplusplus &gt; 201402L</span></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L131">131</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre><span class="w">  </span><span class="c1">// _GLIBCXX_RESOLVE_LIB_DEFECTS</span></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L132">132</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre><span class="w">  </span><span class="c1">// 2296. std::addressof should be constexpr</span></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L133">133</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre><span class="cp"># define __cpp_lib_addressof_constexpr 201603</span></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L134">134</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre><span class="cp">#endif</span></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L135">135</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre><span class="w">  </span><span class="cm">/**</span></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L136">136</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre><span class="cm">   *  @brief Returns the actual address of the object or function</span></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L137">137</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre><span class="cm">   *         referenced by r, even in the presence of an overloaded</span></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L138">138</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre><span class="cm">   *         operator&amp;.</span></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L139">139</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre><span class="cm">   *  @param  __r  Reference to an object or function.</span></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L140">140</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre><span class="cm">   *  @return   The actual address.</span></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L141">141</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre><span class="cm">  */</span><span class="w"></span></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L142">142</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre><span class="w">  </span><span class="k">template</span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">_Tp</span><span class="o">&gt;</span><span class="w"></span></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L143">143</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre><span class="w">    </span><span class="n">_GLIBCXX_NODISCARD</span><span class="w"></span></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L144">144</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre><span class="w">    </span><span class="kr">inline</span><span class="w"> </span><span class="n">_GLIBCXX17_CONSTEXPR</span><span class="w"> </span><span class="n">_Tp</span><span class="o">*</span><span class="w"></span></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L145">145</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre><span class="w">    </span><span class="n">addressof</span><span class="p">(</span><span class="n">_Tp</span><span class="o">&amp;</span><span class="w"> </span><span class="n">__r</span><span class="p">)</span><span class="w"> </span><span class="k">noexcept</span><span class="w"></span></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L146">146</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre><span class="w">    </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">__addressof</span><span class="p">(</span><span class="n">__r</span><span class="p">);</span><span class="w"> </span><span class="p">}</span><span class="w"></span></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L147">147</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L148">148</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre><span class="w">  </span><span class="c1">// _GLIBCXX_RESOLVE_LIB_DEFECTS</span></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L149">149</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre><span class="w">  </span><span class="c1">// 2598. addressof works on temporaries</span></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L150">150</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre><span class="w">  </span><span class="k">template</span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">_Tp</span><span class="o">&gt;</span><span class="w"></span></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L151">151</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre><span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">_Tp</span><span class="o">*</span><span class="w"> </span><span class="n">addressof</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">_Tp</span><span class="o">&amp;&amp;</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">delete</span><span class="p">;</span><span class="w"></span></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L152">152</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L153">153</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre><span class="w">  </span><span class="c1">// C++11 version of std::exchange for internal use.</span></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L154">154</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre><span class="w">  </span><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">_Tp</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">_Up</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">_Tp</span><span class="o">&gt;</span><span class="w"></span></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L155">155</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre><span class="w">    </span><span class="n">_GLIBCXX20_CONSTEXPR</span><span class="w"></span></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L156">156</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre><span class="w">    </span><span class="kr">inline</span><span class="w"> </span><span class="n">_Tp</span><span class="w"></span></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L157">157</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre><span class="w">    </span><span class="n">__exchange</span><span class="p">(</span><span class="n">_Tp</span><span class="o">&amp;</span><span class="w"> </span><span class="n">__obj</span><span class="p">,</span><span class="w"> </span><span class="n">_Up</span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">__new_val</span><span class="p">)</span><span class="w"></span></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L158">158</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre><span class="w">    </span><span class="p">{</span><span class="w"></span></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L159">159</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre><span class="w">      </span><span class="n">_Tp</span><span class="w"> </span><span class="n">__old_val</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="n">__obj</span><span class="p">);</span><span class="w"></span></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L160">160</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre><span class="w">      </span><span class="n">__obj</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">forward</span><span class="o">&lt;</span><span class="n">_Up</span><span class="o">&gt;</span><span class="p">(</span><span class="n">__new_val</span><span class="p">);</span><span class="w"></span></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L161">161</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre><span class="w">      </span><span class="k">return</span><span class="w"> </span><span class="n">__old_val</span><span class="p">;</span><span class="w"></span></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L162">162</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre><span class="w">    </span><span class="p">}</span><span class="w"></span></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L163">163</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L164">164</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre><span class="w">  </span><span class="c1">/// @} group utilities</span></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L165">165</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L166">166</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre><span class="cp">#define _GLIBCXX_FWDREF(_Tp) _Tp&amp;&amp;</span></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L167">167</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre><span class="cp">#define _GLIBCXX_MOVE(__val) std::move(__val)</span></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L168">168</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre><span class="cp">#define _GLIBCXX_FORWARD(_Tp, __val) std::forward&lt;_Tp&gt;(__val)</span></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L169">169</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre><span class="cp">#else</span></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L170">170</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre><span class="cp">#define _GLIBCXX_FWDREF(_Tp) const _Tp&amp;</span></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L171">171</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre><span class="cp">#define _GLIBCXX_MOVE(__val) (__val)</span></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L172">172</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre><span class="cp">#define _GLIBCXX_FORWARD(_Tp, __val) (__val)</span></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L173">173</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre><span class="cp">#endif</span></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L174">174</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L175">175</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre><span class="w">  </span><span class="cm">/**</span></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L176">176</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre><span class="cm">   *  @addtogroup utilities</span></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L177">177</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre><span class="cm">   *  @{</span></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L178">178</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre><span class="cm">   */</span><span class="w"></span></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L179">179</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L180">180</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre><span class="w">  </span><span class="cm">/**</span></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L181">181</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre><span class="cm">   *  @brief Swaps two values.</span></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L182">182</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre><span class="cm">   *  @param  __a  A thing of arbitrary type.</span></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L183">183</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre><span class="cm">   *  @param  __b  Another thing of arbitrary type.</span></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L184">184</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre><span class="cm">   *  @return   Nothing.</span></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L185">185</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre><span class="cm">  */</span><span class="w"></span></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L186">186</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre><span class="w">  </span><span class="k">template</span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">_Tp</span><span class="o">&gt;</span><span class="w"></span></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L187">187</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre><span class="w">    </span><span class="n">_GLIBCXX20_CONSTEXPR</span><span class="w"></span></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L188">188</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre><span class="w">    </span><span class="kr">inline</span><span class="w"></span></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L189">189</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre><span class="cp">#if __cplusplus &gt;= 201103L</span></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L190">190</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre><span class="w">    </span><span class="k">typename</span><span class="w"> </span><span class="nc">enable_if</span><span class="o">&lt;</span><span class="n">__and_</span><span class="o">&lt;</span><span class="n">__not_</span><span class="o">&lt;</span><span class="n">__is_tuple_like</span><span class="o">&lt;</span><span class="n">_Tp</span><span class="o">&gt;&gt;</span><span class="p">,</span><span class="w"></span></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L191">191</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre><span class="w">			      </span><span class="n">is_move_constructible</span><span class="o">&lt;</span><span class="n">_Tp</span><span class="o">&gt;</span><span class="p">,</span><span class="w"></span></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L192">192</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre><span class="w">			      </span><span class="n">is_move_assignable</span><span class="o">&lt;</span><span class="n">_Tp</span><span class="o">&gt;&gt;::</span><span class="n">value</span><span class="o">&gt;::</span><span class="n">type</span><span class="w"></span></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L193">193</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre><span class="cp">#else</span></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L194">194</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre><span class="w">    </span><span class="kt">void</span><span class="w"></span></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L195">195</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre><span class="cp">#endif</span></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L196">196</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre><span class="w">    </span><span class="n">swap</span><span class="p">(</span><span class="n">_Tp</span><span class="o">&amp;</span><span class="w"> </span><span class="n">__a</span><span class="p">,</span><span class="w"> </span><span class="n">_Tp</span><span class="o">&amp;</span><span class="w"> </span><span class="n">__b</span><span class="p">)</span><span class="w"></span></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L197">197</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre><span class="w">    </span><span class="n">_GLIBCXX_NOEXCEPT_IF</span><span class="p">(</span><span class="n">__and_</span><span class="o">&lt;</span><span class="n">is_nothrow_move_constructible</span><span class="o">&lt;</span><span class="n">_Tp</span><span class="o">&gt;</span><span class="p">,</span><span class="w"></span></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L198">198</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre><span class="w">				</span><span class="n">is_nothrow_move_assignable</span><span class="o">&lt;</span><span class="n">_Tp</span><span class="o">&gt;&gt;::</span><span class="n">value</span><span class="p">)</span><span class="w"></span></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L199">199</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre><span class="w">    </span><span class="p">{</span><span class="w"></span></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L200">200</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre><span class="cp">#if __cplusplus &lt; 201103L</span></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L201">201</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre><span class="w">      </span><span class="c1">// concept requirements</span></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L202">202</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre><span class="w">      </span><span class="n">__glibcxx_function_requires</span><span class="p">(</span><span class="n">_SGIAssignableConcept</span><span class="o">&lt;</span><span class="n">_Tp</span><span class="o">&gt;</span><span class="p">)</span><span class="w"></span></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L203">203</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre><span class="cp">#endif</span></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L204">204</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre><span class="w">      </span><span class="n">_Tp</span><span class="w"> </span><span class="n">__tmp</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">_GLIBCXX_MOVE</span><span class="p">(</span><span class="n">__a</span><span class="p">);</span><span class="w"></span></pre></div></td>
+</tr>
+
+<tr>
+<td></td>
+<td></td>
+<td class="column-entry-green">inline</td>
+<td><pre style="display:inline">                  </pre><span class="column-entry-yellow"> '<a href="_usr_bin_.._lib_gcc_x86_64-linux-gnu_11_.._.._.._.._include_c++_11_bits_move.h.html#L105">std::remove_reference&lt;int&amp;&gt;::type&amp;&amp; std::move&lt;int&amp;&gt;(int&amp;)</a>' inlined into 'std::enable_if&lt;__and_&lt;std::__not_&lt;std::__is_tuple_like&lt;int&gt; &gt;, std::is_move_constructible&lt;int&gt;, std::is_move_assignable&lt;int&gt; &gt;::value, void&gt;::type std::swap&lt;int&gt;(int&amp;, int&amp;)' with (cost=-35, threshold=375) at callsite swap<int>:8:19;&nbsp;</span></td>
+<td class="column-entry-yellow"><a href="_usr_bin_.._lib_gcc_x86_64-linux-gnu_11_.._.._.._.._include_c++_11_bits_move.h.html#L197">std::enable_if<__and_<std::__not_<std::__is_tuple_like<int> >, std::is_move_constructible<int>, std::is_move_assignable<int> >::value, void>::type std::swap<int>(int&, int&)</a></td>
+</tr>
+
+<tr>
+<td><a name="L205">205</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre><span class="w">      </span><span class="n">__a</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">_GLIBCXX_MOVE</span><span class="p">(</span><span class="n">__b</span><span class="p">);</span><span class="w"></span></pre></div></td>
+</tr>
+
+<tr>
+<td></td>
+<td></td>
+<td class="column-entry-green">inline</td>
+<td><pre style="display:inline">            </pre><span class="column-entry-yellow"> '<a href="_usr_bin_.._lib_gcc_x86_64-linux-gnu_11_.._.._.._.._include_c++_11_bits_move.h.html#L105">std::remove_reference&lt;int&amp;&gt;::type&amp;&amp; std::move&lt;int&amp;&gt;(int&amp;)</a>' inlined into 'std::enable_if&lt;__and_&lt;std::__not_&lt;std::__is_tuple_like&lt;int&gt; &gt;, std::is_move_constructible&lt;int&gt;, std::is_move_assignable&lt;int&gt; &gt;::value, void&gt;::type std::swap&lt;int&gt;(int&amp;, int&amp;)' with (cost=-35, threshold=375) at callsite swap<int>:9:13;&nbsp;</span></td>
+<td class="column-entry-yellow"><a href="_usr_bin_.._lib_gcc_x86_64-linux-gnu_11_.._.._.._.._include_c++_11_bits_move.h.html#L197">std::enable_if<__and_<std::__not_<std::__is_tuple_like<int> >, std::is_move_constructible<int>, std::is_move_assignable<int> >::value, void>::type std::swap<int>(int&, int&)</a></td>
+</tr>
+
+<tr>
+<td></td>
+<td></td>
+<td class="column-entry-red">gvn</td>
+<td><pre style="display:inline">            </pre><span class="column-entry-yellow"> load of type i32 not eliminated because it is clobbered by <a href="_usr_bin_.._lib_gcc_x86_64-linux-gnu_11_.._.._.._.._include_c++_11_bits_move.h.html#L206">store</a>&nbsp;</span></td>
+<td class="column-entry-yellow"><a href="compiler-optimizations.cpp.html#L304">test_partitioning(int*, int, int)</a></td>
+</tr>
+
+<tr>
+<td><a name="L206">206</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre><span class="w">      </span><span class="n">__b</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">_GLIBCXX_MOVE</span><span class="p">(</span><span class="n">__tmp</span><span class="p">);</span><span class="w"></span></pre></div></td>
+</tr>
+
+<tr>
+<td></td>
+<td></td>
+<td class="column-entry-green">inline</td>
+<td><pre style="display:inline">            </pre><span class="column-entry-yellow"> '<a href="_usr_bin_.._lib_gcc_x86_64-linux-gnu_11_.._.._.._.._include_c++_11_bits_move.h.html#L105">std::remove_reference&lt;int&amp;&gt;::type&amp;&amp; std::move&lt;int&amp;&gt;(int&amp;)</a>' inlined into 'std::enable_if&lt;__and_&lt;std::__not_&lt;std::__is_tuple_like&lt;int&gt; &gt;, std::is_move_constructible&lt;int&gt;, std::is_move_assignable&lt;int&gt; &gt;::value, void&gt;::type std::swap&lt;int&gt;(int&amp;, int&amp;)' with (cost=-35, threshold=375) at callsite swap<int>:10:13;&nbsp;</span></td>
+<td class="column-entry-yellow"><a href="_usr_bin_.._lib_gcc_x86_64-linux-gnu_11_.._.._.._.._include_c++_11_bits_move.h.html#L197">std::enable_if<__and_<std::__not_<std::__is_tuple_like<int> >, std::is_move_constructible<int>, std::is_move_assignable<int> >::value, void>::type std::swap<int>(int&, int&)</a></td>
+</tr>
+
+<tr>
+<td><a name="L207">207</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre><span class="w">    </span><span class="p">}</span><span class="w"></span></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L208">208</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L209">209</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre><span class="w">  </span><span class="c1">// _GLIBCXX_RESOLVE_LIB_DEFECTS</span></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L210">210</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre><span class="w">  </span><span class="c1">// DR 809. std::swap should be overloaded for array types.</span></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L211">211</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre><span class="w">  </span><span class="c1">/// Swap the contents of two arrays.</span></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L212">212</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre><span class="w">  </span><span class="k">template</span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">_Tp</span><span class="p">,</span><span class="w"> </span><span class="kt">size_t</span><span class="w"> </span><span class="n">_Nm</span><span class="o">&gt;</span><span class="w"></span></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L213">213</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre><span class="w">    </span><span class="n">_GLIBCXX20_CONSTEXPR</span><span class="w"></span></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L214">214</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre><span class="w">    </span><span class="kr">inline</span><span class="w"></span></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L215">215</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre><span class="cp">#if __cplusplus &gt;= 201103L</span></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L216">216</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre><span class="w">    </span><span class="k">typename</span><span class="w"> </span><span class="nc">enable_if</span><span class="o">&lt;</span><span class="n">__is_swappable</span><span class="o">&lt;</span><span class="n">_Tp</span><span class="o">&gt;::</span><span class="n">value</span><span class="o">&gt;::</span><span class="n">type</span><span class="w"></span></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L217">217</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre><span class="cp">#else</span></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L218">218</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre><span class="w">    </span><span class="kt">void</span><span class="w"></span></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L219">219</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre><span class="cp">#endif</span></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L220">220</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre><span class="w">    </span><span class="n">swap</span><span class="p">(</span><span class="n">_Tp</span><span class="w"> </span><span class="p">(</span><span class="o">&amp;</span><span class="n">__a</span><span class="p">)[</span><span class="n">_Nm</span><span class="p">],</span><span class="w"> </span><span class="n">_Tp</span><span class="w"> </span><span class="p">(</span><span class="o">&amp;</span><span class="n">__b</span><span class="p">)[</span><span class="n">_Nm</span><span class="p">])</span><span class="w"></span></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L221">221</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre><span class="w">    </span><span class="n">_GLIBCXX_NOEXCEPT_IF</span><span class="p">(</span><span class="n">__is_nothrow_swappable</span><span class="o">&lt;</span><span class="n">_Tp</span><span class="o">&gt;::</span><span class="n">value</span><span class="p">)</span><span class="w"></span></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L222">222</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre><span class="w">    </span><span class="p">{</span><span class="w"></span></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L223">223</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre><span class="w">      </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">size_t</span><span class="w"> </span><span class="n">__n</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">__n</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">_Nm</span><span class="p">;</span><span class="w"> </span><span class="o">++</span><span class="n">__n</span><span class="p">)</span><span class="w"></span></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L224">224</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre><span class="w">	</span><span class="n">swap</span><span class="p">(</span><span class="n">__a</span><span class="p">[</span><span class="n">__n</span><span class="p">],</span><span class="w"> </span><span class="n">__b</span><span class="p">[</span><span class="n">__n</span><span class="p">]);</span><span class="w"></span></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L225">225</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre><span class="w">    </span><span class="p">}</span><span class="w"></span></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L226">226</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L227">227</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre><span class="w">  </span><span class="c1">/// @} group utilities</span></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L228">228</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre><span class="n">_GLIBCXX_END_NAMESPACE_VERSION</span><span class="w"></span></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L229">229</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre><span class="p">}</span><span class="w"> </span><span class="c1">// namespace</span></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L230">230</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L231">231</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre><span class="cp">#endif </span><span class="cm">/* _MOVE_H */</span><span class="cp"></span></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L232">232</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre></pre></div></td>
+</tr>
+
+<tr>
+<td><a name="L233">233</a></td>
+<td></td>
+<td></td>
+<td><div class="highlight"><pre></pre></div></td>
+</tr>
+
+</tbody>
+</table>
+</body>
+</html>
