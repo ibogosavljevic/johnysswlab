@@ -35,9 +35,9 @@ void test_pointer_aliasing_fix(int* __restrict a, int* __restrict  b, int* __res
 
 
 double f1(double* a, int i, int pivot) {
-    if (a[i] > pivot) {
+    if (a[i] > pivot) 
         return a[i];
-    }
+    return 0.0;
 }
 
 void f2(double* a, int i, int pivot) {
@@ -47,9 +47,9 @@ void f2(double* a, int i, int pivot) {
 }
 
 char f3(char* a, int i, int pivot) {
-    if (a[i] > pivot) {
+    if (a[i] > pivot)
         return a[i];
-    }
+    return 0;
 }
 
 void f4(char* a, int i, int pivot) {
