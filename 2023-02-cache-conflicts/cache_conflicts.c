@@ -2,7 +2,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "likwid.h"
+
+__attribute__((noinline))
 void matrix_mul1(double* c, double* a, double* b, int n) {
+    LIKWID_MARKER_START("matmul1");
     for (int i = 0; i < n; ++i) {
         for (int j = 0; j < n; ++j) {
             c[i * n + j] = 0.0;
@@ -11,9 +15,12 @@ void matrix_mul1(double* c, double* a, double* b, int n) {
             }
         }
     }
+    LIKWID_MARKER_STOP("matmul1");
 }
 
+__attribute__((noinline))
 void matrix_mul2(double* c, double* a, double* b, int n) {
+    LIKWID_MARKER_START("matmul2");
     for (int i = 0; i < n; ++i) {
         for (int j = 0; j < n; ++j) {
             c[i * n + j] = 0.0;
@@ -22,9 +29,13 @@ void matrix_mul2(double* c, double* a, double* b, int n) {
             }
         }
     }
+    LIKWID_MARKER_STOP("matmul2");
+
 }
 
+__attribute__((noinline))
 void matrix_mul3(double* c, double* a, double* b, int n) {
+    LIKWID_MARKER_START("matmul3");
     for (int i = 0; i < n; ++i) {
         for (int j = 0; j < n; ++j) {
             c[i * n + j] = 0.0;
@@ -33,6 +44,7 @@ void matrix_mul3(double* c, double* a, double* b, int n) {
             }
         }
     }
+    LIKWID_MARKER_STOP("matmul3");
 }
 
 static void clobber() {
@@ -66,7 +78,7 @@ void* malloc_aligned(size_t s) {
 
 void matrix_test() {
     clock_t start, end;
-    int sizes[] = { 768-16, 768, 768+16 };
+    int sizes[] = { 512-16, 512, 512+16 };
     int max_size = sizes[2];
     double cpu_time_used;
 
@@ -79,8 +91,8 @@ void matrix_test() {
     fill_matrix(c, max_size);
 
     // Warm-up run
-    matrix_mul1(c, a, b, sizes[2]);
-    clobber();
+    //matrix_mul1(c, a, b, sizes[2]);
+    //clobber();
     
     start = clock();
     matrix_mul1(c, a, b, sizes[0]);
@@ -232,6 +244,8 @@ void binary_search_test() {
 }
 
 int main() {
+    LIKWID_MARKER_INIT;
     matrix_test();
     binary_search_test();
+    LIKWID_MARKER_CLOSE;
 }
