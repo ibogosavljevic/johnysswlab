@@ -1,1 +1,1 @@
-clang -O3 -g cache_conflits.c -o cache_conflits
+clang -O3 -g -mavx2 cache_conflicts.c -o cache_conflicts
