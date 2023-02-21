@@ -196,7 +196,7 @@ int main(int argc, const char* argv[]) {
             for (int i = 0; i < arr_len * 4; i++) {
                 count += to_base(q[i])->get_id2();
             }
-            std::cout << "Count virtual non-virtual" << count << std::endl;
+            std::cout << "Count virtual non-virtual " << count << std::endl;
         }
 
     } else if (array_type == array_type_e::VARIANT_VISITOR_ARRAY) {

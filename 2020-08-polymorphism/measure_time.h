@@ -90,7 +90,7 @@ class measure_time {
             std::chrono::duration_cast<std::chrono::milliseconds>(end_time -
                                                                   start_time);
         std::cout << "\"" << message_ << "\" took "
-                  << time / std::chrono::milliseconds(1) << "ms to run.\n";
+                  << time / std::chrono::milliseconds(1) << " ms to run.\n";
 #if HAS_PAPI
         if (papi_valid) {
             print_total(values);
