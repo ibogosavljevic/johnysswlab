@@ -66,6 +66,8 @@ struct my_string {
 
         static constexpr size_t substring_buffer_max_size = 8;
         char substring_buffer[substring_buffer_max_size];
+
+        // Fill the statically allocated substring        
         size_t substring_buffer_size = std::min(substring_buffer_max_size, substr.size);
         for (int i = 0; i < substring_buffer_size; ++i) {
             substring_buffer[i] = substr.ptr[i];
@@ -119,14 +121,13 @@ int main(int argc, char** argv) {
     static constexpr int size = 256*1024*1024;
 
     my_string str_simple = generate<my_string>(size);
-    my_string str_restrict = generate<my_string>(size);
 
     LIKWID_MARKER_START("aliasing_simple");
     str_simple.replace('.', '?');
     LIKWID_MARKER_STOP("aliasing_simple");
 
     LIKWID_MARKER_START("aliasing_avoid");
-    str_restrict.replace2('.', '?');
+    str_simple.replace2('.', '?');
     LIKWID_MARKER_STOP("aliasing_avoid");
 
     LIKWID_MARKER_START("find_simple");
