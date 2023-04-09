@@ -1,6 +1,11 @@
 #!/usr/bin/env perl
 
-#Author: Stefan Talpalaru
+# Author: Stefan Talpalaru
+# Usage: 
+# perf record --call-graph dwarf,16000 ...
+# perf script -F +srcline | ./filter-perf-script.pl > out.perf
+# ./stackcollapse-perf.pl out.perf > perf_collapsed.txt
+# ./flamegraph.pl perf_collapsed.txt > perf.svg
 
 use strict;
 use warnings;
