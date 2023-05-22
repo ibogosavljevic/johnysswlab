@@ -5,10 +5,10 @@
 
 template <int padding1, int padding2>
 struct complex_t {
-    int p1[padding1];
     float re;
-    int p2[padding2];
+    int p1[padding1];
     double im;
+    int p2[padding2];
 
     complex_t() {}
     complex_t(float ret, double imt) : re(ret), im(imt) {}

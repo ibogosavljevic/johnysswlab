@@ -18,7 +18,7 @@ static void escape(void* p) {
 }
 
 template <typename Complex>
-void run_test(size_t size) {
+void run_test(const std::string& prefix, size_t size) {
     
     std::vector<Complex> in1 = generate_random<Complex>(size);
     std::vector<Complex> in2 = generate_random<Complex>(size);
@@ -26,9 +26,9 @@ void run_test(size_t size) {
 
     int repeat_count = TOTAL_OPERATIONS / size;
     std::string name = std::to_string(size) + "_" + std::to_string(sizeof(Complex)) + "_" + typeid(Complex).name();
-    std::string name_multiply = "multiply_" + name;
-    std::string name_sort = "sort_" + name;
-    std::string name_binary_search_low_bound = "binary_search_" + name;
+    std::string name_multiply = prefix + "_multiply_" + name;
+    std::string name_sort = prefix + "_sort_" + name;
+    std::string name_binary_search_low_bound = prefix + "_binary_search_" + name;
 
     LIKWID_MARKER_START(name_multiply.c_str());
     for (int i = 0; i < repeat_count; ++i) {
@@ -121,22 +121,42 @@ int main() {
     verify();
 
     std::vector<size_t> sizes = {
-        2500, 5000, 10000,
-        25000, 50000, 100000,
-        250000, 500000, 1000000,
-        2500000, 5000000, 10000000,
+        10000, 100000, 1000000, 10000000
     };
 
     for (size_t i = 0; i < sizes.size(); i++) {
         size_t size = sizes[i];
         run_test_soa(size);
-        run_test<complex_packed>(size);
-        run_test<complex_t<0, 0>>(size);
-        run_test<complex_t<0, 1>>(size);
-        run_test<complex_t<0, 2>>(size);
-        run_test<complex_t<0, 3>>(size);
-        run_test<complex_t<0, 4>>(size);
-        run_test<complex_t<0, 5>>(size);
+        run_test<complex_packed>("size", size);
+        run_test<complex_t<0, 0>>("size", size);
+        run_test<complex_t<0, 1>>("size", size);
+        run_test<complex_t<0, 3>>("size", size);
+        run_test<complex_t<0, 5>>("size", size);
+        run_test<complex_t<0, 7>>("size", size);
+    }
+
+    std::vector<size_t> sizes2 = {
+        10000, 100000, 1000000, 10000000
+    };
+
+    for (size_t i = 0; i < sizes2.size(); i++) {
+        size_t size = sizes2[i];
+
+        run_test<complex_t<0, 12>>("layout", size);
+        run_test<complex_t<1, 11>>("layout", size);
+        run_test<complex_t<2, 10>>("layout", size);
+        run_test<complex_t<3, 9>>("layout", size);
+        run_test<complex_t<4, 8>>("layout", size);
+        run_test<complex_t<5, 7>>("layout", size);
+        run_test<complex_t<6, 6>>("layout", size);
+
+        run_test<complex_t<0, 20>>("layout", size);
+        run_test<complex_t<1, 19>>("layout", size);
+        run_test<complex_t<2, 18>>("layout", size);
+        run_test<complex_t<3, 17>>("layout", size);
+        run_test<complex_t<4, 16>>("layout", size);
+        run_test<complex_t<5, 15>>("layout", size);
+        run_test<complex_t<6, 14>>("layout", size);
     }
 
 
