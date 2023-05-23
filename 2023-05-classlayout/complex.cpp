@@ -25,7 +25,7 @@ void run_test(const std::string& prefix, size_t size) {
     std::vector<Complex> out(size);
 
     int repeat_count = TOTAL_OPERATIONS / size;
-    std::string name = std::to_string(size) + "_" + std::to_string(sizeof(Complex)) + "_" + typeid(Complex).name();
+    std::string name = std::to_string(size) + "_" + std::to_string(sizeof(Complex)) + "_" + std::to_string(offsetof(Complex, im));
     std::string name_multiply = prefix + "_multiply_" + name;
     std::string name_sort = prefix + "_sort_" + name;
     std::string name_binary_search_low_bound = prefix + "_binary_search_" + name;
