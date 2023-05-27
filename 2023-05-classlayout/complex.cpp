@@ -18,6 +18,7 @@ static void escape(void* p) {
 }
 
 template <typename Complex>
+__attribute__((noinline))
 void run_test(const std::string& prefix, size_t size) {
     
     std::vector<Complex> in1 = generate_random<Complex>(size);
@@ -53,6 +54,7 @@ void run_test(const std::string& prefix, size_t size) {
 
 }
 
+__attribute__((noinline))
 void run_test_soa(size_t size) {
     complex_soa in1 = generate_random(size);
     complex_soa in2 = generate_random(size);
@@ -124,7 +126,7 @@ int main() {
         10000, 100000, 1000000, 10000000
     };
 
-    for (size_t i = 0; i < sizes.size(); i++) {
+    /*for (size_t i = 0; i < sizes.size(); i++) {
         size_t size = sizes[i];
         run_test_soa(size);
         run_test<complex_packed>("size", size);
@@ -133,30 +135,40 @@ int main() {
         run_test<complex_t<0, 3>>("size", size);
         run_test<complex_t<0, 5>>("size", size);
         run_test<complex_t<0, 7>>("size", size);
-    }
+    }*/
 
     std::vector<size_t> sizes2 = {
-        10000, 100000, 1000000, 10000000
+        10000, 100000 , 1000000, 10000000
     };
 
     for (size_t i = 0; i < sizes2.size(); i++) {
         size_t size = sizes2[i];
 
         run_test<complex_t<0, 12>>("layout", size);
-        run_test<complex_t<1, 11>>("layout", size);
         run_test<complex_t<2, 10>>("layout", size);
-        run_test<complex_t<3, 9>>("layout", size);
         run_test<complex_t<4, 8>>("layout", size);
-        run_test<complex_t<5, 7>>("layout", size);
         run_test<complex_t<6, 6>>("layout", size);
-
+        run_test<complex_t<8, 4>>("layout", size);
+        run_test<complex_t<10, 2>>("layout", size);
+/*
         run_test<complex_t<0, 20>>("layout", size);
-        run_test<complex_t<1, 19>>("layout", size);
         run_test<complex_t<2, 18>>("layout", size);
-        run_test<complex_t<3, 17>>("layout", size);
         run_test<complex_t<4, 16>>("layout", size);
-        run_test<complex_t<5, 15>>("layout", size);
         run_test<complex_t<6, 14>>("layout", size);
+        run_test<complex_t<8, 12>>("layout", size);
+        run_test<complex_t<10, 10>>("layout", size);
+        run_test<complex_t<12, 8>>("layout", size);
+        run_test<complex_t<14, 6>>("layout", size);
+
+        run_test<complex_t<0, 28>>("layout", size);
+        run_test<complex_t<2, 26>>("layout", size);
+        run_test<complex_t<4, 24>>("layout", size);
+        run_test<complex_t<6, 22>>("layout", size);
+        run_test<complex_t<8, 20>>("layout", size);
+        run_test<complex_t<10, 18>>("layout", size);
+        run_test<complex_t<12, 16>>("layout", size);
+        run_test<complex_t<14, 14>>("layout", size);
+*/
     }
 
 
