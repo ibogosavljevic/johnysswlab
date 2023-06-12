@@ -56,21 +56,18 @@ int main() {
     LIKWID_MARKER_INIT;
 
     std::vector<size_t> sizes = {
-        2500, 5000, 10000,
-        25000, 50000, 100000,
-        250000, 500000, 1000000,
-        2500000, 5000000, 10000000,
+        10000, 100000, 1000000, 10000000
     };
 
     for (size_t i = 0; i < sizes.size(); i++) {
         size_t size = sizes[i];
         std::cout << "Running for size " << size << std::endl;
-        proxy_sort<complex_t<0, 30>>(size);
-        proxy_sort<complex_t<0, 34>>(size);
-        proxy_sort<complex_t<0, 38>>(size);
-        proxy_sort<complex_t<0, 42>>(size);
-        proxy_sort<complex_t<0, 48>>(size);
         proxy_sort<complex_t<0, 52>>(size);
+        proxy_sort<complex_t<0, 56>>(size);
+        proxy_sort<complex_t<0, 60>>(size);
+        proxy_sort<complex_t<0, 64>>(size);
+        proxy_sort<complex_t<0, 68>>(size);
+        proxy_sort<complex_t<0, 72>>(size);
     }
 
     LIKWID_MARKER_CLOSE;
