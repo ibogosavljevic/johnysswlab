@@ -126,7 +126,7 @@ int main() {
         10000, 100000, 1000000, 10000000
     };
 
-    /*for (size_t i = 0; i < sizes.size(); i++) {
+    for (size_t i = 0; i < sizes.size(); i++) {
         size_t size = sizes[i];
         run_test_soa(size);
         run_test<complex_packed>("size", size);
@@ -135,7 +135,7 @@ int main() {
         run_test<complex_t<0, 3>>("size", size);
         run_test<complex_t<0, 5>>("size", size);
         run_test<complex_t<0, 7>>("size", size);
-    }*/
+    }
 
     std::vector<size_t> sizes2 = {
         10000, 100000 , 1000000, 10000000
