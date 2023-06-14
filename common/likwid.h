@@ -195,7 +195,7 @@ private:
 
         measure_data_t() : created(-1) {}
 
-	bool operator()(const measure_data_t& lhs, const measure_data_t& rhs) const { lhs.created < rhs.created; } 
+	bool operator()(const measure_data_t& lhs, const measure_data_t& rhs) const { return lhs.created < rhs.created; } 
     };
 
 
