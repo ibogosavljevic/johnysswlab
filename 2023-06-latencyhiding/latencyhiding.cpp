@@ -134,6 +134,10 @@ void func_simple_pipeline(int *a, int* b, int* c, int n) {
     );
 }
 
+static void escape(void* p) {
+  asm volatile ("" : : "g"(p) : "memory");
+}
+
 template <typename T>
 bool vectors_equal(const std::vector<T>& v1, const std::vector<T>& v2) {
     if (v1.size() != v2.size()) {
@@ -149,84 +153,111 @@ bool vectors_equal(const std::vector<T>& v1, const std::vector<T>& v2) {
     return true;
 }
 
-
-// Weird number to avoid cache conflicts
-static constexpr int SIZE = 64*1024*1024 - 5*1024;
-
 int main(int argc, char** argv) {
-   std::vector<int> in1(SIZE);
-   std::vector<int> in2(SIZE);
-   std::vector<int> out_ref(SIZE);
-
    LIKWID_MARKER_INIT;
 
-   std::iota(in1.begin(), in1.end(), 0);
-   std::random_shuffle(in1.begin(), in1.end());
-   std::iota(in2.begin(), in2.end(), 0);
-   std::random_shuffle(in2.begin(), in2.end());
+   for (std::size_t s = 16*1024; s <= 64*1024*1024; s *= 4) {
+    std::size_t repeat_count = (64*1024*1024 / s) * 4;
+    // Weird number to avoid cache conflicts
+    std::size_t size = s - 5*1024;
+
+    std::vector<int> in1(size);
+    std::vector<int> in2(size);
+    std::vector<int> out_ref(size);
+
+    std::iota(in1.begin(), in1.end(), 0);
+    std::random_shuffle(in1.begin(), in1.end());
+    std::iota(in2.begin(), in2.end(), 0);
+    std::random_shuffle(in2.begin(), in2.end());
+        
+    // Warm up
+    func_simple(in1.data(), in2.data(), out_ref.data(), size);
     
-   // Warm up
-   func_simple(in1.data(), in2.data(), out_ref.data(), SIZE);
-   
-   LIKWID_MARKER_START("simple");
-   func_simple(in1.data(), in2.data(), out_ref.data(), SIZE);
-   LIKWID_MARKER_STOP("simple");
+    std::string region_name = "simple_" + std::to_string(s / 1024);
 
-   {
-      std::vector<int> out(SIZE);
-      LIKWID_MARKER_START("intrinsics");
-      func_simple_intrinsics(in1.data(), in2.data(), out.data(), SIZE);
-      LIKWID_MARKER_STOP("intrinsics");
+    LIKWID_MARKER_START(region_name.c_str());
+    for (std::size_t i = 0; i < repeat_count; ++i) {
+        func_simple(in1.data(), in2.data(), out_ref.data(), size);
+        escape(out_ref.data());
+    }
+    LIKWID_MARKER_STOP(region_name.c_str());
 
-      if (!vectors_equal(out, out_ref)) {
-        std::cout << "Not same\n";
-      }
-   }
+    {
+        region_name = "intrinsics_" + std::to_string(s / 1024);
+        std::vector<int> out(size);
+        LIKWID_MARKER_START(region_name.c_str());
+        for (std::size_t i = 0; i < repeat_count; ++i) {
+            func_simple_intrinsics(in1.data(), in2.data(), out.data(), size);
+            escape(out.data());
+        }
+        LIKWID_MARKER_STOP(region_name.c_str());
 
-   {
-      std::vector<int> out(SIZE);
-      LIKWID_MARKER_START("simple_asm");
-      func_simple_asm(in1.data(), in2.data(), out.data(), SIZE);
-      LIKWID_MARKER_STOP("simple_asm");
+        if (!vectors_equal(out, out_ref)) {
+            std::cout << "Not same\n";
+        }
+    }
 
-      if (!vectors_equal(out, out_ref)) {
-        std::cout << "Not same asm\n";
-      }
-   }
+    {
+        region_name = "simple_asm_" + std::to_string(s / 1024);
+        std::vector<int> out(size);
+        LIKWID_MARKER_START(region_name.c_str());
+        for (std::size_t i = 0; i < repeat_count; ++i) {
+            func_simple_asm(in1.data(), in2.data(), out.data(), size);
+            escape(out.data());
+        }
+        LIKWID_MARKER_STOP(region_name.c_str());
 
-   {
-      std::vector<int> out(SIZE);
-      LIKWID_MARKER_START("unroll");
-      func_simple_unroll(in1.data(), in2.data(), out.data(), SIZE);
-      LIKWID_MARKER_STOP("unroll");
+        if (!vectors_equal(out, out_ref)) {
+            std::cout << "Not same asm\n";
+        }
+    }
 
-      if (!vectors_equal(out, out_ref)) {
-        std::cout << "Not same unroll\n";
-      }
-   }
+    {
+        region_name = "unroll_" + std::to_string(s / 1024);
+        std::vector<int> out(size);
+        LIKWID_MARKER_START(region_name.c_str());
+        for (std::size_t i = 0; i < repeat_count; ++i) {
+            func_simple_unroll(in1.data(), in2.data(), out.data(), size);
+            escape(out.data());
+        }
+        LIKWID_MARKER_STOP(region_name.c_str());
 
-   {
-      std::vector<int> out(SIZE);
-      LIKWID_MARKER_START("interleave");
-      func_unroll_interleave(in1.data(), in2.data(), out.data(), SIZE);
-      LIKWID_MARKER_STOP("interleave");
+        if (!vectors_equal(out, out_ref)) {
+            std::cout << "Not same unroll\n";
+        }
+    }
 
-      if (!vectors_equal(out, out_ref)) {
-        std::cout << "Not same interleave\n";
-      }
-   }
+    {
+        region_name = "interleave_" + std::to_string(s / 1024);
+        std::vector<int> out(size);
+        LIKWID_MARKER_START(region_name.c_str());
+        for (std::size_t i = 0; i < repeat_count; ++i) {
+            func_unroll_interleave(in1.data(), in2.data(), out.data(), size);
+            escape(out.data());
+        }
+        LIKWID_MARKER_STOP(region_name.c_str());
 
-   {
-      std::vector<int> out(SIZE);
-      LIKWID_MARKER_START("pipeline");
-      func_simple_pipeline(in1.data(), in2.data(), out.data(), SIZE);
-      LIKWID_MARKER_STOP("pipeline");
+        if (!vectors_equal(out, out_ref)) {
+            std::cout << "Not same interleave\n";
+        }
+    }
 
-      if (!vectors_equal(out, out_ref)) {
-        std::cout << "Not same pipeline\n";
-      } else {
-        std::cout << "Same pipeline\n";
-      }
+    {
+        region_name = "pipeline_" + std::to_string(s / 1024);
+        std::vector<int> out(size);
+        LIKWID_MARKER_START(region_name.c_str());
+        for (std::size_t i = 0; i < repeat_count; ++i) {
+            func_simple_pipeline(in1.data(), in2.data(), out.data(), size);
+            escape(out.data());
+        }
+        LIKWID_MARKER_STOP(region_name.c_str());
+
+        if (!vectors_equal(out, out_ref)) {
+            std::cout << "Not same pipeline\n";
+        } else {
+            std::cout << "Same pipeline\n";
+        }
+    }
    }
 
    LIKWID_MARKER_CLOSE;
