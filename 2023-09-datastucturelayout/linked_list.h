@@ -77,6 +77,10 @@ private:
 public:
     typedef int size_type;
 
+    int get_node_size() const {
+        return sizeof(linked_list_node);
+    }
+
     linked_list() {
         begin = new linked_list_node();
         end = begin;

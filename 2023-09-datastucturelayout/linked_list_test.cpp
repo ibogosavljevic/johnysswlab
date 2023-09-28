@@ -58,7 +58,8 @@ void run_test(std::vector<int>& my_array, bool shuffle_list) {
     linked_list<test_struct<struct_size>, linked_list_values> my_list;
 
     std::string header = "Node_" + std::to_string(linked_list_values) + "_struct_" + std::to_string(struct_size) + "_shuffle_" + std::to_string(shuffle_list);
-    
+    std::cout << "Node size = " << my_list.get_node_size() << std::endl;
+
     // Create the list
     for (int i = 0; i < len; i++ ) {
         my_list.emplace_back(my_array[i]);
