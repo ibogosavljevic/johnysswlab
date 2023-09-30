@@ -94,7 +94,7 @@ int main(int argc, const char* argv[]) {
     for (size_t i = 0; i < size; i++) {
         found += std::visit([&](auto& v) -> int { return v.get_value(); }, t.vec_variant[i]) < 5;
     }
-    LIKWID_MARKER_START("std_variant");
+    LIKWID_MARKER_STOP("std_variant");
     std::cout << "Found = " << found << "\n";
 
     found = 0;
@@ -102,7 +102,7 @@ int main(int argc, const char* argv[]) {
     for (size_t i = 0; i < size; i++) {
         found += t.vec_pointer[i]->get_value() < 5;
     }
-    LIKWID_MARKER_START("array_pointer_low_fragmentation");
+    LIKWID_MARKER_STOP("array_pointer_low_fragmentation");
     std::cout << "Found = " << found << "\n";
 
     found = 0;
@@ -110,7 +110,7 @@ int main(int argc, const char* argv[]) {
     for (size_t i = 0; i < size; i++) {
         found += t.vec_pointer_shuffled[i]->get_value() < 5;
     }
-    LIKWID_MARKER_START("array_pointer_high_fragmentation");
+    LIKWID_MARKER_STOP("array_pointer_high_fragmentation");
     std::cout << "Found = " << found << "\n";
 
     LIKWID_MARKER_CLOSE;

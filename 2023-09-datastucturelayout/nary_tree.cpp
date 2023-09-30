@@ -6,6 +6,7 @@
 #include <cassert>
 #include <numeric>
 #include <algorithm>
+#include <random>
 
 template <typename T, int node_count = 1>
 class search_tree {
@@ -196,7 +197,9 @@ private:
         m_free_node = 1;
 
         std::iota(m_nodes_index.begin(), m_nodes_index.end(), 1);
-        std::random_shuffle(m_nodes_index.begin(), m_nodes_index.end());
+        std::random_device rng;
+        std::mt19937 urng(rng());
+        std::shuffle(m_nodes_index.begin(), m_nodes_index.end(), urng);   
     }
 
     uint32_t allocate_node() {
