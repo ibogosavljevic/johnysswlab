@@ -92,7 +92,7 @@ public:
         }
 
         clock_gettime(CLOCK_MONOTONIC, &thread_datum.time.started);
-        if (likwid_collect_all()) {
+        /*if (constexpr likwid_collect_all()) {
             struct rusage usage;
             if (getrusage(RUSAGE_THREAD, &usage) == 0) {
                 thread_datum.user_time.started = usage.ru_utime;
@@ -101,7 +101,7 @@ public:
                 thread_datum.major_faults.started = usage.ru_majflt;
                 thread_datum.context_switches.started = usage.ru_nivcsw + usage.ru_nvcsw;
             }
-        }
+        }*/
 
 	    m_data_mutex.unlock();
     }
@@ -137,7 +137,7 @@ public:
         thread_datum.time.started.tv_sec = 0;
         thread_datum.time.started.tv_nsec = 0;
 
-        if (likwid_collect_all()) {
+        /*if (constexpr likwid_collect_all()) {
             struct rusage usage;
             if (getrusage(RUSAGE_THREAD, &usage) == 0) {
                 struct timeval runtime_user, runtime_system;
@@ -151,7 +151,7 @@ public:
                 thread_datum.major_faults.total += usage.ru_majflt - thread_datum.major_faults.started;
                 thread_datum.context_switches.total += (usage.ru_nivcsw + usage.ru_nvcsw) - thread_datum.context_switches.started;
             }
-        }
+        }*/
 
         m_data_mutex.unlock();
     }
@@ -163,7 +163,7 @@ public:
 
 private:
     using cpu_id_t = int;
-    using cpu_affinity_mask_t = cpu_set_t;
+    //using cpu_affinity_mask_t = cpu_set_t;
 
     template <typename T>
     struct measurement_t {
@@ -257,7 +257,8 @@ private:
     }
 
     static cpu_id_t get_current_cpu() {
-        return omp_get_thread_num();
+        return 0;
+	    //return omp_get_thread_num();
     }
 
 
