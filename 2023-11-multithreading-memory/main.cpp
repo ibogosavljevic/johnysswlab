@@ -9,6 +9,8 @@
 #include <chrono>
 #include <thread>
 
+#include <boost/thread/barrier.hpp>
+
 #include <emmintrin.h>
 
 template<typename T, size_t SIZE=64>
@@ -176,11 +178,39 @@ int32_t binary_search(int32_t* sorted, size_t sorted_size, int32_t key) {
     return std::numeric_limits<int32_t>::min();
 }
 
-void binary_search_packet(int32_t* sorted, size_t sorted_size, packet_queue_t* my_queue, bool* finish, std::pair<size_t, uint64_t>* res) {
+struct binary_search_params_t {
+    int32_t* sorted;
+    size_t sorted_size;
+    packet_queue_t* my_queue;
+
+    int32_t* sorted_from;
+    size_t copy_start;
+    size_t copy_end;
+    boost::barrier* thread_barrier;
+    
+    bool* finish;
+    std::pair<size_t, uint64_t>* res;
+};
+
+void binary_search_packet(binary_search_params_t params) {
+    int32_t* sorted = params.sorted;
+    size_t sorted_size = params.sorted_size;
+    packet_queue_t* my_queue = params.my_queue;
+    bool* finish = params.finish;
+    std::pair<size_t, uint64_t>* res = params.res;
+
     data_packet_t packet;
     size_t total_packets = 0;
 
-    uint64_t diff = 0;
+    uint64_t time = 0;
+
+    if (params.sorted_from) {
+        for (size_t i = params.copy_start; i <= params.copy_end; i++) {
+            sorted[i] = params.sorted_from[i];
+        }
+    }
+
+    params.thread_barrier->wait();
 
     while(!*finish) {
         bool res = my_queue->pop(packet);
@@ -190,14 +220,14 @@ void binary_search_packet(int32_t* sorted, size_t sorted_size, packet_queue_t* m
                 packet.idx[i] = binary_search(sorted, sorted_size, packet.keys[i]);
             }
             std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
-            diff += std::chrono::duration_cast<std::chrono::nanoseconds> (end - begin).count();
+            time += std::chrono::duration_cast<std::chrono::nanoseconds> (end - begin).count();
             total_packets++;
         } else {
             _mm_pause();
         }
     }
 
-    *res = std::make_pair(total_packets, diff);
+    *res = std::make_pair(total_packets, time);
 }
 
 void generate_sorted_array(int32_t* array, size_t size) {
@@ -212,21 +242,45 @@ int main() {
     static constexpr size_t SORTED_SIZE = 128 * 1024 - 128;
     static constexpr size_t NUM_THREADS = 4;
     static constexpr bool USE_ROUND_ROBIN = true;
+    static constexpr bool USE_COPY = true;
 
     bool finish = false;
 
-    std::vector<int32_t> sorted(SORTED_SIZE);
-    generate_sorted_array(sorted.data(), SORTED_SIZE);
+    std::vector<int32_t> sorted_from(SORTED_SIZE);
+    generate_sorted_array(sorted_from.data(), SORTED_SIZE);
 
-    packet_dispatcher_t packet_dispatcher(NUM_THREADS, sorted.data(), SORTED_SIZE);
+    int32_t* sorted = (int32_t*) malloc(sizeof(int32_t) * SORTED_SIZE);
 
-    std::thread generator_thread(generate_data<USE_ROUND_ROBIN>, &packet_dispatcher, sorted[0] - 10, sorted[SORTED_SIZE - 1] + 10, &finish);
+    packet_dispatcher_t packet_dispatcher(NUM_THREADS, sorted_from.data(), SORTED_SIZE);
+
+    std::thread generator_thread(generate_data<USE_ROUND_ROBIN>, &packet_dispatcher, sorted_from[0] - 10, sorted_from[SORTED_SIZE - 1] + 10, &finish);
     std::vector<std::thread> search_threads;
     std::vector<std::pair<size_t, uint64_t>> search_results;
     search_results.resize(NUM_THREADS);
+    boost::barrier thread_barrier(NUM_THREADS);
 
     for (size_t i = 0; i < NUM_THREADS; ++i) {
-        search_threads.emplace_back(binary_search_packet, sorted.data(), SORTED_SIZE, &(packet_dispatcher.queues[i].q), &finish, &search_results[i]);
+        binary_search_params_t params;
+        params.sorted_size = SORTED_SIZE;
+        params.my_queue = &(packet_dispatcher.queues[i].q);
+        if (USE_COPY) {
+            params.sorted_from = sorted_from.data();
+            params.sorted = sorted;
+            params.copy_start = i * (SORTED_SIZE / NUM_THREADS);
+            if (i == (NUM_THREADS - 1)) {
+                params.copy_end = SORTED_SIZE - 1;
+            } else {
+                params.copy_end = (i + 1) * (SORTED_SIZE / NUM_THREADS) - 1;
+            }
+        } else {
+            params.sorted = sorted_from.data();
+            params.sorted_from = nullptr;
+        }
+        params.finish = &finish;
+        params.res = &search_results[i];
+        params.thread_barrier = &thread_barrier;
+
+        search_threads.emplace_back(binary_search_packet, params);
     }
 
     std::cout << "Threads started. Waiting 5 seconds\n";
@@ -251,6 +305,8 @@ int main() {
 
     std::cout << "For all threads: total packets = " << all_threads_packets 
               << ", average time per packet = " << all_threads_runtime / all_threads_packets << "\n";
+
+    free(sorted);
 
     return 0;
 }

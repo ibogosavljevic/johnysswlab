@@ -1,1 +1,1 @@
-clang++ -Werror -DLIKWID_PERFMON -O3 -g main.cpp -o main -llikwid
+clang++ -Werror -O3 -g main.cpp -o main -lboost_thread
