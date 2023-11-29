@@ -16,6 +16,11 @@
 template<typename T, size_t SIZE=64>
 class thread_safe_queue_t {
 public:
+    thread_safe_queue_t():
+        front(0),
+        back(0)
+    { }
+
     bool push(T v) {
         std::unique_lock<std::mutex> lock(m_mutex); 
 
@@ -238,39 +243,35 @@ void generate_sorted_array(int32_t* array, size_t size) {
     }
 }
 
-int main() {
-    static constexpr size_t SORTED_SIZE = 128 * 1024 - 128;
-    static constexpr size_t NUM_THREADS = 4;
-    static constexpr bool USE_ROUND_ROBIN = true;
-    static constexpr bool USE_COPY = true;
-
+template<bool use_round_robin>
+void run_test(size_t sorted_size, size_t num_threads, bool use_copy) {
     bool finish = false;
 
-    std::vector<int32_t> sorted_from(SORTED_SIZE);
-    generate_sorted_array(sorted_from.data(), SORTED_SIZE);
+    std::vector<int32_t> sorted_from(sorted_size);
+    generate_sorted_array(sorted_from.data(), sorted_size);
 
-    int32_t* sorted = (int32_t*) malloc(sizeof(int32_t) * SORTED_SIZE);
+    int32_t* sorted = (int32_t*) malloc(sizeof(int32_t) * sorted_size);
 
-    packet_dispatcher_t packet_dispatcher(NUM_THREADS, sorted_from.data(), SORTED_SIZE);
+    packet_dispatcher_t packet_dispatcher(num_threads, sorted_from.data(), sorted_size);
 
-    std::thread generator_thread(generate_data<USE_ROUND_ROBIN>, &packet_dispatcher, sorted_from[0] - 10, sorted_from[SORTED_SIZE - 1] + 10, &finish);
+    std::thread generator_thread(generate_data<use_round_robin>, &packet_dispatcher, sorted_from[0] - 10, sorted_from[sorted_size - 1] + 10, &finish);
     std::vector<std::thread> search_threads;
     std::vector<std::pair<size_t, uint64_t>> search_results;
-    search_results.resize(NUM_THREADS);
-    boost::barrier thread_barrier(NUM_THREADS);
+    search_results.resize(num_threads);
+    boost::barrier thread_barrier(num_threads);
 
-    for (size_t i = 0; i < NUM_THREADS; ++i) {
+    for (size_t i = 0; i < num_threads; ++i) {
         binary_search_params_t params;
-        params.sorted_size = SORTED_SIZE;
+        params.sorted_size = sorted_size;
         params.my_queue = &(packet_dispatcher.queues[i].q);
-        if (USE_COPY) {
+        if (use_copy) {
             params.sorted_from = sorted_from.data();
             params.sorted = sorted;
-            params.copy_start = i * (SORTED_SIZE / NUM_THREADS);
-            if (i == (NUM_THREADS - 1)) {
-                params.copy_end = SORTED_SIZE - 1;
+            params.copy_start = i * (sorted_size / num_threads);
+            if (i == (num_threads - 1)) {
+                params.copy_end = sorted_size - 1;
             } else {
-                params.copy_end = (i + 1) * (SORTED_SIZE / NUM_THREADS) - 1;
+                params.copy_end = (i + 1) * (sorted_size / num_threads) - 1;
             }
         } else {
             params.sorted = sorted_from.data();
@@ -283,6 +284,7 @@ int main() {
         search_threads.emplace_back(binary_search_packet, params);
     }
 
+    std::cout << "SIZE = " << sorted_size << ", ROUND_ROBIN = " << use_round_robin << ", COPY = " << use_copy << "\n";
     std::cout << "Threads started. Waiting 5 seconds\n";
 
     using namespace std::chrono_literals;
@@ -295,7 +297,7 @@ int main() {
     uint64_t all_threads_runtime = 0;
     size_t all_threads_packets = 0;
 
-    for (size_t i = 0; i < NUM_THREADS; i++) {
+    for (size_t i = 0; i < num_threads; i++) {
         search_threads[i].join();
         all_threads_packets += search_results[i].first;
         all_threads_runtime += search_results[i].second;
@@ -307,6 +309,20 @@ int main() {
               << ", average time per packet = " << all_threads_runtime / all_threads_packets << "\n";
 
     free(sorted);
+}
+
+int main() {
+    static constexpr size_t start_size = 1024;
+    static constexpr size_t end_size = 16*1024*1024;
+    static constexpr size_t THREAD_COUNT = 15;
+
+    for (size_t s = start_size; s <= end_size; s *= 4) {
+        size_t size = s - 348;
+        run_test<true>(size, THREAD_COUNT, false);
+        run_test<false>(size, THREAD_COUNT, false);
+        run_test<true>(size, THREAD_COUNT, true);
+        run_test<false>(size, THREAD_COUNT, true);
+    }
 
     return 0;
 }
