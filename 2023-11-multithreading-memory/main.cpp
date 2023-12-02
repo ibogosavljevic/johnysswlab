@@ -9,8 +9,6 @@
 #include <chrono>
 #include <thread>
 
-#include <boost/thread/barrier.hpp>
-
 #include <emmintrin.h>
 
 template<typename T, size_t SIZE=64>
@@ -188,11 +186,6 @@ struct binary_search_params_t {
     size_t sorted_size;
     packet_queue_t* my_queue;
 
-    int32_t* sorted_from;
-    size_t copy_start;
-    size_t copy_end;
-    boost::barrier* thread_barrier;
-    
     bool* finish;
     std::pair<size_t, uint64_t>* res;
 };
@@ -208,14 +201,6 @@ void binary_search_packet(binary_search_params_t params) {
     size_t total_packets = 0;
 
     uint64_t time = 0;
-
-    if (params.sorted_from) {
-        for (size_t i = params.copy_start; i <= params.copy_end; i++) {
-            sorted[i] = params.sorted_from[i];
-        }
-    }
-
-    params.thread_barrier->wait();
 
     while(!*finish) {
         bool res = my_queue->pop(packet);
@@ -244,7 +229,7 @@ void generate_sorted_array(int32_t* array, size_t size) {
 }
 
 template<bool use_round_robin>
-void run_test(size_t sorted_size, size_t num_threads, bool use_copy) {
+void run_test(size_t sorted_size, size_t num_threads) {
     bool finish = false;
 
     std::vector<int32_t> sorted_from(sorted_size);
@@ -258,33 +243,19 @@ void run_test(size_t sorted_size, size_t num_threads, bool use_copy) {
     std::vector<std::thread> search_threads;
     std::vector<std::pair<size_t, uint64_t>> search_results;
     search_results.resize(num_threads);
-    boost::barrier thread_barrier(num_threads);
 
     for (size_t i = 0; i < num_threads; ++i) {
         binary_search_params_t params;
         params.sorted_size = sorted_size;
         params.my_queue = &(packet_dispatcher.queues[i].q);
-        if (use_copy) {
-            params.sorted_from = sorted_from.data();
-            params.sorted = sorted;
-            params.copy_start = i * (sorted_size / num_threads);
-            if (i == (num_threads - 1)) {
-                params.copy_end = sorted_size - 1;
-            } else {
-                params.copy_end = (i + 1) * (sorted_size / num_threads) - 1;
-            }
-        } else {
-            params.sorted = sorted_from.data();
-            params.sorted_from = nullptr;
-        }
+        params.sorted = sorted_from.data();
         params.finish = &finish;
         params.res = &search_results[i];
-        params.thread_barrier = &thread_barrier;
 
         search_threads.emplace_back(binary_search_packet, params);
     }
 
-    std::cout << "SIZE = " << sorted_size << ", ROUND_ROBIN = " << use_round_robin << ", COPY = " << use_copy << "\n";
+    std::cout << "SIZE = " << sorted_size << ", ROUND_ROBIN = " << use_round_robin << "\n";
     std::cout << "Threads started. Waiting 5 seconds\n";
 
     using namespace std::chrono_literals;
@@ -313,15 +284,13 @@ void run_test(size_t sorted_size, size_t num_threads, bool use_copy) {
 
 int main() {
     static constexpr size_t start_size = 1024;
-    static constexpr size_t end_size = 16*1024*1024;
-    static constexpr size_t THREAD_COUNT = 15;
+    static constexpr size_t end_size = 64*1024*1024;
+    static constexpr size_t THREAD_COUNT = 8;
 
     for (size_t s = start_size; s <= end_size; s *= 4) {
         size_t size = s - 348;
-        run_test<true>(size, THREAD_COUNT, false);
-        run_test<false>(size, THREAD_COUNT, false);
-        run_test<true>(size, THREAD_COUNT, true);
-        run_test<false>(size, THREAD_COUNT, true);
+        run_test<true>(size, THREAD_COUNT);
+        run_test<false>(size, THREAD_COUNT);
     }
 
     return 0;
