@@ -1,0 +1,1 @@
+../2022-10-memproperties3/numa_test.cpp
