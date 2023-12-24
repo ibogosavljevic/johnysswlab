@@ -49,7 +49,7 @@ public:
             __m128 new_vec_i = _mm_blendv_ps(vec_i, vec_j, compare);
             __m128 new_vec_j = _mm_blendv_ps(vec_j, vec_i, compare);
 
-            int increment = _mm_extract_epi32(compare, 0) & 0x1;
+            int increment = _mm_extract_epi32(_mm_castps_si128(compare), 0) & 0x1;
 
             _mm_store_ss(vector_i, new_vec_i);
             _mm_store_ss(vector_j, new_vec_j);
