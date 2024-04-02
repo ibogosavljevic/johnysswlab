@@ -1,0 +1,880 @@
+	CPU id = 0, count = 1, runtime 0.256 (0.003)[ 0.253, 0.255, 0.262 ] s
+		User time = 0 s, system time = 0 s
+		Minor faults = 0, major faults = 0, context switches = 0
+	STAT, cummulative runtime = 0.256 (0.003)[ 0.253, 0.255, 0.262 ] s, min = 0.256 (0.003)[ 0.253, 0.255, 0.262 ] s, avg = 0.256 (0.003)[ 0.253, 0.255, 0.262 ] s, max = 0.256 (0.003)[ 0.253, 0.255, 0.262 ] s
+Region fast_hash_simple_4096
+	CPU id = 0, count = 1, runtime 0.255 (0.001)[ 0.254, 0.254, 0.258 ] s
+		User time = 0 s, system time = 0 s
+		Minor faults = 0, major faults = 0, context switches = 0
+	STAT, cummulative runtime = 0.255 (0.001)[ 0.254, 0.254, 0.258 ] s, min = 0.255 (0.001)[ 0.254, 0.254, 0.258 ] s, avg = 0.255 (0.001)[ 0.254, 0.254, 0.258 ] s, max = 0.255 (0.001)[ 0.254, 0.254, 0.258 ] s
+Region fast_hash_nano_1_noprefetch_4096
+	CPU id = 0, count = 1, runtime 0.266 (0.002)[ 0.263, 0.267, 0.268 ] s
+		User time = 0 s, system time = 0 s
+		Minor faults = 0, major faults = 0, context switches = 0
+	STAT, cummulative runtime = 0.266 (0.002)[ 0.263, 0.267, 0.268 ] s, min = 0.266 (0.002)[ 0.263, 0.267, 0.268 ] s, avg = 0.266 (0.002)[ 0.263, 0.267, 0.268 ] s, max = 0.266 (0.002)[ 0.263, 0.267, 0.268 ] s
+Region fast_hash_nano_1_prefetch_4096
+	CPU id = 0, count = 1, runtime 0.254 (0.001)[ 0.254, 0.254, 0.255 ] s
+		User time = 0 s, system time = 0 s
+		Minor faults = 0, major faults = 0, context switches = 0
+	STAT, cummulative runtime = 0.254 (0.001)[ 0.254, 0.254, 0.255 ] s, min = 0.254 (0.001)[ 0.254, 0.254, 0.255 ] s, avg = 0.254 (0.001)[ 0.254, 0.254, 0.255 ] s, max = 0.254 (0.001)[ 0.254, 0.254, 0.255 ] s
+Region fast_hash_nano_8_noprefetch_4096
+	CPU id = 0, count = 1, runtime 0.367 (0.000)[ 0.367, 0.367, 0.367 ] s
+		User time = 0 s, system time = 0 s
+		Minor faults = 0, major faults = 0, context switches = 0
+	STAT, cummulative runtime = 0.367 (0.000)[ 0.367, 0.367, 0.367 ] s, min = 0.367 (0.000)[ 0.367, 0.367, 0.367 ] s, avg = 0.367 (0.000)[ 0.367, 0.367, 0.367 ] s, max = 0.367 (0.000)[ 0.367, 0.367, 0.367 ] s
+Region fast_hash_nano_8_prefetch_4096
+	CPU id = 0, count = 1, runtime 0.287 (0.001)[ 0.285, 0.287, 0.288 ] s
+		User time = 0 s, system time = 0 s
+		Minor faults = 0, major faults = 0, context switches = 0
+	STAT, cummulative runtime = 0.287 (0.001)[ 0.285, 0.287, 0.288 ] s, min = 0.287 (0.001)[ 0.285, 0.287, 0.288 ] s, avg = 0.287 (0.001)[ 0.285, 0.287, 0.288 ] s, max = 0.287 (0.001)[ 0.285, 0.287, 0.288 ] s
+Region fast_hash_nano_16_noprefetch_4096
+	CPU id = 0, count = 1, runtime 0.321 (0.000)[ 0.320, 0.321, 0.322 ] s
+		User time = 0 s, system time = 0 s
+		Minor faults = 0, major faults = 0, context switches = 0
+	STAT, cummulative runtime = 0.321 (0.000)[ 0.320, 0.321, 0.322 ] s, min = 0.321 (0.000)[ 0.320, 0.321, 0.322 ] s, avg = 0.321 (0.000)[ 0.320, 0.321, 0.322 ] s, max = 0.321 (0.000)[ 0.320, 0.321, 0.322 ] s
+Region fast_hash_nano_16_prefetch_4096
+	CPU id = 0, count = 1, runtime 0.319 (0.000)[ 0.319, 0.319, 0.320 ] s
+		User time = 0 s, system time = 0 s
+		Minor faults = 0, major faults = 0, context switches = 0
+	STAT, cummulative runtime = 0.319 (0.000)[ 0.319, 0.319, 0.320 ] s, min = 0.319 (0.000)[ 0.319, 0.319, 0.320 ] s, avg = 0.319 (0.000)[ 0.319, 0.319, 0.320 ] s, max = 0.319 (0.000)[ 0.319, 0.319, 0.320 ] s
+Region fast_hash_nano_32_noprefetch_4096
+	CPU id = 0, count = 1, runtime 0.447 (0.000)[ 0.447, 0.447, 0.447 ] s
+		User time = 0 s, system time = 0 s
+		Minor faults = 0, major faults = 0, context switches = 0
+	STAT, cummulative runtime = 0.447 (0.000)[ 0.447, 0.447, 0.447 ] s, min = 0.447 (0.000)[ 0.447, 0.447, 0.447 ] s, avg = 0.447 (0.000)[ 0.447, 0.447, 0.447 ] s, max = 0.447 (0.000)[ 0.447, 0.447, 0.447 ] s
+Region fast_hash_nano_32_prefetch_4096
+	CPU id = 0, count = 1, runtime 0.452 (0.000)[ 0.452, 0.452, 0.453 ] s
+		User time = 0 s, system time = 0 s
+		Minor faults = 0, major faults = 0, context switches = 0
+	STAT, cummulative runtime = 0.452 (0.000)[ 0.452, 0.452, 0.453 ] s, min = 0.452 (0.000)[ 0.452, 0.452, 0.453 ] s, avg = 0.452 (0.000)[ 0.452, 0.452, 0.453 ] s, max = 0.452 (0.000)[ 0.452, 0.452, 0.453 ] s
+Region fast_hash_nano_48_noprefetch_4096
+	CPU id = 0, count = 1, runtime 0.449 (0.001)[ 0.448, 0.449, 0.450 ] s
+		User time = 0 s, system time = 0 s
+		Minor faults = 0, major faults = 0, context switches = 0
+	STAT, cummulative runtime = 0.449 (0.001)[ 0.448, 0.449, 0.450 ] s, min = 0.449 (0.001)[ 0.448, 0.449, 0.450 ] s, avg = 0.449 (0.001)[ 0.448, 0.449, 0.450 ] s, max = 0.449 (0.001)[ 0.448, 0.449, 0.450 ] s
+Region fast_hash_nano_48_prefetch_4096
+	CPU id = 0, count = 1, runtime 0.452 (0.000)[ 0.452, 0.453, 0.453 ] s
+		User time = 0 s, system time = 0 s
+		Minor faults = 0, major faults = 0, context switches = 0
+	STAT, cummulative runtime = 0.452 (0.000)[ 0.452, 0.453, 0.453 ] s, min = 0.452 (0.000)[ 0.452, 0.453, 0.453 ] s, avg = 0.452 (0.000)[ 0.452, 0.453, 0.453 ] s, max = 0.452 (0.000)[ 0.452, 0.453, 0.453 ] s
+Region fast_hash_nano_64_noprefetch_4096
+	CPU id = 0, count = 1, runtime 0.461 (0.000)[ 0.461, 0.461, 0.461 ] s
+		User time = 0 s, system time = 0 s
+		Minor faults = 0, major faults = 0, context switches = 0
+	STAT, cummulative runtime = 0.461 (0.000)[ 0.461, 0.461, 0.461 ] s, min = 0.461 (0.000)[ 0.461, 0.461, 0.461 ] s, avg = 0.461 (0.000)[ 0.461, 0.461, 0.461 ] s, max = 0.461 (0.000)[ 0.461, 0.461, 0.461 ] s
+Region fast_hash_nano_64_prefetch_4096
+	CPU id = 0, count = 1, runtime 0.464 (0.000)[ 0.463, 0.464, 0.464 ] s
+		User time = 0 s, system time = 0 s
+		Minor faults = 0, major faults = 0, context switches = 0
+	STAT, cummulative runtime = 0.464 (0.000)[ 0.463, 0.464, 0.464 ] s, min = 0.464 (0.000)[ 0.463, 0.464, 0.464 ] s, avg = 0.464 (0.000)[ 0.463, 0.464, 0.464 ] s, max = 0.464 (0.000)[ 0.463, 0.464, 0.464 ] s
+Region fast_hash_nano_96_noprefetch_4096
+	CPU id = 0, count = 1, runtime 0.460 (0.000)[ 0.460, 0.460, 0.461 ] s
+		User time = 0 s, system time = 0 s
+		Minor faults = 0, major faults = 0, context switches = 0
+	STAT, cummulative runtime = 0.460 (0.000)[ 0.460, 0.460, 0.461 ] s, min = 0.460 (0.000)[ 0.460, 0.460, 0.461 ] s, avg = 0.460 (0.000)[ 0.460, 0.460, 0.461 ] s, max = 0.460 (0.000)[ 0.460, 0.460, 0.461 ] s
+Region fast_hash_nano_96_prefetch_4096
+	CPU id = 0, count = 1, runtime 0.462 (0.000)[ 0.462, 0.462, 0.462 ] s
+		User time = 0 s, system time = 0 s
+		Minor faults = 0, major faults = 0, context switches = 0
+	STAT, cummulative runtime = 0.462 (0.000)[ 0.462, 0.462, 0.462 ] s, min = 0.462 (0.000)[ 0.462, 0.462, 0.462 ] s, avg = 0.462 (0.000)[ 0.462, 0.462, 0.462 ] s, max = 0.462 (0.000)[ 0.462, 0.462, 0.462 ] s
+Region fast_hash_nano_128_noprefetch_4096
+	CPU id = 0, count = 1, runtime 0.469 (0.000)[ 0.469, 0.469, 0.469 ] s
+		User time = 0 s, system time = 0 s
+		Minor faults = 0, major faults = 0, context switches = 0
+	STAT, cummulative runtime = 0.469 (0.000)[ 0.469, 0.469, 0.469 ] s, min = 0.469 (0.000)[ 0.469, 0.469, 0.469 ] s, avg = 0.469 (0.000)[ 0.469, 0.469, 0.469 ] s, max = 0.469 (0.000)[ 0.469, 0.469, 0.469 ] s
+Region fast_hash_nano_128_prefetch_4096
+	CPU id = 0, count = 1, runtime 0.470 (0.000)[ 0.469, 0.469, 0.470 ] s
+		User time = 0 s, system time = 0 s
+		Minor faults = 0, major faults = 0, context switches = 0
+	STAT, cummulative runtime = 0.470 (0.000)[ 0.469, 0.469, 0.470 ] s, min = 0.470 (0.000)[ 0.469, 0.469, 0.470 ] s, avg = 0.470 (0.000)[ 0.469, 0.469, 0.470 ] s, max = 0.470 (0.000)[ 0.469, 0.469, 0.470 ] s
+Region fast_hash_nano_192_noprefetch_4096
+	CPU id = 0, count = 1, runtime 0.470 (0.000)[ 0.470, 0.470, 0.470 ] s
+		User time = 0 s, system time = 0 s
+		Minor faults = 0, major faults = 0, context switches = 0
+	STAT, cummulative runtime = 0.470 (0.000)[ 0.470, 0.470, 0.470 ] s, min = 0.470 (0.000)[ 0.470, 0.470, 0.470 ] s, avg = 0.470 (0.000)[ 0.470, 0.470, 0.470 ] s, max = 0.470 (0.000)[ 0.470, 0.470, 0.470 ] s
+Region fast_hash_nano_192_prefetch_4096
+	CPU id = 0, count = 1, runtime 0.470 (0.000)[ 0.469, 0.470, 0.470 ] s
+		User time = 0 s, system time = 0 s
+		Minor faults = 0, major faults = 0, context switches = 0
+	STAT, cummulative runtime = 0.470 (0.000)[ 0.469, 0.470, 0.470 ] s, min = 0.470 (0.000)[ 0.469, 0.470, 0.470 ] s, avg = 0.470 (0.000)[ 0.469, 0.470, 0.470 ] s, max = 0.470 (0.000)[ 0.469, 0.470, 0.470 ] s
+Region fast_hash_nano_256_noprefetch_4096
+	CPU id = 0, count = 1, runtime 0.383 (0.000)[ 0.383, 0.383, 0.384 ] s
+		User time = 0 s, system time = 0 s
+		Minor faults = 0, major faults = 0, context switches = 0
+	STAT, cummulative runtime = 0.383 (0.000)[ 0.383, 0.383, 0.384 ] s, min = 0.383 (0.000)[ 0.383, 0.383, 0.384 ] s, avg = 0.383 (0.000)[ 0.383, 0.383, 0.384 ] s, max = 0.383 (0.000)[ 0.383, 0.383, 0.384 ] s
+Region fast_hash_nano_256_prefetch_4096
+	CPU id = 0, count = 1, runtime 0.383 (0.000)[ 0.382, 0.383, 0.383 ] s
+		User time = 0 s, system time = 0 s
+		Minor faults = 0, major faults = 0, context switches = 0
+	STAT, cummulative runtime = 0.383 (0.000)[ 0.382, 0.383, 0.383 ] s, min = 0.383 (0.000)[ 0.382, 0.383, 0.383 ] s, avg = 0.383 (0.000)[ 0.382, 0.383, 0.383 ] s, max = 0.383 (0.000)[ 0.382, 0.383, 0.383 ] s
+Region stl_16384
+	CPU id = 0, count = 1, runtime 0.320 (0.003)[ 0.318, 0.320, 0.325 ] s
+		User time = 0 s, system time = 0 s
+		Minor faults = 0, major faults = 0, context switches = 0
+	STAT, cummulative runtime = 0.320 (0.003)[ 0.318, 0.320, 0.325 ] s, min = 0.320 (0.003)[ 0.318, 0.320, 0.325 ] s, avg = 0.320 (0.003)[ 0.318, 0.320, 0.325 ] s, max = 0.320 (0.003)[ 0.318, 0.320, 0.325 ] s
+Region fast_hash_simple_16384
+	CPU id = 0, count = 1, runtime 0.312 (0.004)[ 0.309, 0.311, 0.319 ] s
+		User time = 0 s, system time = 0 s
+		Minor faults = 0, major faults = 0, context switches = 0
+	STAT, cummulative runtime = 0.312 (0.004)[ 0.309, 0.311, 0.319 ] s, min = 0.312 (0.004)[ 0.309, 0.311, 0.319 ] s, avg = 0.312 (0.004)[ 0.309, 0.311, 0.319 ] s, max = 0.312 (0.004)[ 0.309, 0.311, 0.319 ] s
+Region fast_hash_nano_1_noprefetch_16384
+	CPU id = 0, count = 1, runtime 0.395 (0.001)[ 0.394, 0.395, 0.397 ] s
+		User time = 0 s, system time = 0 s
+		Minor faults = 0, major faults = 0, context switches = 0
+	STAT, cummulative runtime = 0.395 (0.001)[ 0.394, 0.395, 0.397 ] s, min = 0.395 (0.001)[ 0.394, 0.395, 0.397 ] s, avg = 0.395 (0.001)[ 0.394, 0.395, 0.397 ] s, max = 0.395 (0.001)[ 0.394, 0.395, 0.397 ] s
+Region fast_hash_nano_1_prefetch_16384
+	CPU id = 0, count = 1, runtime 0.364 (0.003)[ 0.360, 0.362, 0.368 ] s
+		User time = 0 s, system time = 0 s
+		Minor faults = 0, major faults = 0, context switches = 0
+	STAT, cummulative runtime = 0.364 (0.003)[ 0.360, 0.362, 0.368 ] s, min = 0.364 (0.003)[ 0.360, 0.362, 0.368 ] s, avg = 0.364 (0.003)[ 0.360, 0.362, 0.368 ] s, max = 0.364 (0.003)[ 0.360, 0.362, 0.368 ] s
+Region fast_hash_nano_8_noprefetch_16384
+	CPU id = 0, count = 1, runtime 0.410 (0.002)[ 0.407, 0.409, 0.413 ] s
+		User time = 0 s, system time = 0 s
+		Minor faults = 0, major faults = 0, context switches = 0
+	STAT, cummulative runtime = 0.410 (0.002)[ 0.407, 0.409, 0.413 ] s, min = 0.410 (0.002)[ 0.407, 0.409, 0.413 ] s, avg = 0.410 (0.002)[ 0.407, 0.409, 0.413 ] s, max = 0.410 (0.002)[ 0.407, 0.409, 0.413 ] s
+Region fast_hash_nano_8_prefetch_16384
+	CPU id = 0, count = 1, runtime 0.314 (0.002)[ 0.312, 0.314, 0.317 ] s
+		User time = 0 s, system time = 0 s
+		Minor faults = 0, major faults = 0, context switches = 0
+	STAT, cummulative runtime = 0.314 (0.002)[ 0.312, 0.314, 0.317 ] s, min = 0.314 (0.002)[ 0.312, 0.314, 0.317 ] s, avg = 0.314 (0.002)[ 0.312, 0.314, 0.317 ] s, max = 0.314 (0.002)[ 0.312, 0.314, 0.317 ] s
+Region fast_hash_nano_16_noprefetch_16384
+	CPU id = 0, count = 1, runtime 0.352 (0.002)[ 0.350, 0.352, 0.355 ] s
+		User time = 0 s, system time = 0 s
+		Minor faults = 0, major faults = 0, context switches = 0
+	STAT, cummulative runtime = 0.352 (0.002)[ 0.350, 0.352, 0.355 ] s, min = 0.352 (0.002)[ 0.350, 0.352, 0.355 ] s, avg = 0.352 (0.002)[ 0.350, 0.352, 0.355 ] s, max = 0.352 (0.002)[ 0.350, 0.352, 0.355 ] s
+Region fast_hash_nano_16_prefetch_16384
+	CPU id = 0, count = 1, runtime 0.333 (0.001)[ 0.332, 0.334, 0.334 ] s
+		User time = 0 s, system time = 0 s
+		Minor faults = 0, major faults = 0, context switches = 0
+	STAT, cummulative runtime = 0.333 (0.001)[ 0.332, 0.334, 0.334 ] s, min = 0.333 (0.001)[ 0.332, 0.334, 0.334 ] s, avg = 0.333 (0.001)[ 0.332, 0.334, 0.334 ] s, max = 0.333 (0.001)[ 0.332, 0.334, 0.334 ] s
+Region fast_hash_nano_32_noprefetch_16384
+	CPU id = 0, count = 1, runtime 0.488 (0.002)[ 0.486, 0.487, 0.492 ] s
+		User time = 0 s, system time = 0 s
+		Minor faults = 0, major faults = 0, context switches = 0
+	STAT, cummulative runtime = 0.488 (0.002)[ 0.486, 0.487, 0.492 ] s, min = 0.488 (0.002)[ 0.486, 0.487, 0.492 ] s, avg = 0.488 (0.002)[ 0.486, 0.487, 0.492 ] s, max = 0.488 (0.002)[ 0.486, 0.487, 0.492 ] s
+Region fast_hash_nano_32_prefetch_16384
+	CPU id = 0, count = 1, runtime 0.462 (0.001)[ 0.461, 0.461, 0.463 ] s
+		User time = 0 s, system time = 0 s
+		Minor faults = 0, major faults = 0, context switches = 0
+	STAT, cummulative runtime = 0.462 (0.001)[ 0.461, 0.461, 0.463 ] s, min = 0.462 (0.001)[ 0.461, 0.461, 0.463 ] s, avg = 0.462 (0.001)[ 0.461, 0.461, 0.463 ] s, max = 0.462 (0.001)[ 0.461, 0.461, 0.463 ] s
+Region fast_hash_nano_48_noprefetch_16384
+	CPU id = 0, count = 1, runtime 0.479 (0.001)[ 0.477, 0.479, 0.482 ] s
+		User time = 0 s, system time = 0 s
+		Minor faults = 0, major faults = 0, context switches = 0
+	STAT, cummulative runtime = 0.479 (0.001)[ 0.477, 0.479, 0.482 ] s, min = 0.479 (0.001)[ 0.477, 0.479, 0.482 ] s, avg = 0.479 (0.001)[ 0.477, 0.479, 0.482 ] s, max = 0.479 (0.001)[ 0.477, 0.479, 0.482 ] s
+Region fast_hash_nano_48_prefetch_16384
+	CPU id = 0, count = 1, runtime 0.462 (0.000)[ 0.461, 0.462, 0.462 ] s
+		User time = 0 s, system time = 0 s
+		Minor faults = 0, major faults = 0, context switches = 0
+	STAT, cummulative runtime = 0.462 (0.000)[ 0.461, 0.462, 0.462 ] s, min = 0.462 (0.000)[ 0.461, 0.462, 0.462 ] s, avg = 0.462 (0.000)[ 0.461, 0.462, 0.462 ] s, max = 0.462 (0.000)[ 0.461, 0.462, 0.462 ] s
+Region fast_hash_nano_64_noprefetch_16384
+	CPU id = 0, count = 1, runtime 0.485 (0.002)[ 0.484, 0.485, 0.487 ] s
+		User time = 0 s, system time = 0 s
+		Minor faults = 0, major faults = 0, context switches = 0
+	STAT, cummulative runtime = 0.485 (0.002)[ 0.484, 0.485, 0.487 ] s, min = 0.485 (0.002)[ 0.484, 0.485, 0.487 ] s, avg = 0.485 (0.002)[ 0.484, 0.485, 0.487 ] s, max = 0.485 (0.002)[ 0.484, 0.485, 0.487 ] s
+Region fast_hash_nano_64_prefetch_16384
+	CPU id = 0, count = 1, runtime 0.472 (0.001)[ 0.470, 0.472, 0.474 ] s
+		User time = 0 s, system time = 0 s
+		Minor faults = 0, major faults = 0, context switches = 0
+	STAT, cummulative runtime = 0.472 (0.001)[ 0.470, 0.472, 0.474 ] s, min = 0.472 (0.001)[ 0.470, 0.472, 0.474 ] s, avg = 0.472 (0.001)[ 0.470, 0.472, 0.474 ] s, max = 0.472 (0.001)[ 0.470, 0.472, 0.474 ] s
+Region fast_hash_nano_96_noprefetch_16384
+	CPU id = 0, count = 1, runtime 0.490 (0.002)[ 0.488, 0.489, 0.493 ] s
+		User time = 0 s, system time = 0 s
+		Minor faults = 0, major faults = 0, context switches = 0
+	STAT, cummulative runtime = 0.490 (0.002)[ 0.488, 0.489, 0.493 ] s, min = 0.490 (0.002)[ 0.488, 0.489, 0.493 ] s, avg = 0.490 (0.002)[ 0.488, 0.489, 0.493 ] s, max = 0.490 (0.002)[ 0.488, 0.489, 0.493 ] s
+Region fast_hash_nano_96_prefetch_16384
+	CPU id = 0, count = 1, runtime 0.469 (0.000)[ 0.468, 0.469, 0.470 ] s
+		User time = 0 s, system time = 0 s
+		Minor faults = 0, major faults = 0, context switches = 0
+	STAT, cummulative runtime = 0.469 (0.000)[ 0.468, 0.469, 0.470 ] s, min = 0.469 (0.000)[ 0.468, 0.469, 0.470 ] s, avg = 0.469 (0.000)[ 0.468, 0.469, 0.470 ] s, max = 0.469 (0.000)[ 0.468, 0.469, 0.470 ] s
+Region fast_hash_nano_128_noprefetch_16384
+	CPU id = 0, count = 1, runtime 0.495 (0.002)[ 0.493, 0.493, 0.498 ] s
+		User time = 0 s, system time = 0 s
+		Minor faults = 0, major faults = 0, context switches = 0
+	STAT, cummulative runtime = 0.495 (0.002)[ 0.493, 0.493, 0.498 ] s, min = 0.495 (0.002)[ 0.493, 0.493, 0.498 ] s, avg = 0.495 (0.002)[ 0.493, 0.493, 0.498 ] s, max = 0.495 (0.002)[ 0.493, 0.493, 0.498 ] s
+Region fast_hash_nano_128_prefetch_16384
+	CPU id = 0, count = 1, runtime 0.474 (0.000)[ 0.474, 0.474, 0.474 ] s
+		User time = 0 s, system time = 0 s
+		Minor faults = 0, major faults = 0, context switches = 0
+	STAT, cummulative runtime = 0.474 (0.000)[ 0.474, 0.474, 0.474 ] s, min = 0.474 (0.000)[ 0.474, 0.474, 0.474 ] s, avg = 0.474 (0.000)[ 0.474, 0.474, 0.474 ] s, max = 0.474 (0.000)[ 0.474, 0.474, 0.474 ] s
+Region fast_hash_nano_192_noprefetch_16384
+	CPU id = 0, count = 1, runtime 0.498 (0.002)[ 0.496, 0.497, 0.501 ] s
+		User time = 0 s, system time = 0 s
+		Minor faults = 0, major faults = 0, context switches = 0
+	STAT, cummulative runtime = 0.498 (0.002)[ 0.496, 0.497, 0.501 ] s, min = 0.498 (0.002)[ 0.496, 0.497, 0.501 ] s, avg = 0.498 (0.002)[ 0.496, 0.497, 0.501 ] s, max = 0.498 (0.002)[ 0.496, 0.497, 0.501 ] s
+Region fast_hash_nano_192_prefetch_16384
+	CPU id = 0, count = 1, runtime 0.477 (0.001)[ 0.476, 0.477, 0.479 ] s
+		User time = 0 s, system time = 0 s
+		Minor faults = 0, major faults = 0, context switches = 0
+	STAT, cummulative runtime = 0.477 (0.001)[ 0.476, 0.477, 0.479 ] s, min = 0.477 (0.001)[ 0.476, 0.477, 0.479 ] s, avg = 0.477 (0.001)[ 0.476, 0.477, 0.479 ] s, max = 0.477 (0.001)[ 0.476, 0.477, 0.479 ] s
+Region fast_hash_nano_256_noprefetch_16384
+	CPU id = 0, count = 1, runtime 0.410 (0.002)[ 0.407, 0.409, 0.414 ] s
+		User time = 0 s, system time = 0 s
+		Minor faults = 0, major faults = 0, context switches = 0
+	STAT, cummulative runtime = 0.410 (0.002)[ 0.407, 0.409, 0.414 ] s, min = 0.410 (0.002)[ 0.407, 0.409, 0.414 ] s, avg = 0.410 (0.002)[ 0.407, 0.409, 0.414 ] s, max = 0.410 (0.002)[ 0.407, 0.409, 0.414 ] s
+Region fast_hash_nano_256_prefetch_16384
+	CPU id = 0, count = 1, runtime 0.387 (0.000)[ 0.386, 0.387, 0.387 ] s
+		User time = 0 s, system time = 0 s
+		Minor faults = 0, major faults = 0, context switches = 0
+	STAT, cummulative runtime = 0.387 (0.000)[ 0.386, 0.387, 0.387 ] s, min = 0.387 (0.000)[ 0.386, 0.387, 0.387 ] s, avg = 0.387 (0.000)[ 0.386, 0.387, 0.387 ] s, max = 0.387 (0.000)[ 0.386, 0.387, 0.387 ] s
+Region stl_65536
+	CPU id = 0, count = 1, runtime 0.471 (0.001)[ 0.469, 0.471, 0.472 ] s
+		User time = 0 s, system time = 0 s
+		Minor faults = 0, major faults = 0, context switches = 0
+	STAT, cummulative runtime = 0.471 (0.001)[ 0.469, 0.471, 0.472 ] s, min = 0.471 (0.001)[ 0.469, 0.471, 0.472 ] s, avg = 0.471 (0.001)[ 0.469, 0.471, 0.472 ] s, max = 0.471 (0.001)[ 0.469, 0.471, 0.472 ] s
+Region fast_hash_simple_65536
+	CPU id = 0, count = 1, runtime 0.496 (0.003)[ 0.491, 0.495, 0.502 ] s
+		User time = 0 s, system time = 0 s
+		Minor faults = 0, major faults = 0, context switches = 0
+	STAT, cummulative runtime = 0.496 (0.003)[ 0.491, 0.495, 0.502 ] s, min = 0.496 (0.003)[ 0.491, 0.495, 0.502 ] s, avg = 0.496 (0.003)[ 0.491, 0.495, 0.502 ] s, max = 0.496 (0.003)[ 0.491, 0.495, 0.502 ] s
+Region fast_hash_nano_1_noprefetch_65536
+	CPU id = 0, count = 1, runtime 0.500 (0.002)[ 0.498, 0.499, 0.505 ] s
+		User time = 0 s, system time = 0 s
+		Minor faults = 0, major faults = 0, context switches = 0
+	STAT, cummulative runtime = 0.500 (0.002)[ 0.498, 0.499, 0.505 ] s, min = 0.500 (0.002)[ 0.498, 0.499, 0.505 ] s, avg = 0.500 (0.002)[ 0.498, 0.499, 0.505 ] s, max = 0.500 (0.002)[ 0.498, 0.499, 0.505 ] s
+Region fast_hash_nano_1_prefetch_65536
+	CPU id = 0, count = 1, runtime 0.497 (0.002)[ 0.494, 0.496, 0.501 ] s
+		User time = 0 s, system time = 0 s
+		Minor faults = 0, major faults = 0, context switches = 0
+	STAT, cummulative runtime = 0.497 (0.002)[ 0.494, 0.496, 0.501 ] s, min = 0.497 (0.002)[ 0.494, 0.496, 0.501 ] s, avg = 0.497 (0.002)[ 0.494, 0.496, 0.501 ] s, max = 0.497 (0.002)[ 0.494, 0.496, 0.501 ] s
+Region fast_hash_nano_8_noprefetch_65536
+	CPU id = 0, count = 1, runtime 0.586 (0.004)[ 0.581, 0.584, 0.592 ] s
+		User time = 0 s, system time = 0 s
+		Minor faults = 0, major faults = 0, context switches = 0
+	STAT, cummulative runtime = 0.586 (0.004)[ 0.581, 0.584, 0.592 ] s, min = 0.586 (0.004)[ 0.581, 0.584, 0.592 ] s, avg = 0.586 (0.004)[ 0.581, 0.584, 0.592 ] s, max = 0.586 (0.004)[ 0.581, 0.584, 0.592 ] s
+Region fast_hash_nano_8_prefetch_65536
+	CPU id = 0, count = 1, runtime 0.466 (0.003)[ 0.462, 0.465, 0.472 ] s
+		User time = 0 s, system time = 0 s
+		Minor faults = 0, major faults = 0, context switches = 0
+	STAT, cummulative runtime = 0.466 (0.003)[ 0.462, 0.465, 0.472 ] s, min = 0.466 (0.003)[ 0.462, 0.465, 0.472 ] s, avg = 0.466 (0.003)[ 0.462, 0.465, 0.472 ] s, max = 0.466 (0.003)[ 0.462, 0.465, 0.472 ] s
+Region fast_hash_nano_16_noprefetch_65536
+	CPU id = 0, count = 1, runtime 0.537 (0.004)[ 0.534, 0.535, 0.544 ] s
+		User time = 0 s, system time = 0 s
+		Minor faults = 0, major faults = 0, context switches = 0
+	STAT, cummulative runtime = 0.537 (0.004)[ 0.534, 0.535, 0.544 ] s, min = 0.537 (0.004)[ 0.534, 0.535, 0.544 ] s, avg = 0.537 (0.004)[ 0.534, 0.535, 0.544 ] s, max = 0.537 (0.004)[ 0.534, 0.535, 0.544 ] s
+Region fast_hash_nano_16_prefetch_65536
+	CPU id = 0, count = 1, runtime 0.465 (0.005)[ 0.457, 0.464, 0.471 ] s
+		User time = 0 s, system time = 0 s
+		Minor faults = 0, major faults = 0, context switches = 0
+	STAT, cummulative runtime = 0.465 (0.005)[ 0.457, 0.464, 0.471 ] s, min = 0.465 (0.005)[ 0.457, 0.464, 0.471 ] s, avg = 0.465 (0.005)[ 0.457, 0.464, 0.471 ] s, max = 0.465 (0.005)[ 0.457, 0.464, 0.471 ] s
+Region fast_hash_nano_32_noprefetch_65536
+	CPU id = 0, count = 1, runtime 0.657 (0.004)[ 0.652, 0.656, 0.665 ] s
+		User time = 0 s, system time = 0 s
+		Minor faults = 0, major faults = 0, context switches = 0
+	STAT, cummulative runtime = 0.657 (0.004)[ 0.652, 0.656, 0.665 ] s, min = 0.657 (0.004)[ 0.652, 0.656, 0.665 ] s, avg = 0.657 (0.004)[ 0.652, 0.656, 0.665 ] s, max = 0.657 (0.004)[ 0.652, 0.656, 0.665 ] s
+Region fast_hash_nano_32_prefetch_65536
+	CPU id = 0, count = 1, runtime 0.540 (0.001)[ 0.539, 0.540, 0.541 ] s
+		User time = 0 s, system time = 0 s
+		Minor faults = 0, major faults = 0, context switches = 0
+	STAT, cummulative runtime = 0.540 (0.001)[ 0.539, 0.540, 0.541 ] s, min = 0.540 (0.001)[ 0.539, 0.540, 0.541 ] s, avg = 0.540 (0.001)[ 0.539, 0.540, 0.541 ] s, max = 0.540 (0.001)[ 0.539, 0.540, 0.541 ] s
+Region fast_hash_nano_48_noprefetch_65536
+	CPU id = 0, count = 1, runtime 0.654 (0.004)[ 0.651, 0.653, 0.662 ] s
+		User time = 0 s, system time = 0 s
+		Minor faults = 0, major faults = 0, context switches = 0
+	STAT, cummulative runtime = 0.654 (0.004)[ 0.651, 0.653, 0.662 ] s, min = 0.654 (0.004)[ 0.651, 0.653, 0.662 ] s, avg = 0.654 (0.004)[ 0.651, 0.653, 0.662 ] s, max = 0.654 (0.004)[ 0.651, 0.653, 0.662 ] s
+Region fast_hash_nano_48_prefetch_65536
+	CPU id = 0, count = 1, runtime 0.539 (0.001)[ 0.538, 0.539, 0.541 ] s
+		User time = 0 s, system time = 0 s
+		Minor faults = 0, major faults = 0, context switches = 0
+	STAT, cummulative runtime = 0.539 (0.001)[ 0.538, 0.539, 0.541 ] s, min = 0.539 (0.001)[ 0.538, 0.539, 0.541 ] s, avg = 0.539 (0.001)[ 0.538, 0.539, 0.541 ] s, max = 0.539 (0.001)[ 0.538, 0.539, 0.541 ] s
+Region fast_hash_nano_64_noprefetch_65536
+	CPU id = 0, count = 1, runtime 0.660 (0.004)[ 0.656, 0.659, 0.667 ] s
+		User time = 0 s, system time = 0 s
+		Minor faults = 0, major faults = 0, context switches = 0
+	STAT, cummulative runtime = 0.660 (0.004)[ 0.656, 0.659, 0.667 ] s, min = 0.660 (0.004)[ 0.656, 0.659, 0.667 ] s, avg = 0.660 (0.004)[ 0.656, 0.659, 0.667 ] s, max = 0.660 (0.004)[ 0.656, 0.659, 0.667 ] s
+Region fast_hash_nano_64_prefetch_65536
+	CPU id = 0, count = 1, runtime 0.547 (0.001)[ 0.546, 0.548, 0.548 ] s
+		User time = 0 s, system time = 0 s
+		Minor faults = 0, major faults = 0, context switches = 0
+	STAT, cummulative runtime = 0.547 (0.001)[ 0.546, 0.548, 0.548 ] s, min = 0.547 (0.001)[ 0.546, 0.548, 0.548 ] s, avg = 0.547 (0.001)[ 0.546, 0.548, 0.548 ] s, max = 0.547 (0.001)[ 0.546, 0.548, 0.548 ] s
+Region fast_hash_nano_96_noprefetch_65536
+	CPU id = 0, count = 1, runtime 0.672 (0.004)[ 0.669, 0.670, 0.680 ] s
+		User time = 0 s, system time = 0 s
+		Minor faults = 0, major faults = 0, context switches = 0
+	STAT, cummulative runtime = 0.672 (0.004)[ 0.669, 0.670, 0.680 ] s, min = 0.672 (0.004)[ 0.669, 0.670, 0.680 ] s, avg = 0.672 (0.004)[ 0.669, 0.670, 0.680 ] s, max = 0.672 (0.004)[ 0.669, 0.670, 0.680 ] s
+Region fast_hash_nano_96_prefetch_65536
+	CPU id = 0, count = 1, runtime 0.551 (0.001)[ 0.550, 0.552, 0.553 ] s
+		User time = 0 s, system time = 0 s
+		Minor faults = 0, major faults = 0, context switches = 0
+	STAT, cummulative runtime = 0.551 (0.001)[ 0.550, 0.552, 0.553 ] s, min = 0.551 (0.001)[ 0.550, 0.552, 0.553 ] s, avg = 0.551 (0.001)[ 0.550, 0.552, 0.553 ] s, max = 0.551 (0.001)[ 0.550, 0.552, 0.553 ] s
+Region fast_hash_nano_128_noprefetch_65536
+	CPU id = 0, count = 1, runtime 0.670 (0.004)[ 0.666, 0.668, 0.677 ] s
+		User time = 0 s, system time = 0 s
+		Minor faults = 0, major faults = 0, context switches = 0
+	STAT, cummulative runtime = 0.670 (0.004)[ 0.666, 0.668, 0.677 ] s, min = 0.670 (0.004)[ 0.666, 0.668, 0.677 ] s, avg = 0.670 (0.004)[ 0.666, 0.668, 0.677 ] s, max = 0.670 (0.004)[ 0.666, 0.668, 0.677 ] s
+Region fast_hash_nano_128_prefetch_65536
+	CPU id = 0, count = 1, runtime 0.560 (0.001)[ 0.558, 0.560, 0.561 ] s
+		User time = 0 s, system time = 0 s
+		Minor faults = 0, major faults = 0, context switches = 0
+	STAT, cummulative runtime = 0.560 (0.001)[ 0.558, 0.560, 0.561 ] s, min = 0.560 (0.001)[ 0.558, 0.560, 0.561 ] s, avg = 0.560 (0.001)[ 0.558, 0.560, 0.561 ] s, max = 0.560 (0.001)[ 0.558, 0.560, 0.561 ] s
+Region fast_hash_nano_192_noprefetch_65536
+	CPU id = 0, count = 1, runtime 0.663 (0.003)[ 0.661, 0.662, 0.669 ] s
+		User time = 0 s, system time = 0 s
+		Minor faults = 0, major faults = 0, context switches = 0
+	STAT, cummulative runtime = 0.663 (0.003)[ 0.661, 0.662, 0.669 ] s, min = 0.663 (0.003)[ 0.661, 0.662, 0.669 ] s, avg = 0.663 (0.003)[ 0.661, 0.662, 0.669 ] s, max = 0.663 (0.003)[ 0.661, 0.662, 0.669 ] s
+Region fast_hash_nano_192_prefetch_65536
+	CPU id = 0, count = 1, runtime 0.566 (0.002)[ 0.565, 0.567, 0.569 ] s
+		User time = 0 s, system time = 0 s
+		Minor faults = 0, major faults = 0, context switches = 0
+	STAT, cummulative runtime = 0.566 (0.002)[ 0.565, 0.567, 0.569 ] s, min = 0.566 (0.002)[ 0.565, 0.567, 0.569 ] s, avg = 0.566 (0.002)[ 0.565, 0.567, 0.569 ] s, max = 0.566 (0.002)[ 0.565, 0.567, 0.569 ] s
+Region fast_hash_nano_256_noprefetch_65536
+	CPU id = 0, count = 1, runtime 0.570 (0.002)[ 0.568, 0.569, 0.574 ] s
+		User time = 0 s, system time = 0 s
+		Minor faults = 0, major faults = 0, context switches = 0
+	STAT, cummulative runtime = 0.570 (0.002)[ 0.568, 0.569, 0.574 ] s, min = 0.570 (0.002)[ 0.568, 0.569, 0.574 ] s, avg = 0.570 (0.002)[ 0.568, 0.569, 0.574 ] s, max = 0.570 (0.002)[ 0.568, 0.569, 0.574 ] s
+Region fast_hash_nano_256_prefetch_65536
+	CPU id = 0, count = 1, runtime 0.480 (0.002)[ 0.477, 0.480, 0.482 ] s
+		User time = 0 s, system time = 0 s
+		Minor faults = 0, major faults = 0, context switches = 0
+	STAT, cummulative runtime = 0.480 (0.002)[ 0.477, 0.480, 0.482 ] s, min = 0.480 (0.002)[ 0.477, 0.480, 0.482 ] s, avg = 0.480 (0.002)[ 0.477, 0.480, 0.482 ] s, max = 0.480 (0.002)[ 0.477, 0.480, 0.482 ] s
+Region stl_262144
+	CPU id = 0, count = 1, runtime 0.905 (0.016)[ 0.880, 0.903, 0.929 ] s
+		User time = 0 s, system time = 0 s
+		Minor faults = 0, major faults = 0, context switches = 0
+	STAT, cummulative runtime = 0.905 (0.016)[ 0.880, 0.903, 0.929 ] s, min = 0.905 (0.016)[ 0.880, 0.903, 0.929 ] s, avg = 0.905 (0.016)[ 0.880, 0.903, 0.929 ] s, max = 0.905 (0.016)[ 0.880, 0.903, 0.929 ] s
+Region fast_hash_simple_262144
+	CPU id = 0, count = 1, runtime 1.114 (0.017)[ 1.079, 1.123, 1.123 ] s
+		User time = 0 s, system time = 0 s
+		Minor faults = 0, major faults = 0, context switches = 0
+	STAT, cummulative runtime = 1.114 (0.017)[ 1.079, 1.123, 1.123 ] s, min = 1.114 (0.017)[ 1.079, 1.123, 1.123 ] s, avg = 1.114 (0.017)[ 1.079, 1.123, 1.123 ] s, max = 1.114 (0.017)[ 1.079, 1.123, 1.123 ] s
+Region fast_hash_nano_1_noprefetch_262144
+	CPU id = 0, count = 1, runtime 1.104 (0.007)[ 1.092, 1.106, 1.110 ] s
+		User time = 0 s, system time = 0 s
+		Minor faults = 0, major faults = 0, context switches = 0
+	STAT, cummulative runtime = 1.104 (0.007)[ 1.092, 1.106, 1.110 ] s, min = 1.104 (0.007)[ 1.092, 1.106, 1.110 ] s, avg = 1.104 (0.007)[ 1.092, 1.106, 1.110 ] s, max = 1.104 (0.007)[ 1.092, 1.106, 1.110 ] s
+Region fast_hash_nano_1_prefetch_262144
+	CPU id = 0, count = 1, runtime 1.118 (0.017)[ 1.098, 1.110, 1.142 ] s
+		User time = 0 s, system time = 0 s
+		Minor faults = 0, major faults = 0, context switches = 0
+	STAT, cummulative runtime = 1.118 (0.017)[ 1.098, 1.110, 1.142 ] s, min = 1.118 (0.017)[ 1.098, 1.110, 1.142 ] s, avg = 1.118 (0.017)[ 1.098, 1.110, 1.142 ] s, max = 1.118 (0.017)[ 1.098, 1.110, 1.142 ] s
+Region fast_hash_nano_8_noprefetch_262144
+	CPU id = 0, count = 1, runtime 1.605 (0.018)[ 1.576, 1.615, 1.623 ] s
+		User time = 0 s, system time = 0 s
+		Minor faults = 0, major faults = 0, context switches = 0
+	STAT, cummulative runtime = 1.605 (0.018)[ 1.576, 1.615, 1.623 ] s, min = 1.605 (0.018)[ 1.576, 1.615, 1.623 ] s, avg = 1.605 (0.018)[ 1.576, 1.615, 1.623 ] s, max = 1.605 (0.018)[ 1.576, 1.615, 1.623 ] s
+Region fast_hash_nano_8_prefetch_262144
+	CPU id = 0, count = 1, runtime 1.050 (0.014)[ 1.039, 1.042, 1.076 ] s
+		User time = 0 s, system time = 0 s
+		Minor faults = 0, major faults = 0, context switches = 0
+	STAT, cummulative runtime = 1.050 (0.014)[ 1.039, 1.042, 1.076 ] s, min = 1.050 (0.014)[ 1.039, 1.042, 1.076 ] s, avg = 1.050 (0.014)[ 1.039, 1.042, 1.076 ] s, max = 1.050 (0.014)[ 1.039, 1.042, 1.076 ] s
+Region fast_hash_nano_16_noprefetch_262144
+	CPU id = 0, count = 1, runtime 1.668 (0.031)[ 1.638, 1.654, 1.717 ] s
+		User time = 0 s, system time = 0 s
+		Minor faults = 0, major faults = 0, context switches = 0
+	STAT, cummulative runtime = 1.668 (0.031)[ 1.638, 1.654, 1.717 ] s, min = 1.668 (0.031)[ 1.638, 1.654, 1.717 ] s, avg = 1.668 (0.031)[ 1.638, 1.654, 1.717 ] s, max = 1.668 (0.031)[ 1.638, 1.654, 1.717 ] s
+Region fast_hash_nano_16_prefetch_262144
+	CPU id = 0, count = 1, runtime 1.167 (0.014)[ 1.143, 1.167, 1.185 ] s
+		User time = 0 s, system time = 0 s
+		Minor faults = 0, major faults = 0, context switches = 0
+	STAT, cummulative runtime = 1.167 (0.014)[ 1.143, 1.167, 1.185 ] s, min = 1.167 (0.014)[ 1.143, 1.167, 1.185 ] s, avg = 1.167 (0.014)[ 1.143, 1.167, 1.185 ] s, max = 1.167 (0.014)[ 1.143, 1.167, 1.185 ] s
+Region fast_hash_nano_32_noprefetch_262144
+	CPU id = 0, count = 1, runtime 1.716 (0.017)[ 1.691, 1.721, 1.734 ] s
+		User time = 0 s, system time = 0 s
+		Minor faults = 0, major faults = 0, context switches = 0
+	STAT, cummulative runtime = 1.716 (0.017)[ 1.691, 1.721, 1.734 ] s, min = 1.716 (0.017)[ 1.691, 1.721, 1.734 ] s, avg = 1.716 (0.017)[ 1.691, 1.721, 1.734 ] s, max = 1.716 (0.017)[ 1.691, 1.721, 1.734 ] s
+Region fast_hash_nano_32_prefetch_262144
+	CPU id = 0, count = 1, runtime 0.921 (0.033)[ 0.889, 0.912, 0.978 ] s
+		User time = 0 s, system time = 0 s
+		Minor faults = 0, major faults = 0, context switches = 0
+	STAT, cummulative runtime = 0.921 (0.033)[ 0.889, 0.912, 0.978 ] s, min = 0.921 (0.033)[ 0.889, 0.912, 0.978 ] s, avg = 0.921 (0.033)[ 0.889, 0.912, 0.978 ] s, max = 0.921 (0.033)[ 0.889, 0.912, 0.978 ] s
+Region fast_hash_nano_48_noprefetch_262144
+	CPU id = 0, count = 1, runtime 1.463 (0.014)[ 1.445, 1.468, 1.483 ] s
+		User time = 0 s, system time = 0 s
+		Minor faults = 0, major faults = 0, context switches = 0
+	STAT, cummulative runtime = 1.463 (0.014)[ 1.445, 1.468, 1.483 ] s, min = 1.463 (0.014)[ 1.445, 1.468, 1.483 ] s, avg = 1.463 (0.014)[ 1.445, 1.468, 1.483 ] s, max = 1.463 (0.014)[ 1.445, 1.468, 1.483 ] s
+Region fast_hash_nano_48_prefetch_262144
+	CPU id = 0, count = 1, runtime 0.745 (0.018)[ 0.720, 0.750, 0.768 ] s
+		User time = 0 s, system time = 0 s
+		Minor faults = 0, major faults = 0, context switches = 0
+	STAT, cummulative runtime = 0.745 (0.018)[ 0.720, 0.750, 0.768 ] s, min = 0.745 (0.018)[ 0.720, 0.750, 0.768 ] s, avg = 0.745 (0.018)[ 0.720, 0.750, 0.768 ] s, max = 0.745 (0.018)[ 0.720, 0.750, 0.768 ] s
+Region fast_hash_nano_64_noprefetch_262144
+	CPU id = 0, count = 1, runtime 1.363 (0.024)[ 1.327, 1.368, 1.389 ] s
+		User time = 0 s, system time = 0 s
+		Minor faults = 0, major faults = 0, context switches = 0
+	STAT, cummulative runtime = 1.363 (0.024)[ 1.327, 1.368, 1.389 ] s, min = 1.363 (0.024)[ 1.327, 1.368, 1.389 ] s, avg = 1.363 (0.024)[ 1.327, 1.368, 1.389 ] s, max = 1.363 (0.024)[ 1.327, 1.368, 1.389 ] s
+Region fast_hash_nano_64_prefetch_262144
+	CPU id = 0, count = 1, runtime 0.764 (0.018)[ 0.744, 0.761, 0.788 ] s
+		User time = 0 s, system time = 0 s
+		Minor faults = 0, major faults = 0, context switches = 0
+	STAT, cummulative runtime = 0.764 (0.018)[ 0.744, 0.761, 0.788 ] s, min = 0.764 (0.018)[ 0.744, 0.761, 0.788 ] s, avg = 0.764 (0.018)[ 0.744, 0.761, 0.788 ] s, max = 0.764 (0.018)[ 0.744, 0.761, 0.788 ] s
+Region fast_hash_nano_96_noprefetch_262144
+	CPU id = 0, count = 1, runtime 1.238 (0.022)[ 1.205, 1.230, 1.264 ] s
+		User time = 0 s, system time = 0 s
+		Minor faults = 0, major faults = 0, context switches = 0
+	STAT, cummulative runtime = 1.238 (0.022)[ 1.205, 1.230, 1.264 ] s, min = 1.238 (0.022)[ 1.205, 1.230, 1.264 ] s, avg = 1.238 (0.022)[ 1.205, 1.230, 1.264 ] s, max = 1.238 (0.022)[ 1.205, 1.230, 1.264 ] s
+Region fast_hash_nano_96_prefetch_262144
+	CPU id = 0, count = 1, runtime 0.787 (0.017)[ 0.769, 0.780, 0.818 ] s
+		User time = 0 s, system time = 0 s
+		Minor faults = 0, major faults = 0, context switches = 0
+	STAT, cummulative runtime = 0.787 (0.017)[ 0.769, 0.780, 0.818 ] s, min = 0.787 (0.017)[ 0.769, 0.780, 0.818 ] s, avg = 0.787 (0.017)[ 0.769, 0.780, 0.818 ] s, max = 0.787 (0.017)[ 0.769, 0.780, 0.818 ] s
+Region fast_hash_nano_128_noprefetch_262144
+	CPU id = 0, count = 1, runtime 1.161 (0.023)[ 1.121, 1.165, 1.193 ] s
+		User time = 0 s, system time = 0 s
+		Minor faults = 0, major faults = 0, context switches = 0
+	STAT, cummulative runtime = 1.161 (0.023)[ 1.121, 1.165, 1.193 ] s, min = 1.161 (0.023)[ 1.121, 1.165, 1.193 ] s, avg = 1.161 (0.023)[ 1.121, 1.165, 1.193 ] s, max = 1.161 (0.023)[ 1.121, 1.165, 1.193 ] s
+Region fast_hash_nano_128_prefetch_262144
+	CPU id = 0, count = 1, runtime 0.803 (0.011)[ 0.783, 0.803, 0.816 ] s
+		User time = 0 s, system time = 0 s
+		Minor faults = 0, major faults = 0, context switches = 0
+	STAT, cummulative runtime = 0.803 (0.011)[ 0.783, 0.803, 0.816 ] s, min = 0.803 (0.011)[ 0.783, 0.803, 0.816 ] s, avg = 0.803 (0.011)[ 0.783, 0.803, 0.816 ] s, max = 0.803 (0.011)[ 0.783, 0.803, 0.816 ] s
+Region fast_hash_nano_192_noprefetch_262144
+	CPU id = 0, count = 1, runtime 1.109 (0.026)[ 1.080, 1.103, 1.150 ] s
+		User time = 0 s, system time = 0 s
+		Minor faults = 0, major faults = 0, context switches = 0
+	STAT, cummulative runtime = 1.109 (0.026)[ 1.080, 1.103, 1.150 ] s, min = 1.109 (0.026)[ 1.080, 1.103, 1.150 ] s, avg = 1.109 (0.026)[ 1.080, 1.103, 1.150 ] s, max = 1.109 (0.026)[ 1.080, 1.103, 1.150 ] s
+Region fast_hash_nano_192_prefetch_262144
+	CPU id = 0, count = 1, runtime 0.869 (0.014)[ 0.851, 0.862, 0.889 ] s
+		User time = 0 s, system time = 0 s
+		Minor faults = 0, major faults = 0, context switches = 0
+	STAT, cummulative runtime = 0.869 (0.014)[ 0.851, 0.862, 0.889 ] s, min = 0.869 (0.014)[ 0.851, 0.862, 0.889 ] s, avg = 0.869 (0.014)[ 0.851, 0.862, 0.889 ] s, max = 0.869 (0.014)[ 0.851, 0.862, 0.889 ] s
+Region fast_hash_nano_256_noprefetch_262144
+	CPU id = 0, count = 1, runtime 0.910 (0.019)[ 0.886, 0.905, 0.943 ] s
+		User time = 0 s, system time = 0 s
+		Minor faults = 0, major faults = 0, context switches = 0
+	STAT, cummulative runtime = 0.910 (0.019)[ 0.886, 0.905, 0.943 ] s, min = 0.910 (0.019)[ 0.886, 0.905, 0.943 ] s, avg = 0.910 (0.019)[ 0.886, 0.905, 0.943 ] s, max = 0.910 (0.019)[ 0.886, 0.905, 0.943 ] s
+Region fast_hash_nano_256_prefetch_262144
+	CPU id = 0, count = 1, runtime 0.792 (0.024)[ 0.757, 0.786, 0.822 ] s
+		User time = 0 s, system time = 0 s
+		Minor faults = 0, major faults = 0, context switches = 0
+	STAT, cummulative runtime = 0.792 (0.024)[ 0.757, 0.786, 0.822 ] s, min = 0.792 (0.024)[ 0.757, 0.786, 0.822 ] s, avg = 0.792 (0.024)[ 0.757, 0.786, 0.822 ] s, max = 0.792 (0.024)[ 0.757, 0.786, 0.822 ] s
+Region stl_1048576
+	CPU id = 0, count = 1, runtime 1.910 (0.012)[ 1.894, 1.913, 1.925 ] s
+		User time = 0 s, system time = 0 s
+		Minor faults = 0, major faults = 0, context switches = 0
+	STAT, cummulative runtime = 1.910 (0.012)[ 1.894, 1.913, 1.925 ] s, min = 1.910 (0.012)[ 1.894, 1.913, 1.925 ] s, avg = 1.910 (0.012)[ 1.894, 1.913, 1.925 ] s, max = 1.910 (0.012)[ 1.894, 1.913, 1.925 ] s
+Region fast_hash_simple_1048576
+	CPU id = 0, count = 1, runtime 2.417 (0.009)[ 2.409, 2.411, 2.431 ] s
+		User time = 0 s, system time = 0 s
+		Minor faults = 0, major faults = 0, context switches = 0
+	STAT, cummulative runtime = 2.417 (0.009)[ 2.409, 2.411, 2.431 ] s, min = 2.417 (0.009)[ 2.409, 2.411, 2.431 ] s, avg = 2.417 (0.009)[ 2.409, 2.411, 2.431 ] s, max = 2.417 (0.009)[ 2.409, 2.411, 2.431 ] s
+Region fast_hash_nano_1_noprefetch_1048576
+	CPU id = 0, count = 1, runtime 2.316 (0.010)[ 2.306, 2.310, 2.333 ] s
+		User time = 0 s, system time = 0 s
+		Minor faults = 0, major faults = 0, context switches = 0
+	STAT, cummulative runtime = 2.316 (0.010)[ 2.306, 2.310, 2.333 ] s, min = 2.316 (0.010)[ 2.306, 2.310, 2.333 ] s, avg = 2.316 (0.010)[ 2.306, 2.310, 2.333 ] s, max = 2.316 (0.010)[ 2.306, 2.310, 2.333 ] s
+Region fast_hash_nano_1_prefetch_1048576
+	CPU id = 0, count = 1, runtime 2.321 (0.010)[ 2.310, 2.316, 2.336 ] s
+		User time = 0 s, system time = 0 s
+		Minor faults = 0, major faults = 0, context switches = 0
+	STAT, cummulative runtime = 2.321 (0.010)[ 2.310, 2.316, 2.336 ] s, min = 2.321 (0.010)[ 2.310, 2.316, 2.336 ] s, avg = 2.321 (0.010)[ 2.310, 2.316, 2.336 ] s, max = 2.321 (0.010)[ 2.310, 2.316, 2.336 ] s
+Region fast_hash_nano_8_noprefetch_1048576
+	CPU id = 0, count = 1, runtime 2.423 (0.010)[ 2.413, 2.417, 2.440 ] s
+		User time = 0 s, system time = 0 s
+		Minor faults = 0, major faults = 0, context switches = 0
+	STAT, cummulative runtime = 2.423 (0.010)[ 2.413, 2.417, 2.440 ] s, min = 2.423 (0.010)[ 2.413, 2.417, 2.440 ] s, avg = 2.423 (0.010)[ 2.413, 2.417, 2.440 ] s, max = 2.423 (0.010)[ 2.413, 2.417, 2.440 ] s
+Region fast_hash_nano_8_prefetch_1048576
+	CPU id = 0, count = 1, runtime 1.958 (0.011)[ 1.944, 1.954, 1.975 ] s
+		User time = 0 s, system time = 0 s
+		Minor faults = 0, major faults = 0, context switches = 0
+	STAT, cummulative runtime = 1.958 (0.011)[ 1.944, 1.954, 1.975 ] s, min = 1.958 (0.011)[ 1.944, 1.954, 1.975 ] s, avg = 1.958 (0.011)[ 1.944, 1.954, 1.975 ] s, max = 1.958 (0.011)[ 1.944, 1.954, 1.975 ] s
+Region fast_hash_nano_16_noprefetch_1048576
+	CPU id = 0, count = 1, runtime 2.339 (0.010)[ 2.329, 2.335, 2.356 ] s
+		User time = 0 s, system time = 0 s
+		Minor faults = 0, major faults = 0, context switches = 0
+	STAT, cummulative runtime = 2.339 (0.010)[ 2.329, 2.335, 2.356 ] s, min = 2.339 (0.010)[ 2.329, 2.335, 2.356 ] s, avg = 2.339 (0.010)[ 2.329, 2.335, 2.356 ] s, max = 2.339 (0.010)[ 2.329, 2.335, 2.356 ] s
+Region fast_hash_nano_16_prefetch_1048576
+	CPU id = 0, count = 1, runtime 1.557 (0.006)[ 1.548, 1.558, 1.566 ] s
+		User time = 0 s, system time = 0 s
+		Minor faults = 0, major faults = 0, context switches = 0
+	STAT, cummulative runtime = 1.557 (0.006)[ 1.548, 1.558, 1.566 ] s, min = 1.557 (0.006)[ 1.548, 1.558, 1.566 ] s, avg = 1.557 (0.006)[ 1.548, 1.558, 1.566 ] s, max = 1.557 (0.006)[ 1.548, 1.558, 1.566 ] s
+Region fast_hash_nano_32_noprefetch_1048576
+	CPU id = 0, count = 1, runtime 2.570 (0.011)[ 2.559, 2.565, 2.588 ] s
+		User time = 0 s, system time = 0 s
+		Minor faults = 0, major faults = 0, context switches = 0
+	STAT, cummulative runtime = 2.570 (0.011)[ 2.559, 2.565, 2.588 ] s, min = 2.570 (0.011)[ 2.559, 2.565, 2.588 ] s, avg = 2.570 (0.011)[ 2.559, 2.565, 2.588 ] s, max = 2.570 (0.011)[ 2.559, 2.565, 2.588 ] s
+Region fast_hash_nano_32_prefetch_1048576
+	CPU id = 0, count = 1, runtime 1.658 (0.008)[ 1.648, 1.660, 1.667 ] s
+		User time = 0 s, system time = 0 s
+		Minor faults = 0, major faults = 0, context switches = 0
+	STAT, cummulative runtime = 1.658 (0.008)[ 1.648, 1.660, 1.667 ] s, min = 1.658 (0.008)[ 1.648, 1.660, 1.667 ] s, avg = 1.658 (0.008)[ 1.648, 1.660, 1.667 ] s, max = 1.658 (0.008)[ 1.648, 1.660, 1.667 ] s
+Region fast_hash_nano_48_noprefetch_1048576
+	CPU id = 0, count = 1, runtime 2.259 (0.008)[ 2.249, 2.256, 2.270 ] s
+		User time = 0 s, system time = 0 s
+		Minor faults = 0, major faults = 0, context switches = 0
+	STAT, cummulative runtime = 2.259 (0.008)[ 2.249, 2.256, 2.270 ] s, min = 2.259 (0.008)[ 2.249, 2.256, 2.270 ] s, avg = 2.259 (0.008)[ 2.249, 2.256, 2.270 ] s, max = 2.259 (0.008)[ 2.249, 2.256, 2.270 ] s
+Region fast_hash_nano_48_prefetch_1048576
+	CPU id = 0, count = 1, runtime 1.660 (0.009)[ 1.651, 1.660, 1.674 ] s
+		User time = 0 s, system time = 0 s
+		Minor faults = 0, major faults = 0, context switches = 0
+	STAT, cummulative runtime = 1.660 (0.009)[ 1.651, 1.660, 1.674 ] s, min = 1.660 (0.009)[ 1.651, 1.660, 1.674 ] s, avg = 1.660 (0.009)[ 1.651, 1.660, 1.674 ] s, max = 1.660 (0.009)[ 1.651, 1.660, 1.674 ] s
+Region fast_hash_nano_64_noprefetch_1048576
+	CPU id = 0, count = 1, runtime 2.180 (0.007)[ 2.173, 2.177, 2.190 ] s
+		User time = 0 s, system time = 0 s
+		Minor faults = 0, major faults = 0, context switches = 0
+	STAT, cummulative runtime = 2.180 (0.007)[ 2.173, 2.177, 2.190 ] s, min = 2.180 (0.007)[ 2.173, 2.177, 2.190 ] s, avg = 2.180 (0.007)[ 2.173, 2.177, 2.190 ] s, max = 2.180 (0.007)[ 2.173, 2.177, 2.190 ] s
+Region fast_hash_nano_64_prefetch_1048576
+	CPU id = 0, count = 1, runtime 1.716 (0.007)[ 1.708, 1.713, 1.727 ] s
+		User time = 0 s, system time = 0 s
+		Minor faults = 0, major faults = 0, context switches = 0
+	STAT, cummulative runtime = 1.716 (0.007)[ 1.708, 1.713, 1.727 ] s, min = 1.716 (0.007)[ 1.708, 1.713, 1.727 ] s, avg = 1.716 (0.007)[ 1.708, 1.713, 1.727 ] s, max = 1.716 (0.007)[ 1.708, 1.713, 1.727 ] s
+Region fast_hash_nano_96_noprefetch_1048576
+	CPU id = 0, count = 1, runtime 2.146 (0.006)[ 2.140, 2.142, 2.156 ] s
+		User time = 0 s, system time = 0 s
+		Minor faults = 0, major faults = 0, context switches = 0
+	STAT, cummulative runtime = 2.146 (0.006)[ 2.140, 2.142, 2.156 ] s, min = 2.146 (0.006)[ 2.140, 2.142, 2.156 ] s, avg = 2.146 (0.006)[ 2.140, 2.142, 2.156 ] s, max = 2.146 (0.006)[ 2.140, 2.142, 2.156 ] s
+Region fast_hash_nano_96_prefetch_1048576
+	CPU id = 0, count = 1, runtime 1.767 (0.009)[ 1.757, 1.765, 1.784 ] s
+		User time = 0 s, system time = 0 s
+		Minor faults = 0, major faults = 0, context switches = 0
+	STAT, cummulative runtime = 1.767 (0.009)[ 1.757, 1.765, 1.784 ] s, min = 1.767 (0.009)[ 1.757, 1.765, 1.784 ] s, avg = 1.767 (0.009)[ 1.757, 1.765, 1.784 ] s, max = 1.767 (0.009)[ 1.757, 1.765, 1.784 ] s
+Region fast_hash_nano_128_noprefetch_1048576
+	CPU id = 0, count = 1, runtime 2.116 (0.007)[ 2.109, 2.116, 2.127 ] s
+		User time = 0 s, system time = 0 s
+		Minor faults = 0, major faults = 0, context switches = 0
+	STAT, cummulative runtime = 2.116 (0.007)[ 2.109, 2.116, 2.127 ] s, min = 2.116 (0.007)[ 2.109, 2.116, 2.127 ] s, avg = 2.116 (0.007)[ 2.109, 2.116, 2.127 ] s, max = 2.116 (0.007)[ 2.109, 2.116, 2.127 ] s
+Region fast_hash_nano_128_prefetch_1048576
+	CPU id = 0, count = 1, runtime 1.799 (0.010)[ 1.791, 1.793, 1.818 ] s
+		User time = 0 s, system time = 0 s
+		Minor faults = 0, major faults = 0, context switches = 0
+	STAT, cummulative runtime = 1.799 (0.010)[ 1.791, 1.793, 1.818 ] s, min = 1.799 (0.010)[ 1.791, 1.793, 1.818 ] s, avg = 1.799 (0.010)[ 1.791, 1.793, 1.818 ] s, max = 1.799 (0.010)[ 1.791, 1.793, 1.818 ] s
+Region fast_hash_nano_192_noprefetch_1048576
+	CPU id = 0, count = 1, runtime 2.089 (0.009)[ 2.081, 2.083, 2.104 ] s
+		User time = 0 s, system time = 0 s
+		Minor faults = 0, major faults = 0, context switches = 0
+	STAT, cummulative runtime = 2.089 (0.009)[ 2.081, 2.083, 2.104 ] s, min = 2.089 (0.009)[ 2.081, 2.083, 2.104 ] s, avg = 2.089 (0.009)[ 2.081, 2.083, 2.104 ] s, max = 2.089 (0.009)[ 2.081, 2.083, 2.104 ] s
+Region fast_hash_nano_192_prefetch_1048576
+	CPU id = 0, count = 1, runtime 1.866 (0.011)[ 1.857, 1.859, 1.886 ] s
+		User time = 0 s, system time = 0 s
+		Minor faults = 0, major faults = 0, context switches = 0
+	STAT, cummulative runtime = 1.866 (0.011)[ 1.857, 1.859, 1.886 ] s, min = 1.866 (0.011)[ 1.857, 1.859, 1.886 ] s, avg = 1.866 (0.011)[ 1.857, 1.859, 1.886 ] s, max = 1.866 (0.011)[ 1.857, 1.859, 1.886 ] s
+Region fast_hash_nano_256_noprefetch_1048576
+	CPU id = 0, count = 1, runtime 1.982 (0.007)[ 1.975, 1.978, 1.993 ] s
+		User time = 0 s, system time = 0 s
+		Minor faults = 0, major faults = 0, context switches = 0
+	STAT, cummulative runtime = 1.982 (0.007)[ 1.975, 1.978, 1.993 ] s, min = 1.982 (0.007)[ 1.975, 1.978, 1.993 ] s, avg = 1.982 (0.007)[ 1.975, 1.978, 1.993 ] s, max = 1.982 (0.007)[ 1.975, 1.978, 1.993 ] s
+Region fast_hash_nano_256_prefetch_1048576
+	CPU id = 0, count = 1, runtime 1.797 (0.010)[ 1.787, 1.789, 1.812 ] s
+		User time = 0 s, system time = 0 s
+		Minor faults = 0, major faults = 0, context switches = 0
+	STAT, cummulative runtime = 1.797 (0.010)[ 1.787, 1.789, 1.812 ] s, min = 1.797 (0.010)[ 1.787, 1.789, 1.812 ] s, avg = 1.797 (0.010)[ 1.787, 1.789, 1.812 ] s, max = 1.797 (0.010)[ 1.787, 1.789, 1.812 ] s
+Region stl_4194304
+	CPU id = 0, count = 1, runtime 2.380 (0.006)[ 2.374, 2.375, 2.390 ] s
+		User time = 0 s, system time = 0 s
+		Minor faults = 0, major faults = 0, context switches = 0
+	STAT, cummulative runtime = 2.380 (0.006)[ 2.374, 2.375, 2.390 ] s, min = 2.380 (0.006)[ 2.374, 2.375, 2.390 ] s, avg = 2.380 (0.006)[ 2.374, 2.375, 2.390 ] s, max = 2.380 (0.006)[ 2.374, 2.375, 2.390 ] s
+Region fast_hash_simple_4194304
+	CPU id = 0, count = 1, runtime 2.601 (0.007)[ 2.590, 2.599, 2.610 ] s
+		User time = 0 s, system time = 0 s
+		Minor faults = 0, major faults = 0, context switches = 0
+	STAT, cummulative runtime = 2.601 (0.007)[ 2.590, 2.599, 2.610 ] s, min = 2.601 (0.007)[ 2.590, 2.599, 2.610 ] s, avg = 2.601 (0.007)[ 2.590, 2.599, 2.610 ] s, max = 2.601 (0.007)[ 2.590, 2.599, 2.610 ] s
+Region fast_hash_nano_1_noprefetch_4194304
+	CPU id = 0, count = 1, runtime 2.435 (0.006)[ 2.429, 2.430, 2.443 ] s
+		User time = 0 s, system time = 0 s
+		Minor faults = 0, major faults = 0, context switches = 0
+	STAT, cummulative runtime = 2.435 (0.006)[ 2.429, 2.430, 2.443 ] s, min = 2.435 (0.006)[ 2.429, 2.430, 2.443 ] s, avg = 2.435 (0.006)[ 2.429, 2.430, 2.443 ] s, max = 2.435 (0.006)[ 2.429, 2.430, 2.443 ] s
+Region fast_hash_nano_1_prefetch_4194304
+	CPU id = 0, count = 1, runtime 2.441 (0.007)[ 2.434, 2.435, 2.450 ] s
+		User time = 0 s, system time = 0 s
+		Minor faults = 0, major faults = 0, context switches = 0
+	STAT, cummulative runtime = 2.441 (0.007)[ 2.434, 2.435, 2.450 ] s, min = 2.441 (0.007)[ 2.434, 2.435, 2.450 ] s, avg = 2.441 (0.007)[ 2.434, 2.435, 2.450 ] s, max = 2.441 (0.007)[ 2.434, 2.435, 2.450 ] s
+Region fast_hash_nano_8_noprefetch_4194304
+	CPU id = 0, count = 1, runtime 2.561 (0.007)[ 2.555, 2.556, 2.571 ] s
+		User time = 0 s, system time = 0 s
+		Minor faults = 0, major faults = 0, context switches = 0
+	STAT, cummulative runtime = 2.561 (0.007)[ 2.555, 2.556, 2.571 ] s, min = 2.561 (0.007)[ 2.555, 2.556, 2.571 ] s, avg = 2.561 (0.007)[ 2.555, 2.556, 2.571 ] s, max = 2.561 (0.007)[ 2.555, 2.556, 2.571 ] s
+Region fast_hash_nano_8_prefetch_4194304
+	CPU id = 0, count = 1, runtime 2.378 (0.011)[ 2.365, 2.373, 2.395 ] s
+		User time = 0 s, system time = 0 s
+		Minor faults = 0, major faults = 0, context switches = 0
+	STAT, cummulative runtime = 2.378 (0.011)[ 2.365, 2.373, 2.395 ] s, min = 2.378 (0.011)[ 2.365, 2.373, 2.395 ] s, avg = 2.378 (0.011)[ 2.365, 2.373, 2.395 ] s, max = 2.378 (0.011)[ 2.365, 2.373, 2.395 ] s
+Region fast_hash_nano_16_noprefetch_4194304
+	CPU id = 0, count = 1, runtime 2.497 (0.007)[ 2.490, 2.494, 2.506 ] s
+		User time = 0 s, system time = 0 s
+		Minor faults = 0, major faults = 0, context switches = 0
+	STAT, cummulative runtime = 2.497 (0.007)[ 2.490, 2.494, 2.506 ] s, min = 2.497 (0.007)[ 2.490, 2.494, 2.506 ] s, avg = 2.497 (0.007)[ 2.490, 2.494, 2.506 ] s, max = 2.497 (0.007)[ 2.490, 2.494, 2.506 ] s
+Region fast_hash_nano_16_prefetch_4194304
+	CPU id = 0, count = 1, runtime 1.674 (0.004)[ 1.670, 1.672, 1.680 ] s
+		User time = 0 s, system time = 0 s
+		Minor faults = 0, major faults = 0, context switches = 0
+	STAT, cummulative runtime = 1.674 (0.004)[ 1.670, 1.672, 1.680 ] s, min = 1.674 (0.004)[ 1.670, 1.672, 1.680 ] s, avg = 1.674 (0.004)[ 1.670, 1.672, 1.680 ] s, max = 1.674 (0.004)[ 1.670, 1.672, 1.680 ] s
+Region fast_hash_nano_32_noprefetch_4194304
+	CPU id = 0, count = 1, runtime 2.714 (0.008)[ 2.706, 2.710, 2.723 ] s
+		User time = 0 s, system time = 0 s
+		Minor faults = 0, major faults = 0, context switches = 0
+	STAT, cummulative runtime = 2.714 (0.008)[ 2.706, 2.710, 2.723 ] s, min = 2.714 (0.008)[ 2.706, 2.710, 2.723 ] s, avg = 2.714 (0.008)[ 2.706, 2.710, 2.723 ] s, max = 2.714 (0.008)[ 2.706, 2.710, 2.723 ] s
+Region fast_hash_nano_32_prefetch_4194304
+	CPU id = 0, count = 1, runtime 1.917 (0.007)[ 1.909, 1.916, 1.926 ] s
+		User time = 0 s, system time = 0 s
+		Minor faults = 0, major faults = 0, context switches = 0
+	STAT, cummulative runtime = 1.917 (0.007)[ 1.909, 1.916, 1.926 ] s, min = 1.917 (0.007)[ 1.909, 1.916, 1.926 ] s, avg = 1.917 (0.007)[ 1.909, 1.916, 1.926 ] s, max = 1.917 (0.007)[ 1.909, 1.916, 1.926 ] s
+Region fast_hash_nano_48_noprefetch_4194304
+	CPU id = 0, count = 1, runtime 2.377 (0.008)[ 2.371, 2.372, 2.390 ] s
+		User time = 0 s, system time = 0 s
+		Minor faults = 0, major faults = 0, context switches = 0
+	STAT, cummulative runtime = 2.377 (0.008)[ 2.371, 2.372, 2.390 ] s, min = 2.377 (0.008)[ 2.371, 2.372, 2.390 ] s, avg = 2.377 (0.008)[ 2.371, 2.372, 2.390 ] s, max = 2.377 (0.008)[ 2.371, 2.372, 2.390 ] s
+Region fast_hash_nano_48_prefetch_4194304
+	CPU id = 0, count = 1, runtime 1.891 (0.006)[ 1.882, 1.891, 1.902 ] s
+		User time = 0 s, system time = 0 s
+		Minor faults = 0, major faults = 0, context switches = 0
+	STAT, cummulative runtime = 1.891 (0.006)[ 1.882, 1.891, 1.902 ] s, min = 1.891 (0.006)[ 1.882, 1.891, 1.902 ] s, avg = 1.891 (0.006)[ 1.882, 1.891, 1.902 ] s, max = 1.891 (0.006)[ 1.882, 1.891, 1.902 ] s
+Region fast_hash_nano_64_noprefetch_4194304
+	CPU id = 0, count = 1, runtime 2.305 (0.006)[ 2.300, 2.300, 2.313 ] s
+		User time = 0 s, system time = 0 s
+		Minor faults = 0, major faults = 0, context switches = 0
+	STAT, cummulative runtime = 2.305 (0.006)[ 2.300, 2.300, 2.313 ] s, min = 2.305 (0.006)[ 2.300, 2.300, 2.313 ] s, avg = 2.305 (0.006)[ 2.300, 2.300, 2.313 ] s, max = 2.305 (0.006)[ 2.300, 2.300, 2.313 ] s
+Region fast_hash_nano_64_prefetch_4194304
+	CPU id = 0, count = 1, runtime 1.919 (0.006)[ 1.912, 1.919, 1.929 ] s
+		User time = 0 s, system time = 0 s
+		Minor faults = 0, major faults = 0, context switches = 0
+	STAT, cummulative runtime = 1.919 (0.006)[ 1.912, 1.919, 1.929 ] s, min = 1.919 (0.006)[ 1.912, 1.919, 1.929 ] s, avg = 1.919 (0.006)[ 1.912, 1.919, 1.929 ] s, max = 1.919 (0.006)[ 1.912, 1.919, 1.929 ] s
+Region fast_hash_nano_96_noprefetch_4194304
+	CPU id = 0, count = 1, runtime 2.264 (0.006)[ 2.260, 2.260, 2.272 ] s
+		User time = 0 s, system time = 0 s
+		Minor faults = 0, major faults = 0, context switches = 0
+	STAT, cummulative runtime = 2.264 (0.006)[ 2.260, 2.260, 2.272 ] s, min = 2.264 (0.006)[ 2.260, 2.260, 2.272 ] s, avg = 2.264 (0.006)[ 2.260, 2.260, 2.272 ] s, max = 2.264 (0.006)[ 2.260, 2.260, 2.272 ] s
+Region fast_hash_nano_96_prefetch_4194304
+	CPU id = 0, count = 1, runtime 1.970 (0.005)[ 1.965, 1.967, 1.979 ] s
+		User time = 0 s, system time = 0 s
+		Minor faults = 0, major faults = 0, context switches = 0
+	STAT, cummulative runtime = 1.970 (0.005)[ 1.965, 1.967, 1.979 ] s, min = 1.970 (0.005)[ 1.965, 1.967, 1.979 ] s, avg = 1.970 (0.005)[ 1.965, 1.967, 1.979 ] s, max = 1.970 (0.005)[ 1.965, 1.967, 1.979 ] s
+Region fast_hash_nano_128_noprefetch_4194304
+	CPU id = 0, count = 1, runtime 2.247 (0.006)[ 2.241, 2.244, 2.254 ] s
+		User time = 0 s, system time = 0 s
+		Minor faults = 0, major faults = 0, context switches = 0
+	STAT, cummulative runtime = 2.247 (0.006)[ 2.241, 2.244, 2.254 ] s, min = 2.247 (0.006)[ 2.241, 2.244, 2.254 ] s, avg = 2.247 (0.006)[ 2.241, 2.244, 2.254 ] s, max = 2.247 (0.006)[ 2.241, 2.244, 2.254 ] s
+Region fast_hash_nano_128_prefetch_4194304
+	CPU id = 0, count = 1, runtime 1.999 (0.005)[ 1.994, 1.995, 2.006 ] s
+		User time = 0 s, system time = 0 s
+		Minor faults = 0, major faults = 0, context switches = 0
+	STAT, cummulative runtime = 1.999 (0.005)[ 1.994, 1.995, 2.006 ] s, min = 1.999 (0.005)[ 1.994, 1.995, 2.006 ] s, avg = 1.999 (0.005)[ 1.994, 1.995, 2.006 ] s, max = 1.999 (0.005)[ 1.994, 1.995, 2.006 ] s
+Region fast_hash_nano_192_noprefetch_4194304
+	CPU id = 0, count = 1, runtime 2.209 (0.006)[ 2.204, 2.205, 2.217 ] s
+		User time = 0 s, system time = 0 s
+		Minor faults = 0, major faults = 0, context switches = 0
+	STAT, cummulative runtime = 2.209 (0.006)[ 2.204, 2.205, 2.217 ] s, min = 2.209 (0.006)[ 2.204, 2.205, 2.217 ] s, avg = 2.209 (0.006)[ 2.204, 2.205, 2.217 ] s, max = 2.209 (0.006)[ 2.204, 2.205, 2.217 ] s
+Region fast_hash_nano_192_prefetch_4194304
+	CPU id = 0, count = 1, runtime 2.050 (0.005)[ 2.045, 2.047, 2.058 ] s
+		User time = 0 s, system time = 0 s
+		Minor faults = 0, major faults = 0, context switches = 0
+	STAT, cummulative runtime = 2.050 (0.005)[ 2.045, 2.047, 2.058 ] s, min = 2.050 (0.005)[ 2.045, 2.047, 2.058 ] s, avg = 2.050 (0.005)[ 2.045, 2.047, 2.058 ] s, max = 2.050 (0.005)[ 2.045, 2.047, 2.058 ] s
+Region fast_hash_nano_256_noprefetch_4194304
+	CPU id = 0, count = 1, runtime 2.101 (0.006)[ 2.095, 2.097, 2.108 ] s
+		User time = 0 s, system time = 0 s
+		Minor faults = 0, major faults = 0, context switches = 0
+	STAT, cummulative runtime = 2.101 (0.006)[ 2.095, 2.097, 2.108 ] s, min = 2.101 (0.006)[ 2.095, 2.097, 2.108 ] s, avg = 2.101 (0.006)[ 2.095, 2.097, 2.108 ] s, max = 2.101 (0.006)[ 2.095, 2.097, 2.108 ] s
+Region fast_hash_nano_256_prefetch_4194304
+	CPU id = 0, count = 1, runtime 1.970 (0.005)[ 1.964, 1.969, 1.978 ] s
+		User time = 0 s, system time = 0 s
+		Minor faults = 0, major faults = 0, context switches = 0
+	STAT, cummulative runtime = 1.970 (0.005)[ 1.964, 1.969, 1.978 ] s, min = 1.970 (0.005)[ 1.964, 1.969, 1.978 ] s, avg = 1.970 (0.005)[ 1.964, 1.969, 1.978 ] s, max = 1.970 (0.005)[ 1.964, 1.969, 1.978 ] s
+Region stl_16777216
+	CPU id = 0, count = 1, runtime 3.008 (0.009)[ 2.997, 3.004, 3.018 ] s
+		User time = 0 s, system time = 0 s
+		Minor faults = 0, major faults = 0, context switches = 0
+	STAT, cummulative runtime = 3.008 (0.009)[ 2.997, 3.004, 3.018 ] s, min = 3.008 (0.009)[ 2.997, 3.004, 3.018 ] s, avg = 3.008 (0.009)[ 2.997, 3.004, 3.018 ] s, max = 3.008 (0.009)[ 2.997, 3.004, 3.018 ] s
+Region fast_hash_simple_16777216
+	CPU id = 0, count = 1, runtime 2.635 (0.009)[ 2.625, 2.631, 2.649 ] s
+		User time = 0 s, system time = 0 s
+		Minor faults = 0, major faults = 0, context switches = 0
+	STAT, cummulative runtime = 2.635 (0.009)[ 2.625, 2.631, 2.649 ] s, min = 2.635 (0.009)[ 2.625, 2.631, 2.649 ] s, avg = 2.635 (0.009)[ 2.625, 2.631, 2.649 ] s, max = 2.635 (0.009)[ 2.625, 2.631, 2.649 ] s
+Region fast_hash_nano_1_noprefetch_16777216
+	CPU id = 0, count = 1, runtime 2.480 (0.008)[ 2.473, 2.475, 2.493 ] s
+		User time = 0 s, system time = 0 s
+		Minor faults = 0, major faults = 0, context switches = 0
+	STAT, cummulative runtime = 2.480 (0.008)[ 2.473, 2.475, 2.493 ] s, min = 2.480 (0.008)[ 2.473, 2.475, 2.493 ] s, avg = 2.480 (0.008)[ 2.473, 2.475, 2.493 ] s, max = 2.480 (0.008)[ 2.473, 2.475, 2.493 ] s
+Region fast_hash_nano_1_prefetch_16777216
+	CPU id = 0, count = 1, runtime 2.484 (0.008)[ 2.476, 2.478, 2.494 ] s
+		User time = 0 s, system time = 0 s
+		Minor faults = 0, major faults = 0, context switches = 0
+	STAT, cummulative runtime = 2.484 (0.008)[ 2.476, 2.478, 2.494 ] s, min = 2.484 (0.008)[ 2.476, 2.478, 2.494 ] s, avg = 2.484 (0.008)[ 2.476, 2.478, 2.494 ] s, max = 2.484 (0.008)[ 2.476, 2.478, 2.494 ] s
+Region fast_hash_nano_8_noprefetch_16777216
+	CPU id = 0, count = 1, runtime 2.617 (0.008)[ 2.610, 2.611, 2.627 ] s
+		User time = 0 s, system time = 0 s
+		Minor faults = 0, major faults = 0, context switches = 0
+	STAT, cummulative runtime = 2.617 (0.008)[ 2.610, 2.611, 2.627 ] s, min = 2.617 (0.008)[ 2.610, 2.611, 2.627 ] s, avg = 2.617 (0.008)[ 2.610, 2.611, 2.627 ] s, max = 2.617 (0.008)[ 2.610, 2.611, 2.627 ] s
+Region fast_hash_nano_8_prefetch_16777216
+	CPU id = 0, count = 1, runtime 2.519 (0.011)[ 2.509, 2.513, 2.533 ] s
+		User time = 0 s, system time = 0 s
+		Minor faults = 0, major faults = 0, context switches = 0
+	STAT, cummulative runtime = 2.519 (0.011)[ 2.509, 2.513, 2.533 ] s, min = 2.519 (0.011)[ 2.509, 2.513, 2.533 ] s, avg = 2.519 (0.011)[ 2.509, 2.513, 2.533 ] s, max = 2.519 (0.011)[ 2.509, 2.513, 2.533 ] s
+Region fast_hash_nano_16_noprefetch_16777216
+	CPU id = 0, count = 1, runtime 2.556 (0.006)[ 2.551, 2.551, 2.565 ] s
+		User time = 0 s, system time = 0 s
+		Minor faults = 0, major faults = 0, context switches = 0
+	STAT, cummulative runtime = 2.556 (0.006)[ 2.551, 2.551, 2.565 ] s, min = 2.556 (0.006)[ 2.551, 2.551, 2.565 ] s, avg = 2.556 (0.006)[ 2.551, 2.551, 2.565 ] s, max = 2.556 (0.006)[ 2.551, 2.551, 2.565 ] s
+Region fast_hash_nano_16_prefetch_16777216
+	CPU id = 0, count = 1, runtime 1.691 (0.004)[ 1.686, 1.689, 1.696 ] s
+		User time = 0 s, system time = 0 s
+		Minor faults = 0, major faults = 0, context switches = 0
+	STAT, cummulative runtime = 1.691 (0.004)[ 1.686, 1.689, 1.696 ] s, min = 1.691 (0.004)[ 1.686, 1.689, 1.696 ] s, avg = 1.691 (0.004)[ 1.686, 1.689, 1.696 ] s, max = 1.691 (0.004)[ 1.686, 1.689, 1.696 ] s
+Region fast_hash_nano_32_noprefetch_16777216
+	CPU id = 0, count = 1, runtime 2.756 (0.006)[ 2.751, 2.752, 2.764 ] s
+		User time = 0 s, system time = 0 s
+		Minor faults = 0, major faults = 0, context switches = 0
+	STAT, cummulative runtime = 2.756 (0.006)[ 2.751, 2.752, 2.764 ] s, min = 2.756 (0.006)[ 2.751, 2.752, 2.764 ] s, avg = 2.756 (0.006)[ 2.751, 2.752, 2.764 ] s, max = 2.756 (0.006)[ 2.751, 2.752, 2.764 ] s
+Region fast_hash_nano_32_prefetch_16777216
+	CPU id = 0, count = 1, runtime 1.985 (0.005)[ 1.980, 1.981, 1.992 ] s
+		User time = 0 s, system time = 0 s
+		Minor faults = 0, major faults = 0, context switches = 0
+	STAT, cummulative runtime = 1.985 (0.005)[ 1.980, 1.981, 1.992 ] s, min = 1.985 (0.005)[ 1.980, 1.981, 1.992 ] s, avg = 1.985 (0.005)[ 1.980, 1.981, 1.992 ] s, max = 1.985 (0.005)[ 1.980, 1.981, 1.992 ] s
+Region fast_hash_nano_48_noprefetch_16777216
+	CPU id = 0, count = 1, runtime 2.410 (0.006)[ 2.405, 2.406, 2.418 ] s
+		User time = 0 s, system time = 0 s
+		Minor faults = 0, major faults = 0, context switches = 0
+	STAT, cummulative runtime = 2.410 (0.006)[ 2.405, 2.406, 2.418 ] s, min = 2.410 (0.006)[ 2.405, 2.406, 2.418 ] s, avg = 2.410 (0.006)[ 2.405, 2.406, 2.418 ] s, max = 2.410 (0.006)[ 2.405, 2.406, 2.418 ] s
+Region fast_hash_nano_48_prefetch_16777216
+	CPU id = 0, count = 1, runtime 1.954 (0.005)[ 1.950, 1.950, 1.960 ] s
+		User time = 0 s, system time = 0 s
+		Minor faults = 0, major faults = 0, context switches = 0
+	STAT, cummulative runtime = 1.954 (0.005)[ 1.950, 1.950, 1.960 ] s, min = 1.954 (0.005)[ 1.950, 1.950, 1.960 ] s, avg = 1.954 (0.005)[ 1.950, 1.950, 1.960 ] s, max = 1.954 (0.005)[ 1.950, 1.950, 1.960 ] s
+Region fast_hash_nano_64_noprefetch_16777216
+	CPU id = 0, count = 1, runtime 2.351 (0.008)[ 2.344, 2.346, 2.365 ] s
+		User time = 0 s, system time = 0 s
+		Minor faults = 0, major faults = 0, context switches = 0
+	STAT, cummulative runtime = 2.351 (0.008)[ 2.344, 2.346, 2.365 ] s, min = 2.351 (0.008)[ 2.344, 2.346, 2.365 ] s, avg = 2.351 (0.008)[ 2.344, 2.346, 2.365 ] s, max = 2.351 (0.008)[ 2.344, 2.346, 2.365 ] s
+Region fast_hash_nano_64_prefetch_16777216
+	CPU id = 0, count = 1, runtime 1.982 (0.005)[ 1.977, 1.978, 1.990 ] s
+		User time = 0 s, system time = 0 s
+		Minor faults = 0, major faults = 0, context switches = 0
+	STAT, cummulative runtime = 1.982 (0.005)[ 1.977, 1.978, 1.990 ] s, min = 1.982 (0.005)[ 1.977, 1.978, 1.990 ] s, avg = 1.982 (0.005)[ 1.977, 1.978, 1.990 ] s, max = 1.982 (0.005)[ 1.977, 1.978, 1.990 ] s
+Region fast_hash_nano_96_noprefetch_16777216
+	CPU id = 0, count = 1, runtime 2.307 (0.006)[ 2.300, 2.304, 2.314 ] s
+		User time = 0 s, system time = 0 s
+		Minor faults = 0, major faults = 0, context switches = 0
+	STAT, cummulative runtime = 2.307 (0.006)[ 2.300, 2.304, 2.314 ] s, min = 2.307 (0.006)[ 2.300, 2.304, 2.314 ] s, avg = 2.307 (0.006)[ 2.300, 2.304, 2.314 ] s, max = 2.307 (0.006)[ 2.300, 2.304, 2.314 ] s
+Region fast_hash_nano_96_prefetch_16777216
+	CPU id = 0, count = 1, runtime 2.028 (0.006)[ 2.020, 2.029, 2.037 ] s
+		User time = 0 s, system time = 0 s
+		Minor faults = 0, major faults = 0, context switches = 0
+	STAT, cummulative runtime = 2.028 (0.006)[ 2.020, 2.029, 2.037 ] s, min = 2.028 (0.006)[ 2.020, 2.029, 2.037 ] s, avg = 2.028 (0.006)[ 2.020, 2.029, 2.037 ] s, max = 2.028 (0.006)[ 2.020, 2.029, 2.037 ] s
+Region fast_hash_nano_128_noprefetch_16777216
+	CPU id = 0, count = 1, runtime 2.275 (0.006)[ 2.269, 2.271, 2.282 ] s
+		User time = 0 s, system time = 0 s
+		Minor faults = 0, major faults = 0, context switches = 0
+	STAT, cummulative runtime = 2.275 (0.006)[ 2.269, 2.271, 2.282 ] s, min = 2.275 (0.006)[ 2.269, 2.271, 2.282 ] s, avg = 2.275 (0.006)[ 2.269, 2.271, 2.282 ] s, max = 2.275 (0.006)[ 2.269, 2.271, 2.282 ] s
+Region fast_hash_nano_128_prefetch_16777216
+	CPU id = 0, count = 1, runtime 2.046 (0.005)[ 2.040, 2.044, 2.052 ] s
+		User time = 0 s, system time = 0 s
+		Minor faults = 0, major faults = 0, context switches = 0
+	STAT, cummulative runtime = 2.046 (0.005)[ 2.040, 2.044, 2.052 ] s, min = 2.046 (0.005)[ 2.040, 2.044, 2.052 ] s, avg = 2.046 (0.005)[ 2.040, 2.044, 2.052 ] s, max = 2.046 (0.005)[ 2.040, 2.044, 2.052 ] s
+Region fast_hash_nano_192_noprefetch_16777216
+	CPU id = 0, count = 1, runtime 2.243 (0.005)[ 2.238, 2.239, 2.250 ] s
+		User time = 0 s, system time = 0 s
+		Minor faults = 0, major faults = 0, context switches = 0
+	STAT, cummulative runtime = 2.243 (0.005)[ 2.238, 2.239, 2.250 ] s, min = 2.243 (0.005)[ 2.238, 2.239, 2.250 ] s, avg = 2.243 (0.005)[ 2.238, 2.239, 2.250 ] s, max = 2.243 (0.005)[ 2.238, 2.239, 2.250 ] s
+Region fast_hash_nano_192_prefetch_16777216
+	CPU id = 0, count = 1, runtime 2.097 (0.005)[ 2.092, 2.094, 2.104 ] s
+		User time = 0 s, system time = 0 s
+		Minor faults = 0, major faults = 0, context switches = 0
+	STAT, cummulative runtime = 2.097 (0.005)[ 2.092, 2.094, 2.104 ] s, min = 2.097 (0.005)[ 2.092, 2.094, 2.104 ] s, avg = 2.097 (0.005)[ 2.092, 2.094, 2.104 ] s, max = 2.097 (0.005)[ 2.092, 2.094, 2.104 ] s
+Region fast_hash_nano_256_noprefetch_16777216
+	CPU id = 0, count = 1, runtime 2.131 (0.005)[ 2.127, 2.127, 2.138 ] s
+		User time = 0 s, system time = 0 s
+		Minor faults = 0, major faults = 0, context switches = 0
+	STAT, cummulative runtime = 2.131 (0.005)[ 2.127, 2.127, 2.138 ] s, min = 2.131 (0.005)[ 2.127, 2.127, 2.138 ] s, avg = 2.131 (0.005)[ 2.127, 2.127, 2.138 ] s, max = 2.131 (0.005)[ 2.127, 2.127, 2.138 ] s
+Region fast_hash_nano_256_prefetch_16777216
+	CPU id = 0, count = 1, runtime 2.012 (0.005)[ 2.008, 2.008, 2.019 ] s
+		User time = 0 s, system time = 0 s
+		Minor faults = 0, major faults = 0, context switches = 0
+	STAT, cummulative runtime = 2.012 (0.005)[ 2.008, 2.008, 2.019 ] s, min = 2.012 (0.005)[ 2.008, 2.008, 2.019 ] s, avg = 2.012 (0.005)[ 2.008, 2.008, 2.019 ] s, max = 2.012 (0.005)[ 2.008, 2.008, 2.019 ] s
+Region stl_67108864
+	CPU id = 0, count = 1, runtime 5.446 (0.030)[ 5.411, 5.438, 5.498 ] s
+		User time = 0 s, system time = 0 s
+		Minor faults = 0, major faults = 0, context switches = 0
+	STAT, cummulative runtime = 5.446 (0.030)[ 5.411, 5.438, 5.498 ] s, min = 5.446 (0.030)[ 5.411, 5.438, 5.498 ] s, avg = 5.446 (0.030)[ 5.411, 5.438, 5.498 ] s, max = 5.446 (0.030)[ 5.411, 5.438, 5.498 ] s
+Region fast_hash_simple_67108864
+	CPU id = 0, count = 1, runtime 2.633 (0.007)[ 2.626, 2.628, 2.642 ] s
+		User time = 0 s, system time = 0 s
+		Minor faults = 0, major faults = 0, context switches = 0
+	STAT, cummulative runtime = 2.633 (0.007)[ 2.626, 2.628, 2.642 ] s, min = 2.633 (0.007)[ 2.626, 2.628, 2.642 ] s, avg = 2.633 (0.007)[ 2.626, 2.628, 2.642 ] s, max = 2.633 (0.007)[ 2.626, 2.628, 2.642 ] s
+Region fast_hash_nano_1_noprefetch_67108864
+	CPU id = 0, count = 1, runtime 2.477 (0.006)[ 2.472, 2.473, 2.486 ] s
+		User time = 0 s, system time = 0 s
+		Minor faults = 0, major faults = 0, context switches = 0
+	STAT, cummulative runtime = 2.477 (0.006)[ 2.472, 2.473, 2.486 ] s, min = 2.477 (0.006)[ 2.472, 2.473, 2.486 ] s, avg = 2.477 (0.006)[ 2.472, 2.473, 2.486 ] s, max = 2.477 (0.006)[ 2.472, 2.473, 2.486 ] s
+Region fast_hash_nano_1_prefetch_67108864
+	CPU id = 0, count = 1, runtime 2.480 (0.007)[ 2.474, 2.475, 2.488 ] s
+		User time = 0 s, system time = 0 s
+		Minor faults = 0, major faults = 0, context switches = 0
+	STAT, cummulative runtime = 2.480 (0.007)[ 2.474, 2.475, 2.488 ] s, min = 2.480 (0.007)[ 2.474, 2.475, 2.488 ] s, avg = 2.480 (0.007)[ 2.474, 2.475, 2.488 ] s, max = 2.480 (0.007)[ 2.474, 2.475, 2.488 ] s
+Region fast_hash_nano_8_noprefetch_67108864
+	CPU id = 0, count = 1, runtime 2.619 (0.007)[ 2.613, 2.614, 2.629 ] s
+		User time = 0 s, system time = 0 s
+		Minor faults = 0, major faults = 0, context switches = 0
+	STAT, cummulative runtime = 2.619 (0.007)[ 2.613, 2.614, 2.629 ] s, min = 2.619 (0.007)[ 2.613, 2.614, 2.629 ] s, avg = 2.619 (0.007)[ 2.613, 2.614, 2.629 ] s, max = 2.619 (0.007)[ 2.613, 2.614, 2.629 ] s
+Region fast_hash_nano_8_prefetch_67108864
+	CPU id = 0, count = 1, runtime 2.547 (0.012)[ 2.535, 2.539, 2.565 ] s
+		User time = 0 s, system time = 0 s
+		Minor faults = 0, major faults = 0, context switches = 0
+	STAT, cummulative runtime = 2.547 (0.012)[ 2.535, 2.539, 2.565 ] s, min = 2.547 (0.012)[ 2.535, 2.539, 2.565 ] s, avg = 2.547 (0.012)[ 2.535, 2.539, 2.565 ] s, max = 2.547 (0.012)[ 2.535, 2.539, 2.565 ] s
+Region fast_hash_nano_16_noprefetch_67108864
+	CPU id = 0, count = 1, runtime 2.564 (0.008)[ 2.558, 2.559, 2.577 ] s
+		User time = 0 s, system time = 0 s
+		Minor faults = 0, major faults = 0, context switches = 0
+	STAT, cummulative runtime = 2.564 (0.008)[ 2.558, 2.559, 2.577 ] s, min = 2.564 (0.008)[ 2.558, 2.559, 2.577 ] s, avg = 2.564 (0.008)[ 2.558, 2.559, 2.577 ] s, max = 2.564 (0.008)[ 2.558, 2.559, 2.577 ] s
+Region fast_hash_nano_16_prefetch_67108864
+	CPU id = 0, count = 1, runtime 1.705 (0.004)[ 1.701, 1.703, 1.710 ] s
+		User time = 0 s, system time = 0 s
+		Minor faults = 0, major faults = 0, context switches = 0
+	STAT, cummulative runtime = 1.705 (0.004)[ 1.701, 1.703, 1.710 ] s, min = 1.705 (0.004)[ 1.701, 1.703, 1.710 ] s, avg = 1.705 (0.004)[ 1.701, 1.703, 1.710 ] s, max = 1.705 (0.004)[ 1.701, 1.703, 1.710 ] s
+Region fast_hash_nano_32_noprefetch_67108864
+	CPU id = 0, count = 1, runtime 2.761 (0.007)[ 2.755, 2.757, 2.770 ] s
+		User time = 0 s, system time = 0 s
+		Minor faults = 0, major faults = 0, context switches = 0
+	STAT, cummulative runtime = 2.761 (0.007)[ 2.755, 2.757, 2.770 ] s, min = 2.761 (0.007)[ 2.755, 2.757, 2.770 ] s, avg = 2.761 (0.007)[ 2.755, 2.757, 2.770 ] s, max = 2.761 (0.007)[ 2.755, 2.757, 2.770 ] s
+Region fast_hash_nano_32_prefetch_67108864
+	CPU id = 0, count = 1, runtime 2.002 (0.005)[ 1.998, 1.998, 2.009 ] s
+		User time = 0 s, system time = 0 s
+		Minor faults = 0, major faults = 0, context switches = 0
+	STAT, cummulative runtime = 2.002 (0.005)[ 1.998, 1.998, 2.009 ] s, min = 2.002 (0.005)[ 1.998, 1.998, 2.009 ] s, avg = 2.002 (0.005)[ 1.998, 1.998, 2.009 ] s, max = 2.002 (0.005)[ 1.998, 1.998, 2.009 ] s
+Region fast_hash_nano_48_noprefetch_67108864
+	CPU id = 0, count = 1, runtime 2.413 (0.005)[ 2.408, 2.409, 2.420 ] s
+		User time = 0 s, system time = 0 s
+		Minor faults = 0, major faults = 0, context switches = 0
+	STAT, cummulative runtime = 2.413 (0.005)[ 2.408, 2.409, 2.420 ] s, min = 2.413 (0.005)[ 2.408, 2.409, 2.420 ] s, avg = 2.413 (0.005)[ 2.408, 2.409, 2.420 ] s, max = 2.413 (0.005)[ 2.408, 2.409, 2.420 ] s
+Region fast_hash_nano_48_prefetch_67108864
+	CPU id = 0, count = 1, runtime 1.958 (0.005)[ 1.954, 1.955, 1.965 ] s
+		User time = 0 s, system time = 0 s
+		Minor faults = 0, major faults = 0, context switches = 0
+	STAT, cummulative runtime = 1.958 (0.005)[ 1.954, 1.955, 1.965 ] s, min = 1.958 (0.005)[ 1.954, 1.955, 1.965 ] s, avg = 1.958 (0.005)[ 1.954, 1.955, 1.965 ] s, max = 1.958 (0.005)[ 1.954, 1.955, 1.965 ] s
+Region fast_hash_nano_64_noprefetch_67108864
+	CPU id = 0, count = 1, runtime 2.354 (0.006)[ 2.349, 2.350, 2.362 ] s
+		User time = 0 s, system time = 0 s
+		Minor faults = 0, major faults = 0, context switches = 0
+	STAT, cummulative runtime = 2.354 (0.006)[ 2.349, 2.350, 2.362 ] s, min = 2.354 (0.006)[ 2.349, 2.350, 2.362 ] s, avg = 2.354 (0.006)[ 2.349, 2.350, 2.362 ] s, max = 2.354 (0.006)[ 2.349, 2.350, 2.362 ] s
+Region fast_hash_nano_64_prefetch_67108864
+	CPU id = 0, count = 1, runtime 1.983 (0.005)[ 1.979, 1.980, 1.991 ] s
+		User time = 0 s, system time = 0 s
+		Minor faults = 0, major faults = 0, context switches = 0
+	STAT, cummulative runtime = 1.983 (0.005)[ 1.979, 1.980, 1.991 ] s, min = 1.983 (0.005)[ 1.979, 1.980, 1.991 ] s, avg = 1.983 (0.005)[ 1.979, 1.980, 1.991 ] s, max = 1.983 (0.005)[ 1.979, 1.980, 1.991 ] s
+Region fast_hash_nano_96_noprefetch_67108864
+	CPU id = 0, count = 1, runtime 2.309 (0.005)[ 2.303, 2.307, 2.316 ] s
+		User time = 0 s, system time = 0 s
+		Minor faults = 0, major faults = 0, context switches = 0
+	STAT, cummulative runtime = 2.309 (0.005)[ 2.303, 2.307, 2.316 ] s, min = 2.309 (0.005)[ 2.303, 2.307, 2.316 ] s, avg = 2.309 (0.005)[ 2.303, 2.307, 2.316 ] s, max = 2.309 (0.005)[ 2.303, 2.307, 2.316 ] s
+Region fast_hash_nano_96_prefetch_67108864
+	CPU id = 0, count = 1, runtime 2.034 (0.005)[ 2.029, 2.030, 2.041 ] s
+		User time = 0 s, system time = 0 s
+		Minor faults = 0, major faults = 0, context switches = 0
+	STAT, cummulative runtime = 2.034 (0.005)[ 2.029, 2.030, 2.041 ] s, min = 2.034 (0.005)[ 2.029, 2.030, 2.041 ] s, avg = 2.034 (0.005)[ 2.029, 2.030, 2.041 ] s, max = 2.034 (0.005)[ 2.029, 2.030, 2.041 ] s
+Region fast_hash_nano_128_noprefetch_67108864
+	CPU id = 0, count = 1, runtime 2.289 (0.007)[ 2.284, 2.285, 2.299 ] s
+		User time = 0 s, system time = 0 s
+		Minor faults = 0, major faults = 0, context switches = 0
+	STAT, cummulative runtime = 2.289 (0.007)[ 2.284, 2.285, 2.299 ] s, min = 2.289 (0.007)[ 2.284, 2.285, 2.299 ] s, avg = 2.289 (0.007)[ 2.284, 2.285, 2.299 ] s, max = 2.289 (0.007)[ 2.284, 2.285, 2.299 ] s
+Region fast_hash_nano_128_prefetch_67108864
+	CPU id = 0, count = 1, runtime 2.061 (0.004)[ 2.056, 2.059, 2.066 ] s
+		User time = 0 s, system time = 0 s
+		Minor faults = 0, major faults = 0, context switches = 0
+	STAT, cummulative runtime = 2.061 (0.004)[ 2.056, 2.059, 2.066 ] s, min = 2.061 (0.004)[ 2.056, 2.059, 2.066 ] s, avg = 2.061 (0.004)[ 2.056, 2.059, 2.066 ] s, max = 2.061 (0.004)[ 2.056, 2.059, 2.066 ] s
+Region fast_hash_nano_192_noprefetch_67108864
+	CPU id = 0, count = 1, runtime 2.255 (0.005)[ 2.250, 2.251, 2.263 ] s
+		User time = 0 s, system time = 0 s
+		Minor faults = 0, major faults = 0, context switches = 0
+	STAT, cummulative runtime = 2.255 (0.005)[ 2.250, 2.251, 2.263 ] s, min = 2.255 (0.005)[ 2.250, 2.251, 2.263 ] s, avg = 2.255 (0.005)[ 2.250, 2.251, 2.263 ] s, max = 2.255 (0.005)[ 2.250, 2.251, 2.263 ] s
+Region fast_hash_nano_192_prefetch_67108864
+	CPU id = 0, count = 1, runtime 2.113 (0.005)[ 2.107, 2.110, 2.119 ] s
+		User time = 0 s, system time = 0 s
+		Minor faults = 0, major faults = 0, context switches = 0
+	STAT, cummulative runtime = 2.113 (0.005)[ 2.107, 2.110, 2.119 ] s, min = 2.113 (0.005)[ 2.107, 2.110, 2.119 ] s, avg = 2.113 (0.005)[ 2.107, 2.110, 2.119 ] s, max = 2.113 (0.005)[ 2.107, 2.110, 2.119 ] s
+Region fast_hash_nano_256_noprefetch_67108864
+	CPU id = 0, count = 1, runtime 2.142 (0.006)[ 2.136, 2.138, 2.151 ] s
+		User time = 0 s, system time = 0 s
+		Minor faults = 0, major faults = 0, context switches = 0
+	STAT, cummulative runtime = 2.142 (0.006)[ 2.136, 2.138, 2.151 ] s, min = 2.142 (0.006)[ 2.136, 2.138, 2.151 ] s, avg = 2.142 (0.006)[ 2.136, 2.138, 2.151 ] s, max = 2.142 (0.006)[ 2.136, 2.138, 2.151 ] s
+Region fast_hash_nano_256_prefetch_67108864
+	CPU id = 0, count = 1, runtime 2.030 (0.007)[ 2.022, 2.030, 2.040 ] s
+		User time = 0 s, system time = 0 s
+		Minor faults = 0, major faults = 0, context switches = 0
+	STAT, cummulative runtime = 2.030 (0.007)[ 2.022, 2.030, 2.040 ] s, min = 2.030 (0.007)[ 2.022, 2.030, 2.040 ] s, avg = 2.030 (0.007)[ 2.022, 2.030, 2.040 ] s, max = 2.030 (0.007)[ 2.022, 2.030, 2.040 ] s
+
