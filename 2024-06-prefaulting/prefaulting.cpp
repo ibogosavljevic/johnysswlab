@@ -23,13 +23,13 @@ int main() {
     int32_t* array1 = (int32_t*) mmap(0, array_memory_size, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0);
     int32_t* array2 = (int32_t*) mmap(0, array_memory_size, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS|MAP_POPULATE, -1, 0);
 
-    LIKWID_MARKER_START("Calloc");
+    LIKWID_MARKER_START("prefaulted");
     fill_lookup_array(array2, array_size);
-    LIKWID_MARKER_STOP("Calloc");
+    LIKWID_MARKER_STOP("prefaulted");
 
-    LIKWID_MARKER_START("Malloc");
+    LIKWID_MARKER_START("not_prefaulted");
     fill_lookup_array(array1, array_size);
-    LIKWID_MARKER_STOP("Malloc");
+    LIKWID_MARKER_STOP("not_prefaulted");
 
     if (array1[array2[0] % array_size] == array2[array1[0] % array_size]) {
         std::cout << "Same\n";
