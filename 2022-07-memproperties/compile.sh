@@ -1,3 +1,6 @@
+# used when likwid is not available
+# CC="clang++ -std=c++17 -g -O3 -mavx2 -fopenmp-simd -DLIKWID_PERFMON -I ../common"
+
 CC="clang++ -std=c++17 -g -O3 -mavx2 -fopenmp-simd -DLIKWID_PERFMON -llikwid"
 
 $CC arithmetic_intensity.cpp -o arithmetic_intensity
