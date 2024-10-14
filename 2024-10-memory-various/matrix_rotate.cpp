@@ -18,6 +18,14 @@ void matrix_transpose_out(float* out, const float* in, size_t n) {
 }
 
 
+void matrix_transpose_out_full(float** out, float** in, size_t n) {
+    for (size_t i = 0; i < n; i++) {
+        for (size_t j = 0; j < n; j++) {
+            out[i][j] = in[j][i];
+        }
+    }
+}
+
 void matrix_transpose_tiled_in(float* out, const float* in, size_t n) {
     const size_t TILE_SIZE = 16;
     const size_t ii_end = n / TILE_SIZE * TILE_SIZE;
@@ -112,6 +120,43 @@ void run_test(int repeat_count, const std::string& name, FUNC f) {
     LIKWID_MARKER_STOP(name.c_str());
 }
 
+float** allocate_matrix(size_t rows, size_t columns) {
+    float** res = (float**) malloc(rows * sizeof(float*));
+    float* m = (float*) malloc(rows * columns * sizeof(float));
+
+    for (size_t i = 0; i < rows; i++) {
+        res[i] = m + i * columns;
+        std::memset(res[i], 0, columns * sizeof(float));
+    }
+
+    return res;
+}
+
+void free_matrix(float** m) {
+    free(m[0]);
+    free(m);
+}
+
+void assert_matrices_equal(float* in0, float** in1, size_t rows, size_t columns) {
+    for (size_t i = 0; i < rows; i++) {
+        for (size_t j = 0; j < columns; j++) {
+            if (in0[i * columns + j] != in1[i][j]) {
+                std::cout << "Matrices not equal at position [" << i << ", " << j << "]" << std::endl;
+                return;
+            }
+        }
+    }
+    std::cout << "Matrices same\n";
+}
+
+void copy_matrix(float** dest, float* src, size_t rows, size_t columns) {
+    for (size_t i = 0; i < rows; i++) {
+        for (size_t j = 0; j < columns; j++) {
+            dest[i][j] = src[i * columns + j];
+        }
+    }
+}
+
 using namespace argparse;
 
 int main(int argc, const char* argv[]) {
@@ -140,10 +185,13 @@ int main(int argc, const char* argv[]) {
     size_t repeat_count = 1024 * 1024 * 1024 / matrix_size;
 
     float* in_matrix = (float*) malloc(matrix_size * sizeof(float));
+    float** in_matrix_full = allocate_matrix(matrix_dim, matrix_dim);
+    copy_matrix(in_matrix_full, in_matrix, matrix_dim, matrix_dim);
     float* matrix0 = (float*) malloc(matrix_size * sizeof(float));
     float* matrix1 = (float*) malloc(matrix_size * sizeof(float));
     float* matrix2 = (float*) malloc(matrix_size * sizeof(float));
     float* matrix3 = (float*) malloc(matrix_size * sizeof(float));
+    float** out_matrix_full = allocate_matrix(matrix_dim, matrix_dim);
 
     fill_buffer<float>(in_matrix, matrix_size);
 
@@ -156,18 +204,22 @@ int main(int argc, const char* argv[]) {
 
     run_test(repeat_count, "regular_in_linear", [&] ()-> void { matrix_transpose_in(matrix0, in_matrix, matrix_dim); });
     run_test(repeat_count, "regular_out_linear", [&] ()-> void { matrix_transpose_out(matrix1, in_matrix, matrix_dim); });
+    run_test(repeat_count, "full_regular_out_linear", [&] ()-> void { matrix_transpose_out_full(out_matrix_full, in_matrix_full, matrix_dim); });
     run_test(repeat_count, "tiled_in_linear", [&] ()-> void { matrix_transpose_tiled_in(matrix2, in_matrix, matrix_dim); });
     run_test(repeat_count, "tiled_out_linear", [&] ()-> void { matrix_transpose_tiled_out(matrix3, in_matrix, matrix_dim); });
 
     assert_buffers_equal(matrix0, matrix1, matrix_size);
     assert_buffers_equal(matrix0, matrix2, matrix_size);
     assert_buffers_equal(matrix0, matrix3, matrix_size);
+    assert_matrices_equal(matrix0, out_matrix_full, matrix_dim, matrix_dim);
 
     free(in_matrix);
     free(matrix0);
     free(matrix1);
     free(matrix2);
     free(matrix3);
+    free_matrix(in_matrix_full);
+    free_matrix(out_matrix_full);
 
     LIKWID_MARKER_CLOSE;
 }
