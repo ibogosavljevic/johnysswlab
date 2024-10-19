@@ -1,3 +1,5 @@
+#pragma once
+
 // Use on systems where LIKWID is not available
 #include <unordered_map>
 #include <map>
