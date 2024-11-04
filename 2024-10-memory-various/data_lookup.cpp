@@ -64,14 +64,21 @@ std::vector<size_t> data_lookup_vectorized(const std::vector<int64_t> & lookup_v
 
 std::vector<size_t> data_lookup2(const std::vector<int64_t> & lookup_vector, const std::vector<int64_t> & lookup_vals) {
     std::vector<size_t> result(lookup_vals.size(), NOT_FOUND);
+    size_t values_found = 0;
 
     for (size_t i = 0; i < lookup_vector.size(); i++) {
         int64_t val = lookup_vector[i];
+
+        if (values_found >= lookup_vals.size()) {
+            break;
+        }
+
         for (size_t j = 0; j < lookup_vals.size(); j++) {
             if (val == lookup_vals[j]) {
                 result[j] = i;
                 // We don't break the loop because lookup_vals
                 // array is fine if it contain duplicates
+                values_found++;
             }
         }
     }
@@ -86,8 +93,15 @@ std::vector<size_t> data_lookup2_vectorized(const std::vector<int64_t> & lookup_
     size_t lookup_vals_size = lookup_vals.size();
     size_t lookup_vals_vector_size = lookup_vals_size / 4 * 4;
 
+    size_t values_found = 0;
+
     for (size_t i = 0; i < lookup_vector.size(); i++) {
         __m256i val = _mm256_set1_epi64x(lookup_vector[i]);
+
+        if (values_found >= lookup_vals_size) {
+            break;
+        }
+
         for (size_t j = 0; j < lookup_vals_vector_size; j+=4) {
             __m256i lookup_val = _mm256_loadu_si256((__m256i*) (lookup_vals_ptr + j));
             __m256i cmp_mask = _mm256_cmpeq_epi64(val, lookup_val);
@@ -96,6 +110,7 @@ std::vector<size_t> data_lookup2_vectorized(const std::vector<int64_t> & lookup_
                 for (size_t k = 0; k < 4; k++) {
                     if (lookup_vector[i] == lookup_vals[j + k]) {
                         result[j + k] = i;
+                        values_found++;
                     }
                 }
             }
