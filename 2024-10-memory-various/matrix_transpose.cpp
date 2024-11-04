@@ -1,31 +1,6 @@
 #include "../common/argparse.h"
 #include "likwid.h"
 
-void matrix_transpose_in(float* out, const float* in, size_t n) {
-    for (size_t i = 0; i < n; i++) {
-        for (size_t j = 0; j < n; j++) {
-            out[j * n + i] = in[i * n + j];
-        }
-    }
-}
-
-void matrix_transpose_out(float* out, const float* in, size_t n) {
-    for (size_t i = 0; i < n; i++) {
-        for (size_t j = 0; j < n; j++) {
-            out[i * n + j] = in[j * n + i];
-        }
-    }
-}
-
-
-void matrix_transpose_out_full(float** out, float** in, size_t n) {
-    for (size_t i = 0; i < n; i++) {
-        for (size_t j = 0; j < n; j++) {
-            out[i][j] = in[j][i];
-        }
-    }
-}
-
 void matrix_transpose_tiled_in(float* out, const float* in, size_t n) {
     const size_t TILE_SIZE = 16;
     const size_t ii_end = n / TILE_SIZE * TILE_SIZE;
@@ -83,6 +58,36 @@ void matrix_transpose_tiled_out(float* out, const float* in, size_t n) {
     for (size_t i = ii_end; i < n; i++) {
         for (size_t j = 0; j < n; j++) {
             out[i*n + j] = in[j * n + i];
+        }
+    }
+}
+
+void matrix_transpose_out_cstyle_tiled(float** out, float** in, size_t n) {
+    const size_t TILE_SIZE = 16;
+    const size_t ii_end = n / TILE_SIZE * TILE_SIZE;
+    const size_t jj_end = n / TILE_SIZE * TILE_SIZE;
+    
+    for (size_t ii = 0; ii < ii_end; ii+=TILE_SIZE) {
+        for (size_t jj = 0; jj < jj_end; jj+=TILE_SIZE) {
+            for (size_t i = 0; i < TILE_SIZE; i++) {
+                for (size_t j = 0; j < TILE_SIZE; j++) {
+                    out[ii + i][jj + j] = in[jj + j][ii + i];
+                }
+            }
+        }
+
+        // Drain loop for the last few columns in the matrix
+        for(size_t i = ii; i < ii + TILE_SIZE; i++) {
+            for (size_t j = jj_end; j < n; j++) {
+                out[i][j] = in[j][i];
+            }
+        }
+    }
+
+    // Drain loop for the last few rows in the matrix
+    for (size_t i = ii_end; i < n; i++) {
+        for (size_t j = 0; j < n; j++) {
+            out[i][j] = in[j][i];
         }
     }
 }
@@ -186,36 +191,25 @@ int main(int argc, const char* argv[]) {
 
     float* in_matrix = (float*) malloc(matrix_size * sizeof(float));
     float** in_matrix_full = allocate_matrix(matrix_dim, matrix_dim);
-    copy_matrix(in_matrix_full, in_matrix, matrix_dim, matrix_dim);
-    float* matrix0 = (float*) malloc(matrix_size * sizeof(float));
-    float* matrix1 = (float*) malloc(matrix_size * sizeof(float));
     float* matrix2 = (float*) malloc(matrix_size * sizeof(float));
     float* matrix3 = (float*) malloc(matrix_size * sizeof(float));
     float** out_matrix_full = allocate_matrix(matrix_dim, matrix_dim);
 
     fill_buffer<float>(in_matrix, matrix_size);
-
-    std::memset(matrix0, 0, matrix_size * sizeof(float));
-    std::memset(matrix1, 0, matrix_size * sizeof(float));
+    copy_matrix(in_matrix_full, in_matrix, matrix_dim, matrix_dim);
     std::memset(matrix2, 0, matrix_size * sizeof(float));
     std::memset(matrix3, 0, matrix_size * sizeof(float));
 
     std::cout << "Matrix dimension " << matrix_dim << ", repeat count " << repeat_count << std::endl;
 
-    run_test(repeat_count, "regular_in_linear", [&] ()-> void { matrix_transpose_in(matrix0, in_matrix, matrix_dim); });
-    run_test(repeat_count, "regular_out_linear", [&] ()-> void { matrix_transpose_out(matrix1, in_matrix, matrix_dim); });
-    run_test(repeat_count, "full_regular_out_linear", [&] ()-> void { matrix_transpose_out_full(out_matrix_full, in_matrix_full, matrix_dim); });
     run_test(repeat_count, "tiled_in_linear", [&] ()-> void { matrix_transpose_tiled_in(matrix2, in_matrix, matrix_dim); });
     run_test(repeat_count, "tiled_out_linear", [&] ()-> void { matrix_transpose_tiled_out(matrix3, in_matrix, matrix_dim); });
+    run_test(repeat_count, "tiled_full_out_linear", [&] ()-> void { matrix_transpose_out_cstyle_tiled(out_matrix_full, in_matrix_full, matrix_dim); });
 
-    assert_buffers_equal(matrix0, matrix1, matrix_size);
-    assert_buffers_equal(matrix0, matrix2, matrix_size);
-    assert_buffers_equal(matrix0, matrix3, matrix_size);
-    assert_matrices_equal(matrix0, out_matrix_full, matrix_dim, matrix_dim);
+    assert_buffers_equal(matrix2, matrix3, matrix_size);
+    assert_matrices_equal(matrix2, out_matrix_full, matrix_dim, matrix_dim);
 
     free(in_matrix);
-    free(matrix0);
-    free(matrix1);
     free(matrix2);
     free(matrix3);
     free_matrix(in_matrix_full);
