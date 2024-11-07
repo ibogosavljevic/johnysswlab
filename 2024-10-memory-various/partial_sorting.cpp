@@ -2,6 +2,7 @@
 #include "likwid.h"
 
 #include <limits>
+#include <cmath>
 
 template <typename T>
 void assert_buffers_equal(T const * const buff0, T const * const buff1, size_t const size) {
@@ -15,7 +16,7 @@ void assert_buffers_equal(T const * const buff0, T const * const buff1, size_t c
 }
 
 size_t binary_search(uint32_t* array, size_t size, uint32_t key) {
-    size_t low = 0, high = size - 1, mid;
+    int64_t low = 0, high = size - 1, mid;
     while(low <= high) {
         mid = (low + high)/2;
 
@@ -29,9 +30,7 @@ size_t binary_search(uint32_t* array, size_t size, uint32_t key) {
     return std::numeric_limits<size_t>::max();
 }
 
-uint32_t next_pow2(uint32_t x) { 	return x == 1 ? 1 : 1<<(32-__builtin_clz(x-1)); }
-
-void partial_sort(uint32_t* array, size_t size, size_t b, uint32_t max_size) {
+void partial_sort(uint32_t* out, uint32_t const* array, size_t size, size_t b, uint32_t max_size) {
     size_t buckets = 1 << b;
     std::vector<std::vector<uint32_t>> helper_array(buckets);
 
@@ -40,9 +39,9 @@ void partial_sort(uint32_t* array, size_t size, size_t b, uint32_t max_size) {
     for (size_t i = 0; i < size; i++) {
         uint32_t idx = array[i] / values_in_bucket;
         if (idx >= buckets) {
-            std::cout << "Idx " << idx << "is bigger than buckets " << buckets << std::endl;
-            return;
+            idx = buckets - 1;
         }
+
         helper_array[idx].push_back(array[i]);
     }
 
@@ -50,7 +49,7 @@ void partial_sort(uint32_t* array, size_t size, size_t b, uint32_t max_size) {
 
     for (size_t idx = 0; idx < buckets; idx++) {
         for (size_t i = 0; i < helper_array[idx].size(); i++) {
-            array[j] = helper_array[idx][i];
+            out[j] = helper_array[idx][i];
             j++;
         }
     }
@@ -71,6 +70,9 @@ void verify_results(const std::vector<uint32_t>& sorted, const std::vector<uint3
     std::cout << "Result array correct\n";
 }
 
+static void clobber() {
+    asm volatile("" : : : "memory");
+}
 
 using namespace argparse;
 
@@ -110,9 +112,12 @@ int main(int argc, const char* argv[]) {
         }
     }
 
-    size_t buckets = (1ULL << b); 
+    size_t const buckets = (1ULL << b); 
+    size_t const repeat_count = std::max(1UL, 128UL * 1024UL * 1024UL / (lookup_values_count * static_cast<size_t>(log2(sorted_size))));
+
 
     std::cout << "Sorted array size " << sorted_size << ", total lookup values " << lookup_values_count << ", total buckets " << buckets << "\n";
+    std::cout << "Repeat count " << repeat_count << "\n";
 
     std::vector<uint32_t> v(std::max(sorted_size, lookup_values_count) * 2);
     std::iota(v.begin(), v.end(), 0U);
@@ -136,23 +141,29 @@ int main(int argc, const char* argv[]) {
     }
 
     LIKWID_MARKER_START("original");
-    for (size_t i = 0; i < lookup_values_count; i++) {
-        res0[i] = binary_search(sorted.data(), sorted_size, lookup_values[i]);
+    for (size_t r = 0; r < repeat_count; r++) {
+        for (size_t i = 0; i < lookup_values_count; i++) {
+            res0[i] = binary_search(sorted.data(), sorted_size, lookup_values[i]);
+        }
+        clobber();
     }
     LIKWID_MARKER_STOP("original");
 
     verify_results(sorted, lookup_values, res0);
 
-    std::vector<uint32_t> lookup_values2(lookup_values);
+    std::vector<uint32_t> lookup_values2(lookup_values.size());
 
     LIKWID_MARKER_START("partial_sorting");
-    partial_sort(lookup_values.data(), lookup_values_count, b, std::max(sorted_size, lookup_values_count) * 2);
-    for (size_t i = 0; i < lookup_values_count; i++) {
-        res1[i] = binary_search(sorted.data(), sorted_size, lookup_values[i]);
+    for (size_t r = 0; r < repeat_count; r++) {
+        partial_sort(lookup_values2.data(), lookup_values.data(), lookup_values_count, b, std::max(sorted_size, lookup_values_count) * 2 + 1);
+        for (size_t i = 0; i < lookup_values_count; i++) {
+            res1[i] = binary_search(sorted.data(), sorted_size, lookup_values2[i]);
+        }
+        clobber();
     }
     LIKWID_MARKER_STOP("partial_sorting");
 
-    verify_results(sorted, lookup_values, res1);
+    verify_results(sorted, lookup_values2, res1);
 
     std::sort(lookup_values.begin(), lookup_values.end());
     std::sort(lookup_values2.begin(), lookup_values2.end());
