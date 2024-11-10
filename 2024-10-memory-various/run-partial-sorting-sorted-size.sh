@@ -1,0 +1,13 @@
+python3 ../scripts/stat.py -n 10 -c "likwid-perfctr -g MEM -C 0 -m ./partial_sorting -s 10000 -v 100000 -b 8"
+python3 ../scripts/stat.py -n 10 -c "likwid-perfctr -g MEM -C 0 -m ./partial_sorting -s 20000 -v 100000 -b 8"
+python3 ../scripts/stat.py -n 10 -c "likwid-perfctr -g MEM -C 0 -m ./partial_sorting -s 50000 -v 100000 -b 8"
+python3 ../scripts/stat.py -n 10 -c "likwid-perfctr -g MEM -C 0 -m ./partial_sorting -s 100000 -v 100000 -b 8"
+python3 ../scripts/stat.py -n 10 -c "likwid-perfctr -g MEM -C 0 -m ./partial_sorting -s 200000 -v 100000 -b 8"
+python3 ../scripts/stat.py -n 10 -c "likwid-perfctr -g MEM -C 0 -m ./partial_sorting -s 500000 -v 100000 -b 8"
+python3 ../scripts/stat.py -n 10 -c "likwid-perfctr -g MEM -C 0 -m ./partial_sorting -s 1000000 -v 100000 -b 8"
+python3 ../scripts/stat.py -n 10 -c "likwid-perfctr -g MEM -C 0 -m ./partial_sorting -s 2000000 -v 100000 -b 8"
+python3 ../scripts/stat.py -n 10 -c "likwid-perfctr -g MEM -C 0 -m ./partial_sorting -s 5000000 -v 100000 -b 8"
+python3 ../scripts/stat.py -n 10 -c "likwid-perfctr -g MEM -C 0 -m ./partial_sorting -s 10000000 -v 100000 -b 8"
+python3 ../scripts/stat.py -n 10 -c "likwid-perfctr -g MEM -C 0 -m ./partial_sorting -s 20000000 -v 100000 -b 8"
+python3 ../scripts/stat.py -n 10 -c "likwid-perfctr -g MEM -C 0 -m ./partial_sorting -s 50000000 -v 100000 -b 8"
+

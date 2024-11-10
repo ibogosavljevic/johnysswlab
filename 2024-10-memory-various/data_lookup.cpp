@@ -163,6 +163,11 @@ void verify_result(const std::vector<int64_t>& lookup_vector, const std::vector<
     std::cout << "Results correct\n";
 }
 
+static void clobber() {
+    asm volatile("" : : : "memory");
+}
+
+
 using namespace argparse;
 
 int main(int argc, const char* argv[]) {
@@ -179,8 +184,10 @@ int main(int argc, const char* argv[]) {
 
     size_t lookup_vals_size = parser.get<size_t>("v");
     size_t lookup_vector_size = parser.get<size_t>("a");
+    size_t repeat_count = std::max<size_t>(100000000ULL / (lookup_vals_size * lookup_vector_size), 1);
 
-    std::cout << "Lookup vector size " << lookup_vector_size << ", lookup vals size " << lookup_vals_size << "\n";
+    std::cout << "Lookup vector size " << lookup_vector_size << ", lookup vals size " << lookup_vals_size
+              << ", repeat count " << repeat_count << std::endl;
 
     std::vector<int64_t> tmp(std::max(lookup_vector_size, lookup_vals_size)  * 2);
     std::iota(tmp.begin(), tmp.end(), 0);
@@ -194,12 +201,20 @@ int main(int argc, const char* argv[]) {
 
     LIKWID_MARKER_INIT;
 
+    std::vector<size_t> res0, res1;
+
     LIKWID_MARKER_START("values_in_vector");
-    std::vector<size_t> res0 = data_lookup_vectorized(lookup_vector, lookup_vals);
+    for (size_t i = 0; i < repeat_count; i++) {
+        res0 = data_lookup_vectorized(lookup_vector, lookup_vals);
+        clobber();
+    }
     LIKWID_MARKER_STOP("values_in_vector");
 
     LIKWID_MARKER_START("vector_in_values");
-    std::vector<size_t> res1 = data_lookup2_vectorized(lookup_vector, lookup_vals);
+    for (size_t i = 0; i < repeat_count; i++) {
+        res1 = data_lookup2_vectorized(lookup_vector, lookup_vals);
+        clobber();
+    }
     LIKWID_MARKER_STOP("vector_in_values");
 
     verify_result(lookup_vector, lookup_vals, res0);
