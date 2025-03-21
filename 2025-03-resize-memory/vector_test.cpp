@@ -44,7 +44,7 @@ void compare_vectors(const Vec0& v0, const Vec1& v1) {
 }
 
 int main() {
-    std::vector<float> std_vector, input_vector = generate_random_vector(32*1024*1024);
+    std::vector<float> std_vector, input_vector = generate_random_vector(256*1024*1024);
     jsl::vector<float, jsl::simple_allocator> jsl_vector;
     jsl::vector<float, jsl::resize_allocator> jsl_resize_vector;
 

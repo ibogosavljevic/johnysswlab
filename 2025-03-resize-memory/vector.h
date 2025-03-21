@@ -25,7 +25,7 @@ namespace jsl {
     public:
         static void* alloc(std::size_t size) {
             std::cout << "Allocate size " << size << "\n";
-            void * res = mmap(NULL, size, PROT_READ | PROT_WRITE,
+            void * res = mmap((void*) 0x7f02ca14c000, size, PROT_READ | PROT_WRITE,
                 MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
 
             if (res == MAP_FAILED) {
@@ -38,6 +38,9 @@ namespace jsl {
         static bool resize(void* ptr, std::size_t old_size, std::size_t new_size) {
             void * res = mremap(ptr, old_size, new_size, 0);
             std::cout << "Resize, old size " << old_size << ", new size " << new_size << ", resize successfull " << (res != MAP_FAILED) << "\n" ;
+            if (res == MAP_FAILED) {
+                std::cout << "Errno " << errno << "\n";
+            }
             return res != MAP_FAILED;
         }
 
