@@ -1,0 +1,2 @@
+cl.exe /O2 /Zi /arch:AVX2 /EHsc /D JSL_AVX /D LIKWID_PERFMON .\vector_test.cpp /Fe:vector_test.exe
+cl.exe /O2 /Zi /arch:AVX2 /EHsc /D JSL_AVX /D DEBUG_OUT /D LIKWID_PERFMON .\vector_test.cpp /Fe:vector_test_debug_out.exe

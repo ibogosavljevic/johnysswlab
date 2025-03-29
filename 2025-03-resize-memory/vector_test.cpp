@@ -47,16 +47,34 @@ int main() {
     std::vector<float> std_vector, input_vector = generate_random_vector(256*1024*1024);
     jsl::vector<float, jsl::simple_allocator> jsl_vector;
     jsl::vector<float, jsl::resize_allocator> jsl_resize_vector;
-
+#ifdef JSL_USE_JEMALLOC
+    jsl::vector<float, jsl::resize_allocator_jemalloc> jsl_resize_jemalloc_vector;
+#endif
+#ifdef JSL_USE_POSIX
+    jsl::vector<float, jsl::resize_allocator_posix> jsl_resize_posix_vector;
+#endif
     LIKWID_MARKER_INIT;
 
     run_test(std_vector, input_vector, "std_vector");
     run_test(jsl_vector, input_vector, "jsl_vector");
     run_test(jsl_resize_vector, input_vector, "jsl_resize_vector");
+#ifdef JSL_USE_JEMALLOC
+    run_test(jsl_resize_jemalloc_vector, input_vector, "jsl_resize_jemalloc_vector");
+#endif
+#ifdef JSL_USE_POSIX
+    run_test(jsl_resize_posix_vector, input_vector, "jsl_resize_posix_vector");
+#endif
 
     compare_vectors(std_vector, input_vector);
     compare_vectors(jsl_vector, input_vector);
     compare_vectors(jsl_resize_vector, input_vector);
+#ifdef JSL_USE_JEMALLOC
+    compare_vectors(jsl_resize_jemalloc_vector, input_vector);
+#endif
+#ifdef JSL_USE_POSIX
+    compare_vectors(jsl_resize_posix_vector, input_vector);
+#endif
+
 
     LIKWID_MARKER_CLOSE;
 }
