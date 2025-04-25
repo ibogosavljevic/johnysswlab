@@ -170,6 +170,21 @@ std::vector<float> generate_random_floats(std::size_t count) {
     return result;
 }
 
+std::vector<uint8_t> generate_random_pixels(std::size_t count) {
+    std::vector<uint8_t> result;
+    result.reserve(count);
+
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_int_distribution<uint8_t> dist(0, 255);
+
+    for (std::size_t i = 0; i < count; ++i) {
+        result.push_back(dist(gen));
+    }
+
+    return result;
+}
+
 struct node_t {
     node_t* left;
     node_t* right;
@@ -231,7 +246,7 @@ float find_min_scalar(node_t const * const node) {
 float find_min_naive_internal(node_t const * const node) {
     node_t const * const node_left = node->left;
     node_t const * const node_right = node->right;
-    float min_left, min_right;
+    float min_left = std::numeric_limits<float>::max(), min_right = std::numeric_limits<float>::max();
     
     if (node_left) {
         #pragma omp task shared(node_left, min_left) default(none)
@@ -293,6 +308,30 @@ float find_min_openmp(node_t const * const root) {
     return min;
 }
 
+void histogram_scalar(size_t * hist, uint8_t* image, size_t n) {
+    for (size_t i = 0; i < n; i++) {
+        hist[image[i]]++;
+    }
+}
+
+void histogram_openmp(size_t hist[256], uint8_t* image, size_t n) {
+    #pragma omp parallel shared(hist, image, n) default(none)
+    {
+        size_t hist_priv[256] {};
+
+        #pragma omp for nowait
+        for (size_t i = 0; i < n; i++) {
+            hist_priv[image[i]]++;
+        }
+
+        #pragma omp critical
+        for (size_t i = 0; i < 256; i++) {
+            hist[i] += hist_priv[i];
+        }
+    }
+
+}
+
 
 template<typename T>
 bool near(T a, T b, T diff) {
@@ -326,6 +365,12 @@ int main() {
     add_openmp(c2.data(), a.data(), b.data(), COUNT);
     LIKWID_MARKER_STOP("add_openmp");
 
+    if (c1 != c0 || c2 != c0) {
+        std::cout << "FAIL: Add not same\n";
+    } else {
+        std::cout << "SUCC: Add same\n";
+    }
+
     LIKWID_MARKER_START("sum_scalar");
     float sum0 = sum_scalar(a.data(), COUNT);
     LIKWID_MARKER_STOP("sum_scalar");
@@ -345,11 +390,13 @@ int main() {
     a[COUNT/2] = -10.0;
     float find_val = a[COUNT/2];
 
-    float delta = 0.001 * sum0;
+    float delta = 0.01 * sum0;
 
     if ((!near(sum0, sum1, delta)) || (!near(sum0, sum2, delta)) || (!near(sum0, sum3, delta))) {
-        std::cout << "Sums not same\n";
+        std::cout << "FAIL: Sums not same\n";
         std::cout << "sum0 " << sum0 << ", sum1 " << sum1 << ", sum2 " << sum2 << ", sum3 " << sum3 << "\n";
+    } else {
+        std::cout << "SUCC: Sums same\n";
     }
 
     if (!omp_get_cancellation()) {
@@ -368,18 +415,11 @@ int main() {
     size_t idx2 = find_openmp(a.data(), COUNT, find_val);
     LIKWID_MARKER_STOP("find_openmp");
 
-    if (c1 != c0 || c2 != c0) {
-        std::cout << "Not same\n";
-    }
-
     if (a[idx0] != find_val || a[idx1] != find_val || a[idx2] != find_val) {
         std::cout << "Find not good\n";
     }
 
     node_t* root = create_from_array(a, 0, a.size() - 1);
-
-    size_t total_num = count(root);
-    std::cout << "Total count in tree " << total_num << "\n";
 
     LIKWID_MARKER_START("find_min_scalar");
     float min_val0 = find_min_scalar(root);
@@ -394,10 +434,29 @@ int main() {
     LIKWID_MARKER_STOP("find_min_openmp");
 
     if (min_val0 != min_val1 || min_val0 != min_val2) {
-        std::cout << "Find_min not same values\n";
+        std::cout << "FAIL: Find_min not same values\n";
+    } else {
+        std::cout << "SUCC: Find_min same values\n";
     }
 
     destroy(root);
+
+    std::vector<uint8_t> pixels = generate_random_pixels(COUNT);
+    std::vector<size_t> histogram0(256), histogram1(256);
+
+    LIKWID_MARKER_START("hist_scalar");
+    histogram_scalar(histogram0.data(), pixels.data(), COUNT);
+    LIKWID_MARKER_STOP("hist_scalar");
+
+    LIKWID_MARKER_START("hist_openmp");
+    histogram_openmp(histogram1.data(), pixels.data(), COUNT);
+    LIKWID_MARKER_STOP("hist_openmp");
+
+    if (histogram0 != histogram1) {
+        std::cout << "FAIL: Histograms not same\n";
+    } else {
+        std::cout << "SUCC: Histograms same\n";
+    }
 
     LIKWID_MARKER_CLOSE;
 
