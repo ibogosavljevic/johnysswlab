@@ -5,6 +5,8 @@ import math
 import locale
 import datetime
 import os
+import shlex
+import re
 
 
 def float2(val):
@@ -13,6 +15,14 @@ def float2(val):
     in future with ICU present will use icu.NumberFormat.parse().
     """
     return float(val.replace(',', '.'))
+
+def parse_number(str):
+    match = re.match(r'^(\D*)\s*([\d.]+)\s*(\D*)$', str)
+    if match:
+        prefix, number, suffix = match.groups()
+        return prefix.strip(), float2(number), suffix.strip()
+    else:
+        raise ValueError("Input string is not in the expected format '[prefix] number [suffix]'.")
 
 def run_command(command_words, num_runs, save_to_file, silent):
     outputs = []
@@ -25,7 +35,7 @@ def run_command(command_words, num_runs, save_to_file, silent):
     for i in range(num_runs):
         print("+++ Running %d/%d +++" % ((i + 1), num_runs))
         output_str = []
-        with subprocess.Popen(command_words[0].split(), stdout=subprocess.PIPE, universal_newlines=True) as p:
+        with subprocess.Popen(shlex.split(command_words[0]), stdout=subprocess.PIPE, universal_newlines=True) as p:
             for line in p.stdout:
                 if not silent:
                     print(line, end = '')
@@ -147,9 +157,16 @@ def main():
             else:
                 values = []
                 parsed = True
+                prefix = ""
+                suffix = ""
                 try:
+                    prefix, tmp, suffix = parse_number(line_per_exec[0][i])
                     for n in range(num_runs):
-                        values.append(float2(line_per_exec[n][i]))
+                        prefix0, val0, suffix0 = parse_number(line_per_exec[n][i])
+                        if ((prefix == prefix0) and (suffix == suffix0)):
+                            values.append(val0)
+                        else:
+                            raise ValueError("Mismatched prefixes or suffixes")
                 except ValueError:
                     output_text += "XX" + line_per_exec[0][i] + "XX"
                     parsed = False
@@ -181,8 +198,10 @@ def main():
                         left = right - 1
                         median = (values[left] + values[right]) / 2
 
-                    output_text += '{0:.{1}f}'.format(mean, precision) + " (" + '{0:.{1}f}'.format(stddev, precision) + ")" 
-                    output_text += '[ {0:.{1}f}'.format(min, precision) + ', {0:.{1}f}'.format(median, precision) + ', {0:.{1}f} ]'.format(max, 3) 
+                    output_text += prefix
+                    output_text += ' {0:.{1}f}'.format(mean, precision) + " (" + '{0:.{1}f}'.format(stddev, precision) + ")" 
+                    output_text += '[ {0:.{1}f}'.format(min, precision) + ', {0:.{1}f}'.format(median, precision) + ', {0:.{1}f} ] '.format(max, 3) 
+                    output_text += suffix
             
        
         output_text += ("\n")
