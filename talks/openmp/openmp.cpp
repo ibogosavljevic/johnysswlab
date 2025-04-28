@@ -387,8 +387,9 @@ int main() {
     float sum3 = sum_openmp(a.data(), COUNT);
     LIKWID_MARKER_STOP("sum_openmp");
 
-    a[COUNT/2] = -10.0;
-    float find_val = a[COUNT/2];
+    size_t find_idx = COUNT/2 + COUNT/110;
+    a[find_idx] = -10.0;
+    float find_val = a[find_idx];
 
     float delta = 0.01 * sum0;
 
