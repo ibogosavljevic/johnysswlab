@@ -38,21 +38,32 @@ int main() {
     int8_t* out1 = aligned::allocate_buffer<int8_t>(BUFF_SIZE);
     int8_t* out2 = aligned::allocate_buffer<int8_t>(BUFF_SIZE);
     int8_t* out3 = aligned::allocate_buffer<int8_t>(BUFF_SIZE);
+    int8_t* out4 = aligned::allocate_buffer<int8_t>(BUFF_SIZE);
+    int8_t* out5 = aligned::allocate_buffer<int8_t>(BUFF_SIZE);
+
 
     set_buffer<int8_t>(out1, BUFF_SIZE, 0);
     set_buffer<int8_t>(out2, BUFF_SIZE, 0);
     set_buffer<int8_t>(out3, BUFF_SIZE, 0);
+    set_buffer<int8_t>(out4, BUFF_SIZE, 0);
+    set_buffer<int8_t>(out5, BUFF_SIZE, 0);
 
     run_test(100, "stripe_color", [&]() -> void { stripe_color(out1, N, 1, 5); });
-    run_test(100, "stripe_color_interchanged", [&]() -> void { stripe_color_interchanged(out2, N, 1, 5); });
-    run_test(100, "stripe_color_interchanged_noconditions", [&]() -> void { stripe_color_interchanged_no_conditions(out3, N, 1, 5); });
+    run_test(100, "stripe_color_parallelized", [&]() -> void { stripe_color_parallelized(out2, N, 1, 5); });
+    run_test(100, "stripe_color_interchanged", [&]() -> void { stripe_color_interchanged(out3, N, 1, 5); });
+    run_test(100, "stripe_color_interchanged_noconditions", [&]() -> void { stripe_color_interchanged_no_conditions(out4, N, 1, 5); });
+    run_test(100, "stripe_color_interchanged_noconditions_parallelized", [&]() -> void { stripe_color_interchanged_no_conditions(out5, N, 1, 5); });
 
     equal(out1, out2, N);
     equal(out1, out3, N);
+    equal(out1, out4, N);
+    equal(out1, out5, N);
 
     aligned::free_buffer(out1);
     aligned::free_buffer(out2);
     aligned::free_buffer(out3);
+    aligned::free_buffer(out4);
+    aligned::free_buffer(out5);
 
     LIKWID_MARKER_CLOSE;
 }
