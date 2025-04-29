@@ -12,20 +12,42 @@ void stripe_color(int8_t* image, size_t n, int8_t color_odd, int8_t color_even) 
 }
 
 void stripe_color_parallelized(int8_t* image, size_t n, int8_t color_odd, int8_t color_even) {
-    // TODO: Parallelize the simple version
+    #pragma omp parallel for shared(n, image, color_even, color_odd) default(none)
+    for (size_t i = 0; i < n; i++) {
+        int8_t color = ((i % 2) == 0) ? color_even : color_odd;
+        for (size_t j = 0; j < n; j++) {
+            image[j * n + i] = color;
+        }
+    }
 }
 
 void stripe_color_interchanged(int8_t* image, size_t n, int8_t color_odd, int8_t color_even) {
-    // TODO: Add the interchanged scalar version
+    for (size_t j = 0; j < n; j++) {
+        for (size_t i = 0; i < n; i++) {
+            int8_t color = ((i % 2) == 0) ? color_even : color_odd;
+            image[j * n + i] = color;
+        }
+    }
 }
 
 
 void stripe_color_interchanged_no_conditions(int8_t* image, size_t n, int8_t color_odd, int8_t color_even) {
-    // TODO: Improve the interchanged version to remove the conditions
+    for (size_t j = 0; j < n; j++) {
+        for (size_t i = 0; i < n; i+=2) {
+            image[j * n + i] = color_even;
+            image[j * n + i + 1] = color_odd;
+        }
+    }
 }
 
 void stripe_color_interchanged_no_conditions_parallelized(int8_t* image, size_t n, int8_t color_odd, int8_t color_even) {
-    // TODO: Parallelize the improbed interchanged version with no conditions
+    #pragma omp parallel for shared(n, image, color_even, color_odd) default(none)
+    for (size_t j = 0; j < n; j++) {
+        for (size_t i = 0; i < n; i+=2) {
+            image[j * n + i] = color_even;
+            image[j * n + i + 1] = color_odd;
+        }
+    }
 }
 
 
@@ -52,7 +74,7 @@ int main() {
     run_test(100, "stripe_color_parallelized", [&]() -> void { stripe_color_parallelized(out2, N, 1, 5); });
     run_test(100, "stripe_color_interchanged", [&]() -> void { stripe_color_interchanged(out3, N, 1, 5); });
     run_test(100, "stripe_color_interchanged_noconditions", [&]() -> void { stripe_color_interchanged_no_conditions(out4, N, 1, 5); });
-    run_test(100, "stripe_color_interchanged_noconditions_parallelized", [&]() -> void { stripe_color_interchanged_no_conditions(out5, N, 1, 5); });
+    run_test(100, "stripe_color_interchanged_noconditions_parallelized", [&]() -> void { stripe_color_interchanged_no_conditions_parallelized(out5, N, 1, 5); });
 
     equal(out1, out2, N);
     equal(out1, out3, N);
