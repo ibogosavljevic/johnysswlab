@@ -27,7 +27,7 @@ extern "C" {
 
 #pragma omp declare simd uniform(img_ptr, width, height) linear(column) notinbranch
 __attribute__ ((pure, nothrow)) 
-double sum_row(double const * const img_ptr, size_t column, size_t width, size_t height);
+double sum_column(double const * const img_ptr, size_t column, size_t width, size_t height);
 
 }
 
@@ -46,7 +46,7 @@ int main() {
     LIKWID_MARKER_START("scalar_func");
 
     for (size_t i = 0; i < WIDTH; i++) {
-        sum_columns0[i] = sum_row(img_ptr, i, WIDTH, HEIGHT);
+        sum_columns0[i] = sum_column(img_ptr, i, WIDTH, HEIGHT);
     }
 
     clobber();
@@ -57,7 +57,7 @@ int main() {
 
     #pragma omp simd
     for (size_t i = 0; i < WIDTH; i++) {
-        sum_columns1[i] = sum_row(img_ptr, i, WIDTH, HEIGHT);
+        sum_columns1[i] = sum_column(img_ptr, i, WIDTH, HEIGHT);
     }
 
     clobber();
