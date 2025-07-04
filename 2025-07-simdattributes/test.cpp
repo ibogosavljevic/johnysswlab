@@ -1,18 +1,17 @@
 #include <vector>
 #include <random>
 #include <iostream>
+#include <cassert>
 
 static void clobber() {
     asm volatile("" : : : "memory");
 }
 
 
-extern "C" {
-
-__attribute__ ((__simd__ ("notinbranch"), const, nothrow)) 
+#pragma omp declare simd
+__attribute__ ((const, nothrow)) 
 double square(double x);
 
-}
 
 std::vector<double> generateRandomDoubles(std::size_t size) {
     std::vector<double> result;
@@ -30,17 +29,36 @@ std::vector<double> generateRandomDoubles(std::size_t size) {
 }
 
 int main(int argc, char** argv) {
-    static constexpr size_t s { 1000000000ULL };
+    static constexpr size_t s { 100000ULL };
     std::vector<double> input { generateRandomDoubles(s) };
-    double res { 0.0 };
+    std::vector<double> res0(input.size());
+    std::vector<double> res1(input.size());
  
-    double * d = input.data();
+    double * d = input.data(); 
+    double * r0 = res0.data();
+    double * r1 = res1.data();
  
     for (size_t i = 0; i < s; i++) {
-        d[i] = square(d[i]);
+        r0[i] = square(d[i]);
     }
 
     clobber();
 
-    std::cout << "Res = " << res << "\n";
+    for (size_t i = 0; i < s; i++) {
+        if (d[i] > 0) {
+            r1[i] = square(d[i]);
+        }
+    }
+
+    clobber();
+
+    for (size_t i = 0; i < s; i++) {
+        if (d[i] > 0) {
+            assert(res0[i] == res1[i]);
+        } else {
+            assert(res1[i] == 0.0);
+        }
+
+    }
+
 }

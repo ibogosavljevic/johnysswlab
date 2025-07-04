@@ -23,19 +23,15 @@ std::vector<double> generateRandomDoubles(std::size_t size) {
     return result;
 }
 
-extern "C" {
-
 #pragma omp declare simd uniform(img_ptr, width, height) linear(column) notinbranch
 __attribute__ ((pure, nothrow)) 
 double sum_column(double const * const img_ptr, size_t column, size_t width, size_t height);
 
-}
-
 int main() {
     LIKWID_MARKER_INIT;
 
-    static constexpr size_t WIDTH = 3841;
-    static constexpr size_t HEIGHT = 2161;
+    static constexpr size_t WIDTH = 3840;
+    static constexpr size_t HEIGHT = 2160;
 
     std::vector<double> img = generateRandomDoubles(WIDTH * HEIGHT);
     std::vector<double> sum_columns0(WIDTH);
