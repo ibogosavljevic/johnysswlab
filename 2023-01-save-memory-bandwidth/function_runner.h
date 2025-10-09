@@ -5,6 +5,9 @@
 
 class function_runner {
 public:
+    function_runner() : m_num_executed(0), m_run_function(false) {
+    }
+
     template <typename FUNCTION>
     void run_async(FUNCTION f) {
         m_time_started = std::chrono::steady_clock::now();
